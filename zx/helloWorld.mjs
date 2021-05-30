@@ -18,3 +18,9 @@ await $`echo ${getRandomWord()}`
 
 const string = await $`cat README.md`
 console.log(`READMEの中身:\n ${string}`)
+
+const getDockerVersion = () => {
+  return $`docker --version`;
+}
+
+$`echo Docker のバージョンは、${await getDockerVersion()}です！`
