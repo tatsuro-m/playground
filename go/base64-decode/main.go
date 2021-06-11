@@ -1,6 +1,7 @@
 package main
 
 import (
+	"base64-decode/lib"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -9,7 +10,7 @@ import (
 )
 
 func main() {
-	src := sampleJwt()
+	src := lib.SampleJwt
 	claims := strings.Split(src, ".")[1]
 
 	claimsDec, err := base64.RawURLEncoding.DecodeString(claims)
