@@ -1,6 +1,8 @@
 package main
 
 import (
+	"gin-gorm-tutorial/db"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,7 +12,10 @@ func main() {
 		c.String(200, "Hello, World")
 	})
 
+	db.Init()
 	if err := r.Run(":8080"); err != nil {
 		return
 	}
+
+	db.Close()
 }
