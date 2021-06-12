@@ -47,12 +47,16 @@ func main() {
 		}
 
 		if _, ok := targetKey["kid"]; !ok {
-			return nil, fmt.Errorf("key with specified kid is not present in jwks")
+			return "", fmt.Errorf("key with specified kid is not present in jwks")
 		}
 
 		fmt.Printf("cognito が公開している鍵で使うべき方: %v\n", targetKey)
 		return "", nil
 	})
 
-	fmt.Printf("最終的な token: %v\n", token)
+	if err != nil {
+		fmt.Printf("エラーがあったっぽい: %v", err)
+		return
+	}
+	fmt.Printf("最終的な Claims: %v\n", token.Claims)
 }
