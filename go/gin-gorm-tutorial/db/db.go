@@ -1,6 +1,8 @@
 package db
 
 import (
+	"gin-gorm-tutorial/entity"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -16,6 +18,8 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
+
+	autoMigration()
 }
 
 func GetDB() *gorm.DB {
@@ -31,4 +35,8 @@ func Close() {
 	if err := db.Close(); err != nil {
 		return
 	}
+}
+
+func autoMigration() {
+	_ = db.AutoMigrate(&entity.User{})
 }
