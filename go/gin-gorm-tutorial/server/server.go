@@ -16,7 +16,9 @@ func Init() {
 
 func router() *gin.Engine {
 	r := gin.Default()
-	u := r.Group("/users")
+	api := r.Group("/api")
+	v1 := api.Group("/v1")
+	u := v1.Group("/users")
 
 	{
 		ctrl := user.Controller{}
