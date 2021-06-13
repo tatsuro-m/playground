@@ -18,6 +18,8 @@ services:
       target: dev
     tty: true
     stdin_open: true
+    environment:
+      DSN: ${DSN}
     volumes:
       - .:/go/src/app
     ports:
