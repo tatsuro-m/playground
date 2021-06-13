@@ -24,3 +24,14 @@ services:
       - 8080:8080
     depends_on:
       - db
+
+  migration:
+    build:
+      context: .
+      dockerfile: migration.dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./migrations/:/go/src/app/migrations
+    depends_on:
+      - db
