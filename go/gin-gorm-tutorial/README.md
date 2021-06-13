@@ -8,7 +8,7 @@ https://qiita.com/Asuforce/items/0bde8cabb30ac094fcb4 を参考にして Gin + G
 - 環境に応じて接続できる DB を変更できるように環境変数を使う
 - API のエンドポイントをネストする（/api/v1 みたいな感じで）
 - id, createdAt などのカラムを追加してみる（gorm.Model は使わなくて良い）
-- User 構造体に gorm のタグを打って、not null, default値あたりの挙動を確認してみる 
+- User 構造体に gorm のタグを打って、not null, default値あたりの挙動を確認してみる
 - Post モデルを増やしてみる。 User に従属するモデル
 - テスト専用の DB を使えるようにする
 - テスト用の fixture ライブラリ、 https://github.com/go-testfixtures/testfixtures を試す
