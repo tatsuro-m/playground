@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	user "gin-gorm-tutorial/controller"
+	"gin-gorm-tutorial/controller/user"
 
 	"github.com/gin-gonic/gin"
 )

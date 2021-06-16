@@ -2,7 +2,7 @@ package user
 
 import (
 	"fmt"
-	user "gin-gorm-tutorial/service"
+	"gin-gorm-tutorial/service/user"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
