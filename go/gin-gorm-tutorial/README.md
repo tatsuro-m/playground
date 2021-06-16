@@ -9,7 +9,7 @@ https://qiita.com/Asuforce/items/0bde8cabb30ac094fcb4 を参考にして Gin + G
 - ~~API のエンドポイントをネストする（/api/v1 みたいな感じで）~~
 - ~~id, createdAt などのカラムを追加してみる（gorm.Model は使わなくて良い）~~
 - ~~User 構造体に gorm のタグを打って、not null, default値あたりの挙動を確認してみる~~
-- `c.BindJSON(&u)` の挙動を確かめる。not null 制約を gorm でかけていて、 `last_name` を指定しないで post しても空文字で登録される問題があるので、おそらくここではないかと。
+- ~~gin で json から構造体に bind する時にバリデーションをかけてみる（https://github.com/gin-gonic/gin#model-binding-and-validation）~~
 - Post モデルを増やしてみる。 User に従属するモデル
 - テスト専用の DB を使えるようにする
 - テスト用の fixture ライブラリ、 https://github.com/go-testfixtures/testfixtures を試す
