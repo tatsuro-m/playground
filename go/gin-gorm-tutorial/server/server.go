@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"gin-gorm-tutorial/controller/post"
 	"gin-gorm-tutorial/controller/user"
 
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,13 @@ func router() *gin.Engine {
 		u.POST("", ctrl.Create)
 		u.PUT("/:id", ctrl.Update)
 		u.DELETE("/:id", ctrl.Delete)
+	}
+
+	p := v1.Group("/posts")
+
+	{
+		ctrl := post.Controller{}
+		p.GET("", ctrl.Index)
 	}
 
 	return r
