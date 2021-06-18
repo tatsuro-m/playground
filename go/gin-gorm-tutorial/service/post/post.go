@@ -9,10 +9,10 @@ type Service struct{}
 type Post entity.Post
 
 func (s Service) GetAll() ([]Post, error) {
-	db := db.GetDB()
+	d := db.GetDB()
 	var p []Post
 
-	if err := db.Find(&p).Error; err != nil {
+	if err := d.Find(&p).Error; err != nil {
 		return nil, err
 	}
 
