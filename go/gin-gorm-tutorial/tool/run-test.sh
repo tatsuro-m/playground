@@ -1,3 +1,3 @@
 #!/bin/bash
 
-time docker compose exec test go test -v ./...
+time docker compose run --rm test

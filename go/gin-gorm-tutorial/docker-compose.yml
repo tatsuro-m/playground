@@ -42,8 +42,7 @@ services:
       GIN_MODE: release
     volumes:
       - .:/go/src/app
-    #  exec で少しでも早くテストが実行できるように、コンテナを終了させない
-    command: sh -c "go test -v ./... && tail -f"
+    command: go test -v ./...
     depends_on:
       - db
 
