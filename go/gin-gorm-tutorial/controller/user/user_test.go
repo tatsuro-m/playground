@@ -78,42 +78,40 @@ func TestController_Create(t *testing.T) {
 		},
 	}
 
-	for i := 0; i < 500; i++ {
-		for _, tt := range tests {
-			t.Run(tt.name, func(t *testing.T) {
-				test_helper.SetupTest(t)
-				defer test_helper.FinalizeTest(t)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			test_helper.SetupTest(t)
+			defer test_helper.FinalizeTest(t)
 
-				reqBody, _ := json.Marshal(tt.req.body)
-				res := httptest.NewRecorder()
-				c, _ := gin.CreateTestContext(res)
-				c.Request, _ = http.NewRequest(
-					http.MethodPost,
-					"/api/v1/users",
-					bytes.NewBuffer(reqBody),
-				)
+			reqBody, _ := json.Marshal(tt.req.body)
+			res := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(res)
+			c.Request, _ = http.NewRequest(
+				http.MethodPost,
+				"/api/v1/users",
+				bytes.NewBuffer(reqBody),
+			)
 
-				// Act ---
-				var ctrl Controller
-				ctrl.Create(c)
+			// Act ---
+			var ctrl Controller
+			ctrl.Create(c)
 
-				// Assert ---
-				assert.Equal(t, tt.expected.code, res.Code)
+			// Assert ---
+			assert.Equal(t, tt.expected.code, res.Code)
 
-				var resMap map[string]interface{}
-				_ = json.Unmarshal(res.Body.Bytes(), &resMap)
+			var resMap map[string]interface{}
+			_ = json.Unmarshal(res.Body.Bytes(), &resMap)
 
-				if resMap == nil {
-					assert.Nil(t, resMap)
-				} else {
-					for k, v := range tt.expected.body {
-						assert.Equal(t, v, resMap[k])
-					}
-					assert.Contains(t, resMap, "id")
-					assert.Contains(t, resMap, "created_at")
-					assert.Contains(t, resMap, "updated_at")
+			if resMap == nil {
+				assert.Nil(t, resMap)
+			} else {
+				for k, v := range tt.expected.body {
+					assert.Equal(t, v, resMap[k])
 				}
-			})
-		}
+				assert.Contains(t, resMap, "id")
+				assert.Contains(t, resMap, "created_at")
+				assert.Contains(t, resMap, "updated_at")
+			}
+		})
 	}
 }
