@@ -1,6 +1,7 @@
 package post
 
 import (
+	"fmt"
 	"gin-gorm-tutorial/db"
 	"gin-gorm-tutorial/entity"
 
@@ -16,6 +17,21 @@ func (s Service) GetAll() ([]Post, error) {
 
 	if err := d.Find(&p).Error; err != nil {
 		return nil, err
+	}
+
+	return p, nil
+}
+
+func (s Service) GetAllByUserID(id string) ([]Post, error) {
+	d := db.GetDB()
+	fmt.Println(id)
+	fmt.Println("user の id からその user が持っているタスクを全て返す関数を作る")
+
+	var u entity.User
+	var p []Post
+
+	if err := d.Model(&u).Association("posts").Find(&p); err != nil {
+		return p, nil
 	}
 
 	return p, nil
