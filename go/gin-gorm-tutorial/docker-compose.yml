@@ -12,6 +12,7 @@ services:
       - ./initdb:/docker-entrypoint-initdb.d
     ports:
       - 5432:5432
+
   web:
     build:
       context: .
@@ -20,12 +21,28 @@ services:
     tty: true
     stdin_open: true
     environment:
-      DEV_DSN: ${DEV_DSN}
-      TEST_DSN: ${TEST_DSN}
+      DSN: "host=db user=postgres password=password dbname=development port=5432 sslmode=disable TimeZone=Asia/Tokyo"
     volumes:
       - .:/go/src/app
     ports:
       - 8080:8080
+    depends_on:
+      - db
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    tty: true
+    stdin_open: true
+    environment:
+      DSN: "host=db user=postgres password=password dbname=test port=5432 sslmode=disable TimeZone=Asia/Tokyo"
+    volumes:
+      - .:/go/src/app
+    command: go test ./...
+    ports:
+      - 5050:5050
     depends_on:
       - db
 

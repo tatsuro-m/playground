@@ -13,7 +13,7 @@ var (
 )
 
 func Init() {
-	db, err = gorm.Open(postgres.Open(os.Getenv("DEV_DSN")), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(os.Getenv("DSN")), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
