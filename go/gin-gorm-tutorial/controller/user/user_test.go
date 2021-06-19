@@ -3,7 +3,7 @@ package user
 import (
 	"bytes"
 	"encoding/json"
-	"gin-gorm-tutorial/db"
+	test_helper "gin-gorm-tutorial/test-helper"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -80,8 +80,7 @@ func TestController_Create(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Arrange ---
-			db.Init()
+			test_helper.SetupTest(t)
 
 			reqBody, _ := json.Marshal(tt.req.body)
 			res := httptest.NewRecorder()
