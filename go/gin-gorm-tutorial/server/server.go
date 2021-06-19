@@ -15,6 +15,10 @@ func Init() {
 	}
 }
 
+const (
+	id = "/:id"
+)
+
 func router() *gin.Engine {
 	r := gin.Default()
 	api := r.Group("/api")
@@ -24,10 +28,10 @@ func router() *gin.Engine {
 	{
 		ctrl := user.Controller{}
 		u.GET("", ctrl.Index)
-		u.GET("/:id", ctrl.Show)
+		u.GET(id, ctrl.Show)
 		u.POST("", ctrl.Create)
-		u.PUT("/:id", ctrl.Update)
-		u.DELETE("/:id", ctrl.Delete)
+		u.PUT(id, ctrl.Update)
+		u.DELETE(id, ctrl.Delete)
 	}
 
 	p := v1.Group("/posts")
@@ -35,10 +39,10 @@ func router() *gin.Engine {
 	{
 		ctrl := post.Controller{}
 		p.GET("", ctrl.Index)
-		p.GET("/:id", ctrl.Show)
+		p.GET(id, ctrl.Show)
 		p.POST("", ctrl.Create)
-		p.PUT("/:id", ctrl.Update)
-		p.DELETE("/:id", ctrl.Delete)
+		p.PUT(id, ctrl.Update)
+		p.DELETE(id, ctrl.Delete)
 	}
 
 	return r
