@@ -41,7 +41,7 @@ services:
       TEST_ENV: 1
     volumes:
       - .:/go/src/app
-    command: go test ./...
+    command: go test -v ./...
     depends_on:
       - db
 
