@@ -38,6 +38,7 @@ services:
     stdin_open: true
     environment:
       DSN: "host=db user=postgres password=password dbname=test port=5432 sslmode=disable TimeZone=Asia/Tokyo"
+      TEST_ENV: 1
     volumes:
       - .:/go/src/app
     command: go test ./...
