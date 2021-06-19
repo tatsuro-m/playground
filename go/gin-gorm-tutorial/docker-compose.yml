@@ -41,8 +41,6 @@ services:
     volumes:
       - .:/go/src/app
     command: go test ./...
-    ports:
-      - 5050:5050
     depends_on:
       - db
 
