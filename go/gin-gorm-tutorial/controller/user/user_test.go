@@ -4,40 +4,88 @@ import (
 	"bytes"
 	"encoding/json"
 	"gin-gorm-tutorial/db"
-	"gin-gorm-tutorial/entity"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/gin-gonic/gin"
 )
 
-func TestController_Create(t *testing.T) {
-	// Arrange ---
-	db.Init()
+type req struct {
+	body map[string]interface{}
+}
+type expected struct {
+	code int
+	body map[string]interface{}
+}
 
-	mapData := map[string]interface{}{
-		"first_name": "first_name",
-		"last_name":  "last_name",
+func TestController_Create(t *testing.T) {
+	tests := []struct {
+		name     string
+		req      req
+		expected expected
+	}{
+		{
+			name: "正常に作成されること",
+			req: req{map[string]interface{}{
+				"first_name": "test_first1",
+				"last_name":  "test_last1",
+			}},
+			expected: expected{
+				code: http.StatusCreated,
+				body: map[string]interface{}{
+					"first_name": "test_first1",
+					"last_name":  "test_last1",
+				},
+			},
+		},
+		{
+			name: "余計なフィールドがあっても作成されること",
+			req: req{map[string]interface{}{
+				"first_name":       "test_first1",
+				"last_name":        "test_last1",
+				"not_exists_field": "hogehoge",
+			}},
+			expected: expected{
+				code: http.StatusCreated,
+				body: map[string]interface{}{
+					"first_name": "test_first1",
+					"last_name":  "test_last1",
+				},
+			},
+		},
 	}
 
-	reqBody, _ := json.Marshal(mapData)
-	res := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(res)
-	c.Request, _ = http.NewRequest(
-		http.MethodPost,
-		"/api/v1/users",
-		bytes.NewBuffer(reqBody),
-	)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Arrange ---
+			db.Init()
 
-	// Act ---
-	var ctrl Controller
-	ctrl.Create(c)
+			reqBody, _ := json.Marshal(tt.req.body)
+			res := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(res)
+			c.Request, _ = http.NewRequest(
+				http.MethodPost,
+				"/api/v1/users",
+				bytes.NewBuffer(reqBody),
+			)
 
-	// Assert ---
-	assert.Equal(t, http.StatusCreated, res.Code)
-	var user entity.User
-	_ = json.Unmarshal(res.Body.Bytes(), &user)
-	assert.Equal(t, "last_name", user.LastName)
+			// Act ---
+			var ctrl Controller
+			ctrl.Create(c)
+
+			// Assert ---
+			assert.Equal(t, tt.expected.code, res.Code)
+
+			var resMap map[string]interface{}
+			_ = json.Unmarshal(res.Body.Bytes(), &resMap)
+			assert.Equal(t, tt.expected.body["first_name"], resMap["first_name"])
+			assert.Equal(t, tt.expected.body["last_name"], resMap["last_name"])
+			assert.NotNil(t, resMap["id"])
+			assert.NotNil(t, resMap["created_at"])
+			assert.NotNil(t, resMap["updated_at"])
+		})
+	}
 }
