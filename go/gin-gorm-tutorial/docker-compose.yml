@@ -40,6 +40,6 @@ services:
     environment:
       DEV_POSTGRESQL_URL: ${DEV_POSTGRESQL_URL}
       TEST_POSTGRESQL_URL: ${TEST_POSTGRESQL_URL}
-    command: migrate -database ${DEV_POSTGRESQL_URL} -path migrations up && migrate -database ${TEST_POSTGRESQL_URL} -path migrations up
+    command: sh -c "migrate -database ${DEV_POSTGRESQL_URL} -path migrations up && migrate -database ${TEST_POSTGRESQL_URL} -path migrations up"
     depends_on:
       - db
