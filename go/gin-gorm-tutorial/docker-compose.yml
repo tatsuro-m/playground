@@ -39,9 +39,11 @@ services:
     environment:
       DSN: "host=db user=postgres password=password dbname=test port=5432 sslmode=disable TimeZone=Asia/Tokyo"
       TEST_ENV: 1
+      GIN_MODE: release
     volumes:
       - .:/go/src/app
-    command: go test -v ./...
+    #  exec で少しでも早くテストが実行できるように、コンテナを終了させない
+    command: sh -c "go test -v ./... && tail -f"
     depends_on:
       - db
 
