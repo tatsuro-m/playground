@@ -56,6 +56,26 @@ func TestController_Create(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "first_name が欠けていたらエラーになること",
+			req: req{map[string]interface{}{
+				"last_name": "test_last1",
+			}},
+			expected: expected{
+				code: http.StatusBadRequest,
+				body: map[string]interface{}{},
+			},
+		},
+		{
+			name: "last_name が欠けていたらエラーになること",
+			req: req{map[string]interface{}{
+				"first_name": "test_first1",
+			}},
+			expected: expected{
+				code: http.StatusBadRequest,
+				body: map[string]interface{}{},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -81,11 +101,17 @@ func TestController_Create(t *testing.T) {
 
 			var resMap map[string]interface{}
 			_ = json.Unmarshal(res.Body.Bytes(), &resMap)
-			assert.Equal(t, tt.expected.body["first_name"], resMap["first_name"])
-			assert.Equal(t, tt.expected.body["last_name"], resMap["last_name"])
-			assert.NotNil(t, resMap["id"])
-			assert.NotNil(t, resMap["created_at"])
-			assert.NotNil(t, resMap["updated_at"])
+
+			if resMap == nil {
+				assert.Nil(t, resMap)
+			} else {
+				for k, v := range tt.expected.body {
+					assert.Equal(t, v, resMap[k])
+				}
+				assert.Contains(t, resMap, "id")
+				assert.Contains(t, resMap, "created_at")
+				assert.Contains(t, resMap, "updated_at")
+			}
 		})
 	}
 }
