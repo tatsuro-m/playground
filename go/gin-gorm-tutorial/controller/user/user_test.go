@@ -45,19 +45,7 @@ func TestController_Index(t *testing.T) {
 
 			res := httptest.NewRecorder()
 
-			d := db.GetDB()
-			for i := 0; i < 3; i++ {
-				u := entity.User{
-					FirstName: "first_name" + strconv.Itoa(i),
-					LastName:  "last_name" + strconv.Itoa(i),
-					CreatedAt: time.Now(),
-					UpdatedAt: time.Now(),
-				}
-				if err := d.Create(&u).Error; err != nil {
-					t.Log(err)
-				}
-			}
-
+			insertUser(t, 3)
 			c, _ := gin.CreateTestContext(res)
 			c.Request, _ = http.NewRequest(
 				http.MethodGet,
@@ -84,6 +72,23 @@ func TestController_Index(t *testing.T) {
 				assert.Contains(t, user, "updated_at")
 			}
 		})
+	}
+}
+
+func insertUser(t *testing.T, times int) {
+	t.Helper()
+
+	d := db.GetDB()
+	for i := 0; i < times; i++ {
+		u := entity.User{
+			FirstName: "first_name" + strconv.Itoa(i),
+			LastName:  "last_name" + strconv.Itoa(i),
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+		if err := d.Create(&u).Error; err != nil {
+			t.Log(err)
+		}
 	}
 }
 
