@@ -17,15 +17,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type req struct {
+	body map[string]interface{}
+}
+type expected struct {
+	code int
+	body map[string]interface{}
+}
+
 func TestController_Index(t *testing.T) {
 	tests := []struct {
 		name     string
-		expected test_helper.Expected
+		expected expected
 	}{
 		{
 			name: "全ての user が取得できること",
-			expected: test_helper.Expected{
-				Code: http.StatusOK,
+			expected: expected{
+				code: http.StatusOK,
 			},
 		},
 	}
@@ -50,7 +58,7 @@ func TestController_Index(t *testing.T) {
 			ctrl.Index(c)
 
 			// Assert ---
-			assert.Equal(t, tt.expected.Code, res.Code)
+			assert.Equal(t, tt.expected.code, res.Code)
 
 			var resBody []map[string]interface{}
 			_ = json.Unmarshal(res.Body.Bytes(), &resBody)
@@ -87,18 +95,18 @@ func insertUser(t *testing.T, times int) {
 func TestController_Create(t *testing.T) {
 	tests := []struct {
 		name     string
-		req      test_helper.Req
-		expected test_helper.Expected
+		req      req
+		expected expected
 	}{
 		{
 			name: "正常に作成されること",
-			req: test_helper.Req{map[string]interface{}{
+			req: req{map[string]interface{}{
 				"first_name": "test_first1",
 				"last_name":  "test_last1",
 			}},
-			expected: test_helper.Expected{
-				Code: http.StatusCreated,
-				Body: map[string]interface{}{
+			expected: expected{
+				code: http.StatusCreated,
+				body: map[string]interface{}{
 					"first_name": "test_first1",
 					"last_name":  "test_last1",
 				},
@@ -106,14 +114,14 @@ func TestController_Create(t *testing.T) {
 		},
 		{
 			name: "余計なフィールドがあっても作成されること",
-			req: test_helper.Req{map[string]interface{}{
+			req: req{map[string]interface{}{
 				"first_name":       "test_first1",
 				"last_name":        "test_last1",
 				"not_exists_field": "hogehoge",
 			}},
-			expected: test_helper.Expected{
-				Code: http.StatusCreated,
-				Body: map[string]interface{}{
+			expected: expected{
+				code: http.StatusCreated,
+				body: map[string]interface{}{
 					"first_name": "test_first1",
 					"last_name":  "test_last1",
 				},
@@ -121,22 +129,22 @@ func TestController_Create(t *testing.T) {
 		},
 		{
 			name: "first_name が欠けていたらエラーになること",
-			req: test_helper.Req{map[string]interface{}{
+			req: req{map[string]interface{}{
 				"last_name": "test_last1",
 			}},
-			expected: test_helper.Expected{
-				Code: http.StatusBadRequest,
-				Body: map[string]interface{}{},
+			expected: expected{
+				code: http.StatusBadRequest,
+				body: map[string]interface{}{},
 			},
 		},
 		{
 			name: "last_name が欠けていたらエラーになること",
-			req: test_helper.Req{map[string]interface{}{
+			req: req{map[string]interface{}{
 				"first_name": "test_first1",
 			}},
-			expected: test_helper.Expected{
-				Code: http.StatusBadRequest,
-				Body: map[string]interface{}{},
+			expected: expected{
+				code: http.StatusBadRequest,
+				body: map[string]interface{}{},
 			},
 		},
 	}
@@ -146,7 +154,7 @@ func TestController_Create(t *testing.T) {
 			test_helper.SetupTest(t)
 			defer test_helper.FinalizeTest(t)
 
-			reqBody, _ := json.Marshal(tt.req.Body)
+			reqBody, _ := json.Marshal(tt.req.body)
 			res := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(res)
 			c.Request, _ = http.NewRequest(
@@ -160,7 +168,7 @@ func TestController_Create(t *testing.T) {
 			ctrl.Create(c)
 
 			// Assert ---
-			assert.Equal(t, tt.expected.Code, res.Code)
+			assert.Equal(t, tt.expected.code, res.Code)
 
 			var resMap map[string]interface{}
 			_ = json.Unmarshal(res.Body.Bytes(), &resMap)
@@ -168,7 +176,7 @@ func TestController_Create(t *testing.T) {
 			if resMap == nil {
 				assert.Nil(t, resMap)
 			} else {
-				for k, v := range tt.expected.Body {
+				for k, v := range tt.expected.body {
 					assert.Equal(t, v, resMap[k])
 				}
 				assert.Contains(t, resMap, "id")
