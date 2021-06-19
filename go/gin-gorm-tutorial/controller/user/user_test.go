@@ -3,10 +3,14 @@ package user
 import (
 	"bytes"
 	"encoding/json"
+	"gin-gorm-tutorial/db"
+	"gin-gorm-tutorial/entity"
 	test_helper "gin-gorm-tutorial/test-helper"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -19,6 +23,68 @@ type req struct {
 type expected struct {
 	code int
 	body map[string]interface{}
+}
+
+func TestController_Index(t *testing.T) {
+	tests := []struct {
+		name     string
+		expected expected
+	}{
+		{
+			name: "全ての user が取得できること",
+			expected: expected{
+				code: http.StatusOK,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			test_helper.SetupTest(t)
+			defer test_helper.FinalizeTest(t)
+
+			res := httptest.NewRecorder()
+
+			d := db.GetDB()
+			for i := 0; i < 3; i++ {
+				u := entity.User{
+					FirstName: "first_name" + strconv.Itoa(i),
+					LastName:  "last_name" + strconv.Itoa(i),
+					CreatedAt: time.Now(),
+					UpdatedAt: time.Now(),
+				}
+				if err := d.Create(&u).Error; err != nil {
+					t.Log(err)
+				}
+			}
+
+			c, _ := gin.CreateTestContext(res)
+			c.Request, _ = http.NewRequest(
+				http.MethodGet,
+				"/api/v1/users",
+				nil,
+			)
+
+			// Act ---
+			var ctrl Controller
+			ctrl.Index(c)
+
+			// Assert ---
+			assert.Equal(t, tt.expected.code, res.Code)
+
+			var resBody []map[string]interface{}
+			_ = json.Unmarshal(res.Body.Bytes(), &resBody)
+
+			assert.Len(t, resBody, 3)
+			for i, user := range resBody {
+				assert.Equal(t, "first_name"+strconv.Itoa(i), user["first_name"])
+				assert.Equal(t, "last_name"+strconv.Itoa(i), user["last_name"])
+				assert.Contains(t, user, "id")
+				assert.Contains(t, user, "created_at")
+				assert.Contains(t, user, "updated_at")
+			}
+		})
+	}
 }
 
 func TestController_Create(t *testing.T) {

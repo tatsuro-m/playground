@@ -15,9 +15,7 @@ func FinalizeTest(t *testing.T) {
 	excludeTables := append(make([]string, 0), "schema_migrations")
 
 	for _, name := range tableNames {
-		if contains(excludeTables, name) {
-			t.Log("truncate 対象外のテーブルなのでスキップします")
-		} else {
+		if notContains(excludeTables, name) {
 			d.Exec(fmt.Sprintf("TRUNCATE TABLE %s CASCADE", name))
 		}
 	}
@@ -25,11 +23,11 @@ func FinalizeTest(t *testing.T) {
 	db.Close()
 }
 
-func contains(s []string, e string) bool {
+func notContains(s []string, e string) bool {
 	for _, v := range s {
 		if e == v {
-			return true
+			return false
 		}
 	}
-	return false
+	return true
 }
