@@ -5,10 +5,11 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
+      POSTGRES_DB: development
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
     ports:
       - 5432:5432
   web:
@@ -19,7 +20,8 @@ services:
     tty: true
     stdin_open: true
     environment:
-      DSN: ${DSN}
+      DEV_DSN: ${DEV_DSN}
+      TEST_DSN: ${TEST_DSN}
     volumes:
       - .:/go/src/app
     ports:
@@ -36,7 +38,8 @@ services:
     volumes:
       - ./migrations/:/go/src/app/migrations
     environment:
-      POSTGRESQL_URL: ${POSTGRESQL_URL}
-    command: migrate -database ${POSTGRESQL_URL} -path migrations up
+      DEV_POSTGRESQL_URL: ${DEV_POSTGRESQL_URL}
+      TEST_POSTGRESQL_URL: ${TEST_POSTGRESQL_URL}
+    command: migrate -database ${DEV_POSTGRESQL_URL} -path migrations up && migrate -database ${TEST_POSTGRESQL_URL} -path migrations up
     depends_on:
       - db
