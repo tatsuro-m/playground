@@ -171,18 +171,18 @@ func TestController_Create(t *testing.T) {
 			// Assert ---
 			assert.Equal(t, tt.expected.code, res.Code)
 
-			var resMap map[string]interface{}
-			_ = json.Unmarshal(res.Body.Bytes(), &resMap)
+			var resBody map[string]interface{}
+			_ = json.Unmarshal(res.Body.Bytes(), &resBody)
 
-			if resMap == nil {
-				assert.Nil(t, resMap)
+			if resBody == nil {
+				assert.Nil(t, resBody)
 			} else {
 				for k, v := range tt.expected.body {
-					assert.Equal(t, v, resMap[k])
+					assert.Equal(t, v, resBody[k])
 				}
-				assert.Contains(t, resMap, "id")
-				assert.Contains(t, resMap, "created_at")
-				assert.Contains(t, resMap, "updated_at")
+				assert.Contains(t, resBody, "id")
+				assert.Contains(t, resBody, "created_at")
+				assert.Contains(t, resBody, "updated_at")
 			}
 		})
 	}
@@ -205,6 +205,32 @@ func TestController_Update(t *testing.T) {
 				body: map[string]interface{}{
 					"first_name": "changed",
 					"last_name":  "changed",
+				},
+			},
+		},
+		{
+			name: "余計なリクエストボディが付いていても無視されること",
+			req: req{map[string]interface{}{
+				"first_name": "changed",
+				"last_name":  "changed",
+				"hoge":       "hoge",
+			}},
+			expected: expected{
+				code: http.StatusOK,
+				body: map[string]interface{}{
+					"first_name": "changed",
+					"last_name":  "changed",
+				},
+			},
+		},
+		{
+			name: "リクエストボディが空の場合には更新されないこと",
+			req:  req{map[string]interface{}{}},
+			expected: expected{
+				code: http.StatusOK,
+				body: map[string]interface{}{
+					"first_name": "original_first",
+					"last_name":  "original_last",
 				},
 			},
 		},
