@@ -3,6 +3,7 @@ package user
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"gin-gorm-tutorial/db"
 	"gin-gorm-tutorial/entity"
 	test_helper "gin-gorm-tutorial/test-helper"
@@ -183,6 +184,73 @@ func TestController_Create(t *testing.T) {
 				assert.Contains(t, resMap, "created_at")
 				assert.Contains(t, resMap, "updated_at")
 			}
+		})
+	}
+}
+
+func TestController_Update(t *testing.T) {
+	tests := []struct {
+		name     string
+		req      req
+		expected expected
+	}{
+		{
+			name: "正常にアップデートされること",
+			req: req{map[string]interface{}{
+				"first_name": "changed",
+				"last_name":  "changed",
+			}},
+			expected: expected{
+				code: http.StatusOK,
+				body: map[string]interface{}{
+					"first_name": "changed",
+					"last_name":  "changed",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			test_helper.SetupTest(t)
+			defer test_helper.FinalizeTest(t)
+
+			insertUser := func() entity.User {
+				d := db.GetDB()
+				u := entity.User{FirstName: "original_first", LastName: "original_last"}
+				d.Create(&u)
+				return u
+			}
+			u := insertUser()
+			id := fmt.Sprintf("%d", u.ID)
+			reqBody, _ := json.Marshal(tt.req.body)
+			res := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(res)
+			c.Params = gin.Params{gin.Param{Key: "id", Value: id}}
+			c.Request, _ = http.NewRequest(
+				http.MethodPut,
+				fmt.Sprintf("/api/v1/users/%s", id),
+				bytes.NewBuffer(reqBody),
+			)
+
+			var ctrl Controller
+			ctrl.Update(c)
+
+			assert.Equal(t, tt.expected.code, res.Code)
+
+			var resBody map[string]interface{}
+			_ = json.Unmarshal(res.Body.Bytes(), &resBody)
+
+			assert.Equal(t, tt.expected.body["first_name"], resBody["first_name"])
+			assert.Equal(t, tt.expected.body["last_name"], resBody["last_name"])
+			assert.Equal(t, id, fmt.Sprintf("%v", resBody["id"]))
+
+			format := func(t time.Time) string {
+				l := "2006-01-02"
+				return t.Format(l)
+			}
+			assert.Contains(t, resBody["created_at"], format(u.CreatedAt))
+			assert.Contains(t, resBody["updated_at"], format(u.UpdatedAt))
 		})
 	}
 }
