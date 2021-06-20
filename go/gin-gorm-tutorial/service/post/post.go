@@ -22,16 +22,15 @@ func (s Service) GetAll() ([]Post, error) {
 	return p, nil
 }
 
-func (s Service) GetAllByUserID(id string) ([]Post, error) {
+func (s Service) GetAllByUserID(uid string) ([]Post, error) {
 	d := db.GetDB()
-	fmt.Println(id)
-	fmt.Println("user の id からその user が持っているタスクを全て返す関数を作る")
-
 	var u entity.User
-	var p []Post
+	d.Where("id = ?", uid).First(&u)
+	fmt.Println(u)
 
-	if err := d.Model(&u).Association("posts").Find(&p); err != nil {
-		return p, nil
+	var p []Post
+	if err := d.Model(&u).Association("Posts").Find(&p); err != nil {
+		return p, err
 	}
 
 	return p, nil
