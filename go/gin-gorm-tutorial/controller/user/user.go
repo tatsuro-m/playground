@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"gin-gorm-tutorial/service/post"
 	"gin-gorm-tutorial/service/user"
 	"net/http"
 
@@ -74,5 +75,18 @@ func (ct Controller) Delete(c *gin.Context) {
 		fmt.Println(err)
 	} else {
 		c.JSON(http.StatusNoContent, gin.H{"id #" + id: "deleted"})
+	}
+}
+
+// GET /users/:id/posts
+func (ct Controller) Posts(c *gin.Context) {
+	id := c.Params.ByName("id")
+	var s post.Service
+
+	if posts, err := s.GetAllByUserID(id); err != nil {
+		c.AbortWithStatus(http.StatusNotFound)
+		fmt.Println(err)
+	} else {
+		c.JSON(http.StatusOK, posts)
 	}
 }

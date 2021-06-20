@@ -280,3 +280,61 @@ func TestController_Update(t *testing.T) {
 		})
 	}
 }
+
+func TestController_Posts(t *testing.T) {
+	tests := []struct {
+		name     string
+		req      req
+		expected expected
+	}{
+		{
+			name:     "user の持っている post が全て取得できること",
+			expected: expected{code: http.StatusOK},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			test_helper.SetupTest(t)
+			defer test_helper.FinalizeTest(t)
+			d := db.GetDB()
+
+			insertUser := func() entity.User {
+				u := entity.User{FirstName: "first", LastName: "last"}
+				d.Create(&u)
+				return u
+			}
+			u := insertUser()
+			insertPost := func() {
+				for i := 0; i < 5; i++ {
+					p := entity.Post{Title: "title" + strconv.Itoa(i), Content: "content" + strconv.Itoa(i), UserID: u.ID}
+					d.Create(&p)
+				}
+			}
+			insertPost()
+
+			id := fmt.Sprintf("%d", u.ID)
+			res := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(res)
+			c.Params = gin.Params{gin.Param{Key: "id", Value: id}}
+			c.Request, _ = http.NewRequest(
+				http.MethodGet,
+				fmt.Sprintf("/api/v1/users/%s/posts", id),
+				nil,
+			)
+
+			var ctrl Controller
+			ctrl.Posts(c)
+
+			var resBody []map[string]interface{}
+			_ = json.Unmarshal(res.Body.Bytes(), &resBody)
+
+			assert.Equal(t, tt.expected.code, res.Code)
+			assert.Len(t, resBody, 5)
+			for i, post := range resBody {
+				assert.Equal(t, "title"+strconv.Itoa(i), post["title"])
+				assert.Equal(t, "content"+strconv.Itoa(i), post["content"])
+			}
+		})
+	}
+}

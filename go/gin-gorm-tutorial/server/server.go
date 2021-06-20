@@ -32,6 +32,7 @@ func router() *gin.Engine {
 		u.POST("", ctrl.Create)
 		u.PUT(id, ctrl.Update)
 		u.DELETE(id, ctrl.Delete)
+		u.GET(id+"/posts", ctrl.Posts)
 	}
 
 	p := v1.Group("/posts")
