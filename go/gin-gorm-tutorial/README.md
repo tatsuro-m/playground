@@ -10,7 +10,7 @@ https://qiita.com/Asuforce/items/0bde8cabb30ac094fcb4 を参考にして Gin + G
 - ~~id, createdAt などのカラムを追加してみる（gorm.Model は使わなくて良い）~~
 - ~~User 構造体に gorm のタグを打って、not null, default値あたりの挙動を確認してみる~~
 - ~~gin で json から構造体に bind する時にバリデーションをかけてみる（https://github.com/gin-gonic/gin#model-binding-and-validation）~~
-- Post モデルを増やしてみる。 User に従属するモデル
+- ~~Post モデルを増やしてみる。 User に従属するモデル~~
 - Railsで言うところの `dependent_destroy` 的な挙動はどうやって実現するのかやってみる
 - ~~テスト専用の DB を使えるようにする~~
 - ~~テスト用の fixture ライブラリ、 https://github.com/go-testfixtures/testfixtures を試す（メリットが薄そうだったのでやめた。普通に自作すれば良い）~~
