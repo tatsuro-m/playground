@@ -271,12 +271,8 @@ func TestController_Update(t *testing.T) {
 			assert.Equal(t, tt.expected.body["last_name"], resBody["last_name"])
 			assert.Equal(t, id, fmt.Sprintf("%v", resBody["id"]))
 
-			format := func(t time.Time) string {
-				l := "2006-01-02"
-				return t.Format(l)
-			}
-			assert.Contains(t, resBody["created_at"], format(u.CreatedAt))
-			assert.Contains(t, resBody["updated_at"], format(u.UpdatedAt))
+			assert.Contains(t, resBody["created_at"], test_helper.TimeFormat(t, u.CreatedAt))
+			assert.Contains(t, resBody["updated_at"], test_helper.TimeFormat(t, u.UpdatedAt))
 		})
 	}
 }
