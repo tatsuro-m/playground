@@ -1,7 +1,6 @@
 package post
 
 import (
-	"fmt"
 	"gin-gorm-tutorial/db"
 	"gin-gorm-tutorial/entity"
 
@@ -26,10 +25,9 @@ func (s Service) GetAllByUserID(uid string) ([]Post, error) {
 	d := db.GetDB()
 	var u entity.User
 	d.Where("id = ?", uid).First(&u)
-	fmt.Println(u)
 
 	var p []Post
-	if err := d.Model(&u).Association("Posts").Find(&p); err != nil {
+	if err := d.Where("user_id = ?", uid).Find(&p).Error; err != nil {
 		return p, err
 	}
 
