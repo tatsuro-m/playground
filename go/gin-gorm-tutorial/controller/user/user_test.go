@@ -330,6 +330,9 @@ func TestController_Posts(t *testing.T) {
 			for i, post := range resBody {
 				assert.Equal(t, "title"+strconv.Itoa(i), post["title"])
 				assert.Equal(t, "content"+strconv.Itoa(i), post["content"])
+				assert.Contains(t, post, "id")
+				assert.Contains(t, post, "created_at")
+				assert.Contains(t, post, "updated_at")
 			}
 		})
 	}
