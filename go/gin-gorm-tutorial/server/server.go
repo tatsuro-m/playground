@@ -2,8 +2,8 @@ package server
 
 import (
 	"fmt"
-	"gin-gorm-tutorial/controller/post"
-	"gin-gorm-tutorial/controller/user"
+	"gin-gorm-tutorial/controller/api/v1/post"
+	"gin-gorm-tutorial/controller/api/v1/user"
 
 	"github.com/gin-gonic/gin"
 )
