@@ -5,14 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"gin-gorm-tutorial/controller/api/v1/user"
-	"gin-gorm-tutorial/db"
-	"gin-gorm-tutorial/entity"
 	test_helper "gin-gorm-tutorial/test-helper"
 	"net/http"
 	"net/http/httptest"
 	"strconv"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -47,7 +44,7 @@ func TestController_Index(t *testing.T) {
 
 			res := httptest.NewRecorder()
 
-			insertUser(t, 3)
+			test_helper.InsertUser(t, 3)
 			c, _ := gin.CreateTestContext(res)
 			c.Request, _ = http.NewRequest(
 				http.MethodGet,
@@ -74,23 +71,6 @@ func TestController_Index(t *testing.T) {
 				assert.Contains(t, user, "updated_at")
 			}
 		})
-	}
-}
-
-func insertUser(t *testing.T, times int) {
-	t.Helper()
-
-	d := db.GetDB()
-	for i := 0; i < times; i++ {
-		u := entity.User{
-			FirstName: "first_name" + strconv.Itoa(i),
-			LastName:  "last_name" + strconv.Itoa(i),
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		}
-		if err := d.Create(&u).Error; err != nil {
-			t.Log(err)
-		}
 	}
 }
 
@@ -230,8 +210,8 @@ func TestController_Update(t *testing.T) {
 			expected: expected{
 				code: http.StatusOK,
 				body: map[string]interface{}{
-					"first_name": "original_first",
-					"last_name":  "original_last",
+					"first_name": "first_name0",
+					"last_name":  "last_name0",
 				},
 			},
 		},
@@ -242,13 +222,7 @@ func TestController_Update(t *testing.T) {
 			test_helper.SetupTest(t)
 			defer test_helper.FinalizeTest(t)
 
-			insertUser := func() entity.User {
-				d := db.GetDB()
-				u := entity.User{FirstName: "original_first", LastName: "original_last"}
-				d.Create(&u)
-				return u
-			}
-			u := insertUser()
+			u := test_helper.InsertUser(t, 1)[0]
 			id := fmt.Sprintf("%d", u.ID)
 			reqBody, _ := json.Marshal(tt.req.body)
 			res := httptest.NewRecorder()
@@ -294,21 +268,9 @@ func TestController_Posts(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			test_helper.SetupTest(t)
 			defer test_helper.FinalizeTest(t)
-			d := db.GetDB()
 
-			insertUser := func() entity.User {
-				u := entity.User{FirstName: "first", LastName: "last"}
-				d.Create(&u)
-				return u
-			}
-			u := insertUser()
-			insertPost := func() {
-				for i := 0; i < 5; i++ {
-					p := entity.Post{Title: "title" + strconv.Itoa(i), Content: "content" + strconv.Itoa(i), UserID: u.ID}
-					d.Create(&p)
-				}
-			}
-			insertPost()
+			u := test_helper.InsertUser(t, 1)[0]
+			test_helper.InsertPost(t, 5, u)
 
 			id := fmt.Sprintf("%d", u.ID)
 			res := httptest.NewRecorder()

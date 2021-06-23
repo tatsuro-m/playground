@@ -3,8 +3,6 @@ package post_test
 import (
 	"bytes"
 	"encoding/json"
-	"gin-gorm-tutorial/db"
-	"gin-gorm-tutorial/entity"
 	"gin-gorm-tutorial/server"
 	test_helper "gin-gorm-tutorial/test-helper"
 	"net/http"
@@ -19,17 +17,8 @@ func TestController_Index(t *testing.T) {
 	test_helper.SetupTest(t)
 	defer test_helper.FinalizeTest(t)
 
-	insertPost := func() {
-		d := db.GetDB()
-		u := entity.User{FirstName: "first", LastName: "last"}
-		d.Create(&u)
-
-		for i := 0; i < 5; i++ {
-			p := entity.Post{Title: "title" + strconv.Itoa(i), Content: "content" + strconv.Itoa(i), UserID: u.ID}
-			d.Create(&p)
-		}
-	}
-	insertPost()
+	u := test_helper.InsertUser(t, 1)[0]
+	test_helper.InsertPost(t, 5, u)
 
 	router := server.Router()
 	w := httptest.NewRecorder()
@@ -52,14 +41,8 @@ func TestController_Create(t *testing.T) {
 	router := server.Router()
 	w := httptest.NewRecorder()
 
-	d := db.GetDB()
-	insertUser := func() entity.User {
-		u := entity.User{FirstName: "first", LastName: "last"}
-		d.Create(&u)
-		return u
-	}
+	u := test_helper.InsertUser(t, 1)[0]
 
-	u := insertUser()
 	body := map[string]interface{}{"title": "title1", "content": "content1", "user_id": u.ID, "User": u}
 	reqBody, _ := json.Marshal(body)
 	req, _ := http.NewRequest(http.MethodPost, "/api/v1/posts", bytes.NewBuffer(reqBody))
