@@ -1,9 +1,10 @@
-package user
+package user_test
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"gin-gorm-tutorial/controller/api/v1/user"
 	"gin-gorm-tutorial/db"
 	"gin-gorm-tutorial/entity"
 	test_helper "gin-gorm-tutorial/test-helper"
@@ -55,7 +56,7 @@ func TestController_Index(t *testing.T) {
 			)
 
 			// Act ---
-			var ctrl Controller
+			var ctrl user.Controller
 			ctrl.Index(c)
 
 			// Assert ---
@@ -165,7 +166,7 @@ func TestController_Create(t *testing.T) {
 			)
 
 			// Act ---
-			var ctrl Controller
+			var ctrl user.Controller
 			ctrl.Create(c)
 
 			// Assert ---
@@ -259,7 +260,7 @@ func TestController_Update(t *testing.T) {
 				bytes.NewBuffer(reqBody),
 			)
 
-			var ctrl Controller
+			var ctrl user.Controller
 			ctrl.Update(c)
 
 			assert.Equal(t, tt.expected.code, res.Code)
@@ -319,7 +320,7 @@ func TestController_Posts(t *testing.T) {
 				nil,
 			)
 
-			var ctrl Controller
+			var ctrl user.Controller
 			ctrl.Posts(c)
 
 			var resBody []map[string]interface{}

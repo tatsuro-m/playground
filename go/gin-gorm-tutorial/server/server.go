@@ -9,7 +9,7 @@ import (
 )
 
 func Init() {
-	r := router()
+	r := Router()
 	if err := r.Run(":8080"); err != nil {
 		fmt.Println(err)
 	}
@@ -19,7 +19,7 @@ const (
 	id = "/:id"
 )
 
-func router() *gin.Engine {
+func Router() *gin.Engine {
 	r := gin.Default()
 	api := r.Group("/api")
 	v1 := api.Group("/v1")

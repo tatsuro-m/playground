@@ -1,9 +1,10 @@
-package post
+package post_test
 
 import (
 	"fmt"
 	"gin-gorm-tutorial/db"
 	"gin-gorm-tutorial/entity"
+	"gin-gorm-tutorial/service/post"
 	test_helper "gin-gorm-tutorial/test-helper"
 	"strconv"
 	"testing"
@@ -30,7 +31,7 @@ func TestService_GetAllByUserID(t *testing.T) {
 	}
 	insertPost()
 
-	var s Service
+	var s post.Service
 	posts, err := s.GetAllByUserID(fmt.Sprintf("%v", u.ID))
 	if err != nil {
 		fmt.Println(err)
@@ -38,7 +39,7 @@ func TestService_GetAllByUserID(t *testing.T) {
 	}
 
 	assert.Len(t, posts, 5)
-	for _, post := range posts {
-		assert.Equal(t, post.UserID, u.ID)
+	for _, p := range posts {
+		assert.Equal(t, p.UserID, u.ID)
 	}
 }
