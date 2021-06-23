@@ -3,6 +3,10 @@ package test_helper
 import (
 	"gin-gorm-tutorial/db"
 	"gin-gorm-tutorial/entity"
+	"gin-gorm-tutorial/server"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"strconv"
 	"testing"
 	"time"
@@ -14,6 +18,21 @@ func TimeFormat(t *testing.T, time time.Time) string {
 	// この形式にフォーマットして、json の time 型レスポンスの中に含まれているかをチェックする
 	l := "2006-01-02"
 	return time.Format(l)
+}
+
+func SendHttpRequest(t *testing.T, method string, url string, body io.Reader) (*httptest.ResponseRecorder, error) {
+	t.Helper()
+
+	router := server.Router()
+	w := httptest.NewRecorder()
+	req, err := http.NewRequest(method, url, body)
+	if err != nil {
+		return w, err
+	}
+
+	router.ServeHTTP(w, req)
+
+	return w, nil
 }
 
 func InsertUser(t *testing.T, num int) []entity.User {
