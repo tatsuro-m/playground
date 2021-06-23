@@ -38,6 +38,7 @@ func TestController_Index(t *testing.T) {
 
 	var reqBody []map[string]interface{}
 	_ = json.Unmarshal([]byte(w.Body.String()), &reqBody)
+	assert.Len(t, reqBody, 5)
 	for i, b := range reqBody {
 		assert.Equal(t, "title"+strconv.Itoa(i), b["title"])
 		assert.Equal(t, "content"+strconv.Itoa(i), b["content"])
