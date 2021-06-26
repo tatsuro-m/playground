@@ -15,4 +15,4 @@ https://qiita.com/Asuforce/items/0bde8cabb30ac094fcb4 を参考にして Gin + G
 - ~~テスト専用の DB を使えるようにする~~
 - ~~テスト用の fixture ライブラリ、 https://github.com/go-testfixtures/testfixtures を試す（メリットが薄そうだったのでやめた。普通に自作すれば良い）~~
 - ~~エンドポイントのテストを書く（golden とかで良いかも）~~
-- cognito（jwt）を使って API の認証・認可を実装する
+- ~~cognito（jwt）を使って API の認証・認可を実装する~~
