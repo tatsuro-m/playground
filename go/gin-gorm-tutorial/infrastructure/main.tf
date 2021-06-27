@@ -2,7 +2,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "3.5.0"
+      version = "3.73.0"
     }
   }
   backend "gcs" {
@@ -27,6 +27,7 @@ resource "google_sql_database_instance" "master" {
   project          = google_project.my_project.project_id
   name             = "master-instance"
   database_version = "POSTGRES_13"
+  deletion_protection = false
 
   settings {
     tier = "db-f1-micro"

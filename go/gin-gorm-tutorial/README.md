@@ -23,8 +23,9 @@ GCP App Engine を試してみた。
 - Cloud SQL がデフォルトのネットワーク上に立っている？ので VPC を作成してそこに立てるというのをやりたい。
 - Cloud SQL の SSL が Off になっている。
 - Cloud SQL インスタンスにアクセスできるネットワークを `0.0.0.0/0` にしている。
-  
+- `gcloud app deploy` は手動で実行する必要がある。
 - プロジェクト単位で簡単に削除できるように tfstate を管理しているプロジェクトとリソースをデプロイするプロジェクトを分けている
     - これが正解かはちょっと微妙
 - DB migration が Docker コンテナから手動でやっている
     - `postgres://postgres:{password}@{host}/playground-master-db?sslmode=disable` を指定して migration を実行する
+
