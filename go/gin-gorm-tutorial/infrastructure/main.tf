@@ -23,11 +23,6 @@ resource "google_project" "my_project" {
   billing_account = var.billing_account_id
 }
 
-resource "google_compute_network" "vpc_network" {
-  project = google_project.my_project.project_id
-  name    = "terraform-network"
-}
-
 resource "google_sql_database_instance" "master" {
   project          = google_project.my_project.project_id
   name             = "master-instance"
