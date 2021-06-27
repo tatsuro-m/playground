@@ -16,3 +16,15 @@ https://qiita.com/Asuforce/items/0bde8cabb30ac094fcb4 を参考にして Gin + G
 - ~~テスト用の fixture ライブラリ、 https://github.com/go-testfixtures/testfixtures を試す（メリットが薄そうだったのでやめた。普通に自作すれば良い）~~
 - ~~エンドポイントのテストを書く（golden とかで良いかも）~~
 - ~~cognito（jwt）を使って API の認証・認可を実装する~~
+
+## インフラについて
+GCP App Engine を試してみた。
+基本は Terraform で管理する。とりあえず API をデプロイして動かすところまではできたので良しとするが、以下の改善点がある。
+- Cloud SQL がデフォルトのネットワーク上に立っている？ので VPC を作成してそこに立てるというのをやりたい。
+- Cloud SQL の SSL が Off になっている。
+- Cloud SQL インスタンスにアクセスできるネットワークを `0.0.0.0/0` にしている。
+  
+- プロジェクト単位で簡単に削除できるように tfstate を管理しているプロジェクトとリソースをデプロイするプロジェクトを分けている
+    - これが正解かはちょっと微妙
+- DB migration が Docker コンテナから手動でやっている
+    - `postgres://postgres:{password}@{host}/playground-master-db?sslmode=disable` を指定して migration を実行する
