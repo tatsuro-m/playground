@@ -19,8 +19,13 @@ variable "billing_account_id" {}
 
 resource "google_project" "my_project" {
   name            = "gin-gorm-tutorial"
-  project_id      = "gin-gorm-tutorial-2348792381"
+  project_id      = "gin-gorm-tutorial-234879292381"
   billing_account = var.billing_account_id
+}
+
+resource "google_app_engine_application" "app" {
+  project     = google_project.my_project.project_id
+  location_id = "asia-northeast1"
 }
 
 resource "google_sql_database_instance" "master" {

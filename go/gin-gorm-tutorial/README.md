@@ -29,3 +29,5 @@ GCP App Engine を試してみた。
 - DB migration が Docker コンテナから手動でやっている
     - `postgres://postgres:{password}@{host}/playground-master-db?sslmode=disable` を指定して migration を実行する
 
+最初に terraform apply した時には DB のパブリックIPアドレスは変わることに注意。    
+DSN 環境変数の値も変更する必要がある。
