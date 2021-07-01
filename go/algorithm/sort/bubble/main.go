@@ -9,10 +9,17 @@ import (
 func main() {
 	rand.Seed(time.Now().Unix())
 	s := make([]int, 1000)
-
-	for i, _ := range s {
+	for i := range s {
 		s[i] = rand.Intn(100)
 	}
 
-	fmt.Println(s)
+	fmt.Println(exec(s))
+}
+
+func exec(s []int) []int {
+	for _, e := range s {
+		fmt.Println(e)
+	}
+
+	return s
 }
