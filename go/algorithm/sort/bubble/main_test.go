@@ -15,12 +15,14 @@ func TestAsc(t *testing.T) {
 		for i := range s {
 			s[i] = rand.Intn(100)
 		}
+		c := make([]int, 100)
+		copy(c, s)
 
-		want := asc(s)
-		sort.Ints(s)
+		asc(s)
+		sort.Ints(c)
 
-		if !reflect.DeepEqual(s, want) {
-			t.Errorf("結果が違います。")
+		if !reflect.DeepEqual(c, s) {
+			t.Errorf("結果が違います。\n actual: %v, want: %v", s, c)
 		}
 	})
 }
