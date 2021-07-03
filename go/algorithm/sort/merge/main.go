@@ -22,22 +22,25 @@ func asc(s []int) []int {
 	}
 
 	mid := len(s) / 2
-	r := asc(s[:mid])
-	l := asc(s[mid:])
+	// スライスの約半分のところで分割する
+	left := asc(s[:mid])
+	right := asc(s[mid:])
 	i, j := 0, 0
 
-	for i < len(r) && j < len(l) {
-		if r[i] > l[j] {
-			result = append(result, l[j])
+	for i < len(left) && j < len(right) {
+		// 初回は、２つに分割したスライスそれぞれの先頭の要素を比べる（i, j 共に０で初期化してあるから）
+		// もし分割した左側の方が大きいなら、とりあえず右側に
+		if left[i] > right[j] {
+			result = append(result, right[j])
 			j++
 		} else {
-			result = append(result, r[i])
+			result = append(result, left[i])
 			i++
 		}
 	}
 
-	result = append(result, r[i:]...)
-	result = append(result, l[j:]...)
+	result = append(result, left[i:]...)
+	result = append(result, right[j:]...)
 
 	return result
 }
