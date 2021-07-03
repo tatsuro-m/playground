@@ -22,7 +22,7 @@ func TestAsc(t *testing.T) {
 		sort.Ints(c)
 
 		if !reflect.DeepEqual(c, s) {
-			t.Errorf("結果が違います。\n actual: %v, want: %v", s, c)
+			t.Errorf("結果が違います。\n actual: %v \n want: %v", s, c)
 		}
 	})
 }
