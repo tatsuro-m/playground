@@ -16,89 +16,32 @@ func main() {
 }
 
 func asc(s []int) []int {
-	// 単純に先頭、中間、最後の要素の中から中間の値を地道な if で洗い出しているだけ
-	pivot := Med(s[0], s[len(s)/2], s[len(s)-1])
-
-	//　left, right 共にインデックス番号として使う
-	left := 0
-	right := len(s) - 1
-
-	// 条件式を書かないことによって無限ループにする
-	for {
-		//　条件式だけ書いているのでいわゆる while 文になる
-		// 左から探索していって、値が基準値よりも小さい限りは１個ずつ対象を右にずらしていく。
-		for s[left] < pivot {
-			left++
-		}
-		//　ループを抜けているので、この時点で left が表すのは、「先頭から探索して最初に見つかった、基準値以上の要素のインデックス番号」になっているはず。
-
-		// 右から探索していって、値が基準値よりも大きい限りは１個ずつ対象を左にずらしていく。
-		for s[right] > pivot {
-			right--
-		}
-		// ループを抜けているので、この時点で right が表すのは、「末尾から探索して最初に見つかった、基準値以下の要素のインデックス番号」になっているはず。
-
-		//	左右からの探索が交差したら終了するが、交差していない場合にはこの後の処理が続く
-		if left >= right {
-			break
-		}
-
-		// ここまで来ているので、s[left]　の値は基準値以上である。同様に s[right] の値は基準値以下である。
-		// 昇順にソートしたいので、 s[left] が後ろに来なくてはいけないので交換する。
-		s[left], s[right] = s[right], s[left]
-
-		flag := true
-		if s[right] == pivot {
-			left++
-			flag = false
-		}
-		if s[left] == pivot && flag {
-			right--
-		}
-	}
-
-	s1 := s[:left]
-	if len(s1) > 1 {
-		asc(s1)
-	}
-
-	s2 := s[right+1:]
-	if len(s2) > 1 {
-		asc(s2)
-	}
-
-	cnt := 0
-	for _, v := range s1 {
-		s[cnt] = v
-		cnt++
-	}
-	s[cnt] = pivot
-	cnt++
-
-	for _, v := range s2 {
-		s[cnt] = v
-		cnt++
-	}
-
-	return s
-}
-
-func Med(x, y, z int) int {
-	if x < y {
-		if y < z {
-			return y
-		} else if x < z {
-			return z
-		} else {
-			return x
-		}
+	//　要素数が１以下なら何もせずスライスを返す
+	if len(s) <= 1 {
+		return s
 	} else {
-		if x < z {
-			return x
-		} else if y < z {
-			return z
-		} else {
-			return y
+		// pivot の求め方は今回適当で、単純に先頭の要素を採用する。
+		pivot := s[0]
+
+		place := 0
+
+		// s のインデックス番号の末尾数まで繰り返す
+		for j := 0; j < len(s)-1; j++ {
+			// 先頭要素は pivot として使っているので、今回は２番目の要素から探索する
+			if s[j+1] < pivot {
+				// もし基準値の方が大きいのなら入れ替える。
+				// place は０で初期化してあって、入れ替えるとインクリメントされる。
+				s[j+1], s[place+1] = s[place+1], s[j+1]
+				place++
+			}
 		}
+		s[0], s[place] = s[place], s[0]
+
+		first := asc(s[:place])
+		second := asc(s[place+1:])
+		first = append(first, s[place])
+
+		first = append(first, second...)
+		return first
 	}
 }
