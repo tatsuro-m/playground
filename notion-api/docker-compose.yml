@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    tty: true
+    stdin_open: true
+    environment:
+      NOTION_API_KEY: ${NOTION_API_KEY}
+      ROOT_PAGE_ID: ${ROOT_PAGE_ID}
+    volumes:
+      - .:/go/src/app
