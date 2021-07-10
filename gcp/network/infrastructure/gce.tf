@@ -1,7 +1,7 @@
-resource "google_service_account" "my_service_account" {
+resource "google_service_account" "ssh-account" {
   project = google_project.my_project.project_id
-  account_id   = "my-service-account"
-  display_name = "My Service Account"
+  account_id   = "gce-ssh-account"
+  display_name = "ssh-account"
 }
 
 resource "google_compute_instance" "default" {
@@ -28,7 +28,7 @@ resource "google_compute_instance" "default" {
   }
 
   service_account {
-    email  = google_service_account.my_service_account.email
+    email  = google_service_account.ssh-account.email
     scopes = ["cloud-platform"]
   }
 }
