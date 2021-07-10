@@ -21,3 +21,18 @@ resource "google_compute_firewall" "gce" {
     ports    = ["22"]
   }
 }
+
+resource "google_compute_global_address" "private_ip_alloc" {
+  project = google_project.my_project.project_id
+  name          = "private-ip-alloc"
+  purpose       = "VPC_PEERING"
+  address_type  = "INTERNAL"
+  prefix_length = 16
+  network       = google_compute_network.vpc_network.id
+}
+
+resource "google_service_networking_connection" "sample" {
+  network                 = google_compute_network.vpc_network.id
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.private_ip_alloc.name]
+}
