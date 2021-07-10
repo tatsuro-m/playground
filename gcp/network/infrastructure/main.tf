@@ -30,4 +30,5 @@ resource "google_project" "my_project" {
   name            = "network-lesson"
   project_id      = "network-lesson-${random_string.random.result}"
   billing_account = var.billing_account_id
+  auto_create_network = false
 }
