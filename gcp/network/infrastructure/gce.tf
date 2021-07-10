@@ -31,4 +31,8 @@ resource "google_compute_instance" "default" {
     email  = google_service_account.ssh-account.email
     scopes = ["cloud-platform"]
   }
+
+  metadata = {
+    os_login = "true"
+  }
 }
