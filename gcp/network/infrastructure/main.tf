@@ -13,6 +13,7 @@ terraform {
 
 provider "google" {
   region = "asia-northeast1"
+  zone   = "asia-northeast1-b"
 }
 
 variable "billing_account_id" {}
@@ -27,8 +28,8 @@ resource "random_string" "random" {
 
 
 resource "google_project" "my_project" {
-  name            = "network-lesson"
-  project_id      = "network-lesson-${random_string.random.result}"
-  billing_account = var.billing_account_id
+  name                = "network-lesson"
+  project_id          = "network-lesson-${random_string.random.result}"
+  billing_account     = var.billing_account_id
   auto_create_network = false
 }
