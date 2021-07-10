@@ -18,6 +18,6 @@ resource "google_compute_firewall" "gce" {
 
   allow {
     protocol = "tcp"
-    ports = ["22"]
+    ports    = ["22"]
   }
 }
