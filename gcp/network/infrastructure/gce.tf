@@ -33,6 +33,6 @@ resource "google_compute_instance" "default" {
   }
 
   metadata = {
-    os_login = "true"
+    enable-oslogin = "TRUE"
   }
 }
