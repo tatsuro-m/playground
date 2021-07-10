@@ -1,7 +1,7 @@
 resource "google_sql_database_instance" "master" {
-  project          = google_project.my_project.project_id
-  name             = "master-instance"
-  database_version = "POSTGRES_13"
+  project             = google_project.my_project.project_id
+  name                = "master-instance"
+  database_version    = "POSTGRES_13"
   deletion_protection = false
 
   settings {

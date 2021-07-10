@@ -23,7 +23,7 @@ resource "google_compute_firewall" "gce" {
 }
 
 resource "google_compute_global_address" "private_ip_alloc" {
-  project = google_project.my_project.project_id
+  project       = google_project.my_project.project_id
   name          = "private-ip-alloc"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
