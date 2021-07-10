@@ -17,8 +17,17 @@ provider "google" {
 
 variable "billing_account_id" {}
 
+resource "random_string" "random" {
+  length  = 4
+  number  = true
+  upper   = false
+  lower   = false
+  special = false
+}
+
+
 resource "google_project" "my_project" {
   name            = "network-lesson"
-  project_id      = "network-lesson-234879292381"
+  project_id      = "network-lesson-${random_string.random.result}"
   billing_account = var.billing_account_id
 }
