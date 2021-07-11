@@ -54,6 +54,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
       - name: terraform fmt
         id: fmt
         run: terraform fmt
@@ -61,10 +65,6 @@ jobs:
       - name: terraform validate
         id: validate
         run: terraform validate
-
-      - name: Terraform Init
-        id: init
-        run: terraform init
 
       - name: Terraform Apply
         id: apply
