@@ -6,4 +6,3 @@
 - feature ブランチの push で検証環境に自動デプロイ
 - main にマージされたら本番環境に自動デプロイ
 - terraform は環境ごとにディレクトリを分ける方法とし、workspace などは利用しない
-- tfnotify で plan がコメントされると嬉しい
