@@ -7,7 +7,7 @@ terraform {
   }
   backend "gcs" {
     bucket = "playground-tfstate-949181"
-    prefix = "ci-cd/dev"
+    prefix = "ci-cd/stg"
   }
 }
 
@@ -26,10 +26,14 @@ resource "random_string" "random" {
   special = false
 }
 
+locals {
+  app_name = "ci-cd-lesson"
+  project_name = "stg-${local.app_name}"
+}
 
 resource "google_project" "my_project" {
-  name                = "ci-cd-lesson"
-  project_id          = "ci-cd-lesson-${random_string.random.result}"
+  name                = local.project_name
+  project_id          = "${local.project_name}-${random_string.random.result}"
   billing_account     = var.billing_account_id
   auto_create_network = false
 }
