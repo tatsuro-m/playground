@@ -16,8 +16,6 @@ provider "google" {
   zone   = "asia-northeast1-b"
 }
 
-variable "billing_account_id" {}
-
 resource "random_string" "random" {
   length  = 4
   number  = true
@@ -31,6 +29,7 @@ locals {
   project_name = "stg-${local.app_name}"
 }
 
+variable "billing_account_id" {}
 resource "google_project" "my_project" {
   name                = local.project_name
   project_id          = "${local.project_name}-${random_string.random.result}"
