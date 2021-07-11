@@ -18,6 +18,8 @@ jobs:
     defaults:
       run:
         working-directory: ./gcp/ci-cd/infrastructure/staging
+    env:
+      TF_VAR_billing_account_id: ${{ secrets.TF_VAR_BILLING_ACCOUNT_ID }}
 
     steps:
       - name: Checkout
