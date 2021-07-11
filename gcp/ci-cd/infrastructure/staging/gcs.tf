@@ -1,5 +1,5 @@
 resource "google_storage_bucket" "a" {
-  name          = "${local.app_name}-test-bucket-a"
+  name          = "${local.project_name}-test-bucket-a"
   location      = "ASIA-NORTHEAST1"
   force_destroy = true
 
@@ -7,7 +7,7 @@ resource "google_storage_bucket" "a" {
 }
 
 resource "google_storage_bucket" "b" {
-  name          = "${local.app_name}-test-bucket-b"
+  name          = "${local.project_name}-test-bucket-b"
   location      = "ASIA-NORTHEAST1"
   force_destroy = true
 
