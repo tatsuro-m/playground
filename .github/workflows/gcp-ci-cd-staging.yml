@@ -37,8 +37,7 @@ jobs:
           terraform_version: 1.0.1
 
       #  本番環境を apply したらどうなるかという差分を PR にコメントするために prod の方も init しておく
-      - name: Terraform Init
-        id: init
+      - name: Terraform Init for production env
         run: terraform init
         working-directory: ./gcp/ci-cd/infrastructure/production
 
