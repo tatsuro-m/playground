@@ -18,7 +18,6 @@ resource "google_storage_bucket" "c" {
   name          = "${local.project_name}-test-bucket-c"
   location      = "ASIA-NORTHEAST1"
   force_destroy = true
-  hoge = true
 
   uniform_bucket_level_access = true
 }
