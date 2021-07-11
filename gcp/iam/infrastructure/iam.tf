@@ -26,3 +26,10 @@ resource "google_service_account" "c" {
   display_name = "c"
   description = "for test"
 }
+
+// サービスアカウント a をリソースとして捉えて、b からアクセスできるようにする
+resource "google_service_account_iam_member" "admin-account-iam" {
+  service_account_id = google_service_account.a.id
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.b.email}"
+}
