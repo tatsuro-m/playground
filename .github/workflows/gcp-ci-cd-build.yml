@@ -54,3 +54,7 @@ jobs:
         run: terraform plan | tfnotify -config ../../../../.github/.tfnotify/github.yaml plan
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve
