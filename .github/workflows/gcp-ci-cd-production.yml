@@ -7,8 +7,8 @@ defaults:
 on:
   push:
     paths:
-      - "gcp/ci-cd/infrastructure/staging/**"
-    branches-ignore:
+      - "gcp/ci-cd/infrastructure/production/**"
+    branches:
       - main
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./gcp/ci-cd/infrastructure/staging
+        working-directory: ./gcp/ci-cd/infrastructure/production
     env:
       TF_VAR_billing_account_id: ${{ secrets.TF_VAR_BILLING_ACCOUNT_ID }}
 
@@ -36,21 +36,9 @@ jobs:
         with:
           terraform_version: 1.0.1
 
-      - name: Install tfnotify
-        id: install-tfnotify
-        run: |
-          sudo curl -fL -o tfnotify.tar.gz https://github.com/mercari/tfnotify/releases/download/v0.7.0/tfnotify_linux_amd64.tar.gz
-          sudo tar -C /usr/bin -xzf ./tfnotify.tar.gz
-
       - name: Terraform Init
         id: init
         run: terraform init
-
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan | tfnotify -config ../../../../.github/.tfnotify/github.yaml plan
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Terraform Apply
         id: apply
