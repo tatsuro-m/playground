@@ -4,12 +4,12 @@ defaults:
   run:
     shell: bash
     working-directory: ./gcp/ci-cd
-on: push
-#  push:
-#    paths:
-#      - "gcp/ci-cd/**"
-#    branches-ignore:
-#      - main
+on:
+  push:
+    paths:
+      - "gcp/ci-cd/**"
+    branches-ignore:
+      - main
 
 jobs:
   infrastructure:
@@ -30,9 +30,6 @@ jobs:
         with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
-
-      - name: Use gcloud CLI
-        run: gcloud info
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
