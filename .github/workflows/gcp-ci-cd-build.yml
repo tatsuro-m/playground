@@ -4,10 +4,10 @@ defaults:
   run:
     shell: bash
     working-directory: ./gcp/ci-cd
-on:
-  push:
-    paths:
-      - "gcp/ci-cd/**"
+on: push
+#  push:
+#    paths:
+#      - "gcp/ci-cd/**"
 #    branches-ignore:
 #      - main
 
