@@ -12,8 +12,9 @@ terraform {
 }
 
 provider "google" {
-  region = "asia-northeast1"
-  zone   = "asia-northeast1-b"
+  project = "playground-318023"
+  region  = "asia-northeast1"
+  zone    = "asia-northeast1-b"
 }
 
 resource "random_string" "random" {
@@ -25,14 +26,6 @@ resource "random_string" "random" {
 }
 
 locals {
-  app_name = "ci-cd-lesson"
+  app_name     = "ci-cd-lesson"
   project_name = "stg-${local.app_name}"
-}
-
-variable "billing_account_id" {}
-resource "google_project" "my_project" {
-  name                = local.project_name
-  project_id          = "${local.project_name}-${random_string.random.result}"
-  billing_account     = var.billing_account_id
-  auto_create_network = false
 }

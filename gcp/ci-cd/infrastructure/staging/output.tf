@@ -1,3 +1,3 @@
-output "project_id" {
-  value = google_project.my_project.project_id
+output "app_name" {
+  value = local.app_name
 }
