@@ -10,6 +10,7 @@
 - terraform の iam 関連設定は色々あるが、「誰が、どのアクションを、何に対して」行えるのかということを意識すると理解しやすい
 - リソースとして見るサービスアカウントに対してアイデンティティとして見るサービスアカウントからのアクセス権限を付与するみたいなこともある
 - 基本的には project 全体に対して特定のロールを許可するアクションをメンバーに付与するのが良い
+  - https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project_iam
   - 個々のリソースレベルまで絞り込みたいなら条件式を使うか、サービスごとに用意されているサービスアカウントを関連付けるリソースを利用する
 - 「Aというサービスアカウントへのアクセス権限があるメンバーを調べたい」ということならコンソールから簡単に分かるが、「A に紐付いているポリシーを確認したい」という場合には cli を使う必要があるかも
   - https://cloud.google.com/asset-inventory/docs/searching-iam-policies
