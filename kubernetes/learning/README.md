@@ -1,3 +1,3 @@
-https://kubernetes.io/ja/docs/home/
+https://book.impress.co.jp/books/1119101148
 
-を利用して基礎的なコンセプト等を学習する。
+の書籍を利用して手を動かしながら基礎的なコンセプト等を学習する。
