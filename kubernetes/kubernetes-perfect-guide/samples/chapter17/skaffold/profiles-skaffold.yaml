@@ -1,0 +1,33 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+build:
+  # ビルドしたDockerイメージの保存先とイメージ名
+  artifacts:
+  - image: DOCKERHUB_USER/sample-skaffold
+    docker:
+      dockerfile: ./Dockerfile
+  tagPolicy:
+    dateTime: {}
+profiles:
+# GKE環境に本番用のマニフェストを使用するプロファイル
+- name: prdProfile
+  build:
+    local:
+      push: true # イメージのプッシュを行う
+  deploy:
+    kubeContext: gke_PROJECT_asia-northeast1-a_k8s
+    kubectl:
+      manifests:
+      # 適用するマニフェストのファイル名
+      - skaffold-*
+# Docker Desktop環境に開発用のマニフェストを使用するプロファイル
+- name: devProfile
+  build:
+    local:
+      push: false # イメージのプッシュを行わない
+  deploy:
+    kubeContext: docker-desktop
+    kubectl:
+      manifests:
+      # 適用するマニフェストのファイル名
+      - dev-skaffold-*

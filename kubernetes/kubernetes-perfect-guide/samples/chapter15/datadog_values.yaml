@@ -1,0 +1,13 @@
+datadog:
+  apiKey: XXXXXXXXXXXXXXXXXXXXXXXX
+  appKey: YYYYYYYYYYYYYYYYYYYYYYYY
+  tags: "project:sample,env:dev"
+  clusterAgent:
+    enabled: true
+    metricsProvider:
+      enabled: true
+  processAgent:
+    enabled: true
+    processCollection: true
+  collectEvents: true
+  leaderElection: true

@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-topology-spread-constraints
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sample-app
+  template:
+    metadata:
+      labels:
+        app: sample-app
+    spec:
+      topologySpreadConstraints:
+      - topologyKey: kubernetes.io/hostname
+        labelSelector:
+          matchLabels:
+            app: sample-app
+        maxSkew: 2
+        whenUnsatisfiable: DoNotSchedule
+      - topologyKey: topology.kubernetes.io/zone
+        labelSelector:
+          matchLabels:
+            app: sample-app
+        maxSkew: 1
+        whenUnsatisfiable: DoNotSchedule
+      containers:
+      - name: nginx-container
+        image: nginx:1.16
