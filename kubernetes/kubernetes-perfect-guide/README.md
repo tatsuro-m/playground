@@ -42,3 +42,22 @@ For `1st edition`, please refer [1st-edition branch](https://github.com/MasayaAo
 $ git checkout 1st-edition
 ```
 
+## 環境
+本書で使っているのと同じように GKE を利用する。バージョンが１部違うので改めて記述しておく。
+
+### 作成
+基本的に結構時間かかる（５分以上？）ので注意。
+```shell
+$ gcloud container clusters create k8s \
+--cluster-version 1.18.20-gke.900 \
+--zone asia-northeast1-a \
+--num-nodes 3 \
+--machine-type e2-micro \
+--enable-network-policy \
+--enable-vertical-pod-autoscaling
+```
+
+### 削除
+```shell
+ $ gcloud container clusters delete k8s --zone asia-northeast1-a
+```
