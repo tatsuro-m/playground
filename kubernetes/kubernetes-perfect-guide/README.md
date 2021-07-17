@@ -49,7 +49,7 @@ $ git checkout 1st-edition
 基本的に結構時間かかる（５分以上？）ので注意。
 ```shell
 $ gcloud container clusters create k8s \
---cluster-version 1.18.20-gke.900 \
+--cluster-version 1.20.8-gke.700 \
 --zone asia-northeast1-a \
 --num-nodes 3 \
 --machine-type e2-micro \
