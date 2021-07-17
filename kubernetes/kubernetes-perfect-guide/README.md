@@ -57,6 +57,12 @@ $ gcloud container clusters create k8s \
 --enable-vertical-pod-autoscaling
 ```
 
+### クラスターへの認証情報を取得し直す
+これで kubeconfig に認証情報が設定される。
+```shell
+ $ gcloud container clusters get-credentials k8s --zone asia-northeast1-a
+```
+
 ### 削除
 ```shell
  $ gcloud container clusters delete k8s --zone asia-northeast1-a
