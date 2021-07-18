@@ -4,7 +4,7 @@ metadata:
   name: sample-statefulset
 spec:
   serviceName: sample-statefulset
-  replicas: 3
+  replicas: 4
   selector:
     matchLabels:
       app: sample-app
