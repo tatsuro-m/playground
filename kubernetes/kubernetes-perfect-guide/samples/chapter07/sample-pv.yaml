@@ -7,7 +7,7 @@ metadata:
     environment: stg
 spec:
   capacity: # 容量
-    storage: 10Gi
+    storage: 20Gi
   accessModes: # アクセスモード
   - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain # Reclaim Policy
