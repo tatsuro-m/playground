@@ -1,8 +1,21 @@
-FROM golang:1.8-alpine
-ADD hello-app /go/src/hello-app
-RUN go install hello-app
+FROM golang:1.15.7-alpine as builder
 
-FROM alpine:latest
-COPY --from=0 /go/bin/hello-app .
-ENV PORT 8080
-CMD ["./hello-app"]
+ENV ROOT=/go/src/app
+WORKDIR ${ROOT}
+
+RUN apk update && apk add git
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY hello-app ${ROOT}
+RUN CGO_ENABLED=0 GOOS=linux go build -o $ROOT/binary
+
+
+FROM scratch as prod
+
+ENV ROOT=/go/src/app
+WORKDIR ${ROOT}
+COPY --from=builder ${ROOT}/binary ${ROOT}
+
+EXPOSE 8080
+CMD ["/go/src/app/binary"]
