@@ -7,7 +7,7 @@ RUN apk update && apk add git
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY hello-app ${ROOT}
+COPY main.go ${ROOT}
 RUN CGO_ENABLED=0 GOOS=linux go build -o $ROOT/binary
 
 
