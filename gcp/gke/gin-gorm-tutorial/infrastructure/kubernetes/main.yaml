@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golang-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: golang-api
+  template:
+    metadata:
+      namespace: gin-gorm-tutorial
+      labels:
+        app: golang-api
+    spec:
+      containers:
+        - name: golang-api
+          # 一旦 stg でイメージタグもベタ書きするが、後で動的になるように修正する
+          image: asia-northeast1-docker.pkg.dev/playground-318023/stg-gin-gorm-tutorial-main/golang-api:v1
+          ports:
+            - containerPort: 8080
