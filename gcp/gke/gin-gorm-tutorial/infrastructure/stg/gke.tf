@@ -21,6 +21,7 @@ resource "google_container_cluster" "primary" {
 
 resource "google_container_node_pool" "main_node_pool" {
   name       = "${local.app_prefix}-main"
+  location   = "asia-northeast1"
   cluster    = google_container_cluster.primary.name
   node_count = 1
 
