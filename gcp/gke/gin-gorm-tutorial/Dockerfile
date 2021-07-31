@@ -27,7 +27,7 @@ COPY . ${ROOT}
 RUN CGO_ENABLED=0 GOOS=linux go build -o $ROOT/binary
 
 
-FROM scratch as prod
+FROM alpine:3.14.0 as prod
 
 ENV ROOT=/go/src/app
 ENV TZ=Asia/Tokyo

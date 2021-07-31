@@ -18,6 +18,12 @@ spec:
         - name: golang-api
           # 一旦 stg でイメージタグもベタ書きするが、後で動的になるように修正する
           image: asia-northeast1-docker.pkg.dev/playground-318023/stg-gin-gorm-tutorial-main/golang-api:v1
+          env:
+            - name: DSN
+              valueFrom:
+                secretKeyRef:
+                  name: db-auth
+                  key: DSN
           ports:
             - containerPort: 8080
 ---
@@ -25,6 +31,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: main-ksa
+  namespace: gin-gorm-tutorial
   annotations:
     #  ここも stg ベタ書きになっているけど環境に合わせて動的にしたい
     iam.gke.io/gcp-service-account: stg-gin-gorm-tutorial-main@playground-318023.iam.gserviceaccount.com

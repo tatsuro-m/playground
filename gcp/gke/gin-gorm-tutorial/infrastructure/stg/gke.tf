@@ -1,19 +1,23 @@
-resource "google_service_account" "gke" {
-  account_id   = "${local.app_prefix}-main"
-  display_name = "gke service account"
+resource "google_service_account" "node_pool" {
+  account_id   = "${local.app_prefix}-nodepool"
+  display_name = "gke node pool service account"
 }
 
 resource "google_project_iam_member" "role1" {
   role   = "roles/artifactregistry.reader"
-  member = "serviceAccount:${google_service_account.gke.email}"
+  member = "serviceAccount:${google_service_account.node_pool.email}"
+}
+
+resource "google_service_account" "workload_identity" {
+  account_id   = "${local.app_prefix}-wi"
+  display_name = "gke workload identity service account"
 }
 
 resource "google_project_iam_member" "role2" {
   role   = "roles/cloudsql.client"
-  member = "serviceAccount:${google_service_account.gke.email}"
+  member = "serviceAccount:${google_service_account.workload_identity.email}"
 }
 
-// Workload Identity を利用するため
 resource "google_project_iam_member" "role3" {
   role   = "roles/iam.workloadIdentityUser"
   member = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${local.app_name}/main-ksa]"
@@ -44,7 +48,7 @@ resource "google_container_node_pool" "main_node_pool" {
     machine_type = "e2-micro"
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = google_service_account.gke.email
+    service_account = google_service_account.node_pool.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
