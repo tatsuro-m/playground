@@ -24,7 +24,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . ${ROOT}
-RUN CGO_ENABLED=0 GOOS=linux go build -o $ROOT/binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $ROOT/binary
 
 
 FROM alpine:3.14.0 as prod

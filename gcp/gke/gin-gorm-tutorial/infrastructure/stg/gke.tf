@@ -45,7 +45,7 @@ resource "google_container_node_pool" "main_node_pool" {
   node_count = 1
 
   node_config {
-    machine_type = "e2-micro"
+    machine_type = "e2-medium"
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     service_account = google_service_account.node_pool.email
