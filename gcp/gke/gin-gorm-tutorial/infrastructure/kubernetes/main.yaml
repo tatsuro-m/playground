@@ -32,7 +32,7 @@ spec:
           #  コネクション名を環境ごとに変える必要がある
           command:
             - "/cloud_sql_proxy"
-            - "-instances=playground-318023:asia-northeast1:stg-gin-gorm-tutorial-master-instance=tcp:5432"
+            - "-instances=playground-318023:asia-northeast1:stg-gin-gorm-tutorial-master-instance1=tcp:5432"
           securityContext:
             runAsNonRoot: true
 ---

@@ -1,5 +1,5 @@
 resource "google_sql_database_instance" "master" {
-  name                = "${local.app_prefix}-master-instance"
+  name                = "${local.app_prefix}-master-instance1"
   database_version    = "POSTGRES_13"
   deletion_protection = false
 
