@@ -22,7 +22,7 @@ k8s の学習が主目的ですが余裕があれば [DataDog](https://www.datad
 - クラスタの起動タイプは Autopilot ではなく Standard で行う
 - GitHub Actions で CI/CD パイプラインを構築する
 - CI では静的ツールやテストの実行など標準的なものは一通りやるようにしてください
-- CD は feature ブランチの段階で
+- CD は feature ブランチの段階で stg 環境にデプロイして良い
 - [ArgoCD](https://argoproj.github.io/argo-cd/) を利用して GitOps を実現する
   - `Git で管理されているマニフェストの状態 = GKE で動いている k8s の構成` となるようにする
 - DB migration を手動ではなく完全自動化する

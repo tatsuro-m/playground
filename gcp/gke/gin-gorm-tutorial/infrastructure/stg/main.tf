@@ -25,7 +25,9 @@ resource "random_string" "random" {
   special = false
 }
 
+data "google_project" "project" {}
+
 locals {
-  app_name     = "gin-gorm-tutorial"
+  app_name   = "gin-gorm-tutorial"
   app_prefix = "stg-${local.app_name}"
 }
