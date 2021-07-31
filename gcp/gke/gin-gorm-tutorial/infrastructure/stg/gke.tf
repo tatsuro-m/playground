@@ -3,9 +3,20 @@ resource "google_service_account" "gke" {
   display_name = "gke service account"
 }
 
-resource "google_project_iam_member" "sample1" {
+resource "google_project_iam_member" "role1" {
   role   = "roles/artifactregistry.reader"
   member = "serviceAccount:${google_service_account.gke.email}"
+}
+
+resource "google_project_iam_member" "role2" {
+  role   = "roles/cloudsql.client"
+  member = "serviceAccount:${google_service_account.gke.email}"
+}
+
+// Workload Identity を利用するため
+resource "google_project_iam_member" "role3" {
+  role   = "roles/iam.workloadIdentityUser"
+  member = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${local.app_name}/main-ksa]"
 }
 
 resource "google_container_cluster" "primary" {
