@@ -44,3 +44,21 @@ metadata:
   annotations:
     #  ここも stg ベタ書きになっているけど環境に合わせて動的にしたい
     iam.gke.io/gcp-service-account: stg-gin-gorm-tutorial-wi@playground-318023.iam.gserviceaccount.com
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alb
+  namespace: gin-gorm-tutorial
+spec:
+  type: LoadBalancer
+  ports:
+    - name: "http-port"
+      protocol: "TCP"
+      port: 80
+      targetPort: 8080
+  selector:
+    app: golang-api
+  loadBalancerSourceRanges:
+    - 207.65.237.117/0
