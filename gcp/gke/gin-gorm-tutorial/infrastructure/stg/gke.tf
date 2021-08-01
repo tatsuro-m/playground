@@ -33,7 +33,7 @@ resource "google_service_account" "external_secret" {
 resource "google_service_account_iam_member" "bind2" {
   service_account_id = google_service_account.external_secret.name
   role               = "roles/iam.workloadIdentityUser"
-  member             = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${local.app_name}/kubernetes-external-secrets]"
+  member             = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${local.app_name}/my-release-kubernetes-external-secrets]"
 }
 
 resource "google_secret_manager_secret_iam_member" "bind3" {
