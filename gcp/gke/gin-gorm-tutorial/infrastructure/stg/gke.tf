@@ -27,7 +27,7 @@ resource "google_service_account_iam_member" "admin-account-iam" {
 
 resource "google_container_cluster" "primary" {
   name     = "${local.app_prefix}-gke-cluster"
-  location = "asia-northeast1"
+  location = var.default_region
 
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
@@ -42,7 +42,7 @@ resource "google_container_cluster" "primary" {
 
 resource "google_container_node_pool" "main_node_pool" {
   name       = "${local.app_prefix}-main"
-  location   = "asia-northeast1"
+  location   = var.default_region
   cluster    = google_container_cluster.primary.name
   node_count = 1
 

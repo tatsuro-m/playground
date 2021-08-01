@@ -27,6 +27,11 @@ resource "random_string" "random" {
 
 data "google_project" "project" {}
 
+variable "default_region" {
+  type    = string
+  default = "asia-northeast1"
+}
+
 locals {
   app_name   = "gin-gorm-tutorial"
   app_prefix = "stg-${local.app_name}"
