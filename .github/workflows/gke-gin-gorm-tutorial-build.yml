@@ -38,7 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: debug
-        run: pwd && ls
+        run: pwd && ls && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
