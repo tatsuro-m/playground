@@ -19,10 +19,21 @@ resource "google_project_iam_member" "role2" {
 }
 
 // サービスアカウントをリソースとして使うので、 ksa からアクセスできるように bind する
-resource "google_service_account_iam_member" "admin-account-iam" {
+resource "google_service_account_iam_member" "bind1" {
   service_account_id = google_service_account.workload_identity.name
   role               = "roles/iam.workloadIdentityUser"
   member             = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${local.app_name}/main-ksa]"
+}
+
+resource "google_service_account" "external_secret" {
+  account_id   = "${local.app_prefix}-ex-sec"
+  display_name = "gke external secret service account"
+}
+
+resource "google_service_account_iam_member" "bind2" {
+  service_account_id = google_service_account.external_secret.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${local.app_name}/sample-es-kubernetes-external-secrets]"
 }
 
 resource "google_container_cluster" "primary" {

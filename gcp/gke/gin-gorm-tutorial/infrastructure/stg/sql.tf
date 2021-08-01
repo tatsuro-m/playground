@@ -19,7 +19,7 @@ resource "google_sql_database" "database" {
 }
 
 variable "POSTGRES_PASSWORD" {}
-resource "google_sql_user" "users" {
+resource "google_sql_user" "user" {
   name     = "postgres"
   instance = google_sql_database_instance.master.name
   password = var.POSTGRES_PASSWORD
