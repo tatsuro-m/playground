@@ -8,8 +8,8 @@ on:
   push:
 #    paths:
 #      - "gcp/gke/gin-gorm-tutorial/**"
-    branches-ignore:
-      - main
+#    branches-ignore:
+#      - main
 
 jobs:
   infrastructure:
