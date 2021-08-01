@@ -33,8 +33,15 @@ resource "google_service_account" "external_secret" {
 resource "google_service_account_iam_member" "bind2" {
   service_account_id = google_service_account.external_secret.name
   role               = "roles/iam.workloadIdentityUser"
-  member             = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${local.app_name}/sample-es-kubernetes-external-secrets]"
+  member             = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${local.app_name}/kubernetes-external-secrets]"
 }
+
+resource "google_secret_manager_secret_iam_member" "bind3" {
+  secret_id = google_secret_manager_secret.dsn.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.external_secret.email}"
+}
+
 
 resource "google_container_cluster" "primary" {
   name     = "${local.app_prefix}-gke-cluster"
@@ -59,6 +66,10 @@ resource "google_container_node_pool" "main_node_pool" {
 
   node_config {
     machine_type = "e2-medium"
+
+    workload_metadata_config {
+      node_metadata = "GKE_METADATA_SERVER"
+    }
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     service_account = google_service_account.node_pool.email

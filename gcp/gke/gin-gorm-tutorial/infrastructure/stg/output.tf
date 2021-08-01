@@ -21,3 +21,7 @@ output "db_connection_name" {
 output "db_name" {
   value = google_sql_database.database.name
 }
+
+output "dsn_secret_name" {
+  value = google_secret_manager_secret.dsn.secret_id
+}
