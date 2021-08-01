@@ -31,7 +31,7 @@ jobs:
     name: go test
     runs-on: ubuntu-latest
     env:
-      TEST_POSTGRESQL_URL: "postgres://postgres:password@db:5432/test?sslmode=disable"
+      TEST_POSTGRESQL_URL: "postgres://postgres:password@localhost:5432/test?sslmode=disable"
       DSN: "host=localhost user=postgres password=password dbname=test port=5432 sslmode=disable TimeZone=Asia/Tokyo"
       TEST_ENV: 1
       GIN_MODE: release
