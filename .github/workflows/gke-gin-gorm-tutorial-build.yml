@@ -43,6 +43,27 @@ jobs:
           version: v1.41.1
           working-directory: ./gcp/gke/gin-gorm-tutorial
 
+  test:
+    name: go test
+    needs: setup
+    runs-on: ubuntu-latest
+    env:
+      TEST_POSTGRESQL_URL: postgres://postgres:password@db:5432/test?sslmode=disable
+      DSN: "host=db user=postgres password=password dbname=test port=5432 sslmode=disable TimeZone=Asia/Tokyo"
+      TEST_ENV: 1
+      GIN_MODE: release
+    services:
+      postgres:
+        image: postgres:13.3-alpine
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v2
+      - name: install golang-migrate
+        run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+      - name: db migrate
+        run: migrate -database $TEST_POSTGRESQL_URL -path migrations up
+
   build:
     name: go build
     needs: setup
