@@ -18,9 +18,11 @@ resource "google_project_iam_member" "role2" {
   member = "serviceAccount:${google_service_account.workload_identity.email}"
 }
 
-resource "google_project_iam_member" "role3" {
-  role   = "roles/iam.workloadIdentityUser"
-  member = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${local.app_name}/main-ksa]"
+// サービスアカウントをリソースとして使うので、 ksa からアクセスできるように bind する
+resource "google_service_account_iam_member" "admin-account-iam" {
+  service_account_id = google_service_account.workload_identity.name
+  role               = "roles/iam.workloadIdentityUser"
+  member             = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[${local.app_name}/main-ksa]"
 }
 
 resource "google_container_cluster" "primary" {
