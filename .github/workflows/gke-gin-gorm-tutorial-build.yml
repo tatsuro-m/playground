@@ -12,9 +12,39 @@ on:
 #      - main
 
 jobs:
+  setup:
+    name: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: set up
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16
+        id: go
+      - name: check out
+        uses: actions/checkout@v2
+      - name: Cache
+        uses: actions/cache@v2.1.0
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+  build:
+    name: go build
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build
+        run: go build ./...
+
   infrastructure:
     name: infrastructure
     runs-on: ubuntu-latest
+    needs:
+      - setup
     defaults:
       run:
         working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/
@@ -23,9 +53,6 @@ jobs:
       TF_VAR_POSTGRES_PASSWORD: ${{ secrets.TF_VAR_POSTGRES_PASSWORD }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
