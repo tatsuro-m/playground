@@ -302,5 +302,7 @@ func TestController_Posts(t *testing.T) {
 }
 
 func sampleTest(t *testing.T) {
-	assert.Equal(t, 10, 100)
+	t.Run("debug", func(t *testing.T) {
+		assert.Equal(t, 10, 100)
+	})
 }
