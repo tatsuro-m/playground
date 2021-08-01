@@ -21,7 +21,7 @@ func TestController_Index(t *testing.T) {
 	w, _ := test_helper.SendHttpRequest(t, http.MethodGet, "/api/v1/posts", nil)
 
 	var resBody []map[string]interface{}
-	_ = json.Unmarshal([]byte(w.Body.String()), &resBody)
+	_ = json.Unmarshal(w.Body.Bytes(), &resBody)
 	assert.Len(t, resBody, 5)
 	for i, b := range resBody {
 		assert.Equal(t, "title"+strconv.Itoa(i), b["title"])
@@ -42,7 +42,7 @@ func TestController_Create(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, w.Code)
 
 	var resBody map[string]interface{}
-	_ = json.Unmarshal([]byte(w.Body.String()), &resBody)
+	_ = json.Unmarshal(w.Body.Bytes(), &resBody)
 	assert.Equal(t, "title1", resBody["title"])
 	assert.Equal(t, "content1", resBody["content"])
 }
