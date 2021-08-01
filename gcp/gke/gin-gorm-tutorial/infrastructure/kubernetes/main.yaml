@@ -60,5 +60,3 @@ spec:
       targetPort: 8080
   selector:
     app: golang-api
-  loadBalancerSourceRanges:
-    - 207.65.237.117/0
