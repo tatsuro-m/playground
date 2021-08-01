@@ -297,12 +297,7 @@ func TestController_Posts(t *testing.T) {
 				assert.Contains(t, post, "created_at")
 				assert.Contains(t, post, "updated_at")
 			}
+			assert.Equal(t, 10, 100)
 		})
 	}
-}
-
-func sampleTest(t *testing.T) {
-	t.Run("debug", func(t *testing.T) {
-		assert.Equal(t, 10, 100)
-	})
 }
