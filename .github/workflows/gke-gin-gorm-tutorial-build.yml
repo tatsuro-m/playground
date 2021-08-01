@@ -59,6 +59,8 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v2
+      - name: debub
+        run: go version≠
       - name: mod download
         run: go mod download
       - name: install golang-migrate
