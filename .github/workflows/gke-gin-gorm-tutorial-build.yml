@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: build
-        run: go build ./...
+        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ./...
 
   infrastructure:
     name: infrastructure
