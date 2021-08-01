@@ -1,0 +1,75 @@
+name: staging deploy
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./gcp/gke/gin-gorm-tutorial
+on:
+  push:
+    paths:
+      - "gcp/gke/gin-gorm-tutorial/**"
+    branches-ignore:
+      - main
+
+jobs:
+  infrastructure:
+    name: infrastructure
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/
+    env:
+      SAMPLE: sample
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.1
+
+#      #  本番環境を apply したらどうなるかという差分を PR にコメントするために prod の方も init しておく
+#      - name: Terraform Init for production env
+#        run: terraform init
+#        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/production
+#
+#      - name: Install tfnotify
+#        id: install-tfnotify
+#        run: |
+#          sudo curl -fL -o tfnotify.tar.gz https://github.com/mercari/tfnotify/releases/download/v0.7.0/tfnotify_linux_amd64.tar.gz
+#          sudo tar -C /usr/bin -xzf ./tfnotify.tar.gz
+#
+#      - name: Terraform Plan
+#        id: plan
+#        run: terraform plan | tfnotify -config ../../../.github/.tfnotify/github.yaml plan
+#        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/production
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/stg
+
+      - name: terraform fmt
+        id: fmt
+        run: terraform fmt
+        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/stg
+
+      - name: terraform validate
+        id: validate
+        run: terraform validate
+        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/stg
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve
+        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/stg
