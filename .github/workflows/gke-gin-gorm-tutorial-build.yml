@@ -52,6 +52,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: build
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ./...
+      - name: debug
+        run: pwd && ls
 
   infrastructure:
     name: infrastructure
