@@ -1,4 +1,4 @@
-name: staging deploy
+name: staging build
 
 defaults:
   run:
@@ -37,8 +37,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: debug
-        run: pwd && ls && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
@@ -53,8 +51,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: build
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
-      - name: debug
-        run: pwd && ls
 
   infrastructure:
     name: infrastructure
