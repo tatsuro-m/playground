@@ -19,7 +19,8 @@ jobs:
       run:
         working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/
     env:
-      SAMPLE: sample
+      TF_VAR_POSTGRES_DB_NAME: ${{ secrets.TF_VAR_POSTGRES_DB_NAME }}
+      TF_VAR_POSTGRES_PASSWORD: ${{ secrets.TF_VAR_POSTGRES_PASSWORD }}
 
     steps:
       - name: Checkout
