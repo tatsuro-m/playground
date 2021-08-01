@@ -56,6 +56,8 @@ jobs:
         run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
       - name: db migrate
         run: migrate -database $TEST_POSTGRESQL_URL -path migrations up
+      - name: execute test
+        run: go test -v ./...
 
   build:
     name: go build
