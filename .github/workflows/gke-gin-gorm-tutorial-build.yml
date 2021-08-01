@@ -11,6 +11,12 @@ on:
 #    branches-ignore:
 #      - main
 
+env:
+  ENV_PREFIX: stg
+  APP_NAME: gin-gorm-tutorial
+  GCP_REGION: asia-northeast1
+  GCP_PROJECT_ID: playground-318023
+
 jobs:
   lint:
     name: go lint
@@ -58,16 +64,23 @@ jobs:
         run: go test -v ./...
 
   build:
-    name: go build
+    name: container image build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: set up golang
-        uses: actions/setup-go@v2
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
         with:
-          go-version: ^1.16.3
-      - name: build
-        run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      - name: authenticate registry
+        run: gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
+      - name: image build and push
+        run: |
+          IMAGE_TAG=$GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/$ENV_PREFIX-$APP_NAME-main/golang-api:${{ GITHUB_SHA }}
+          docker build -t $IMAGE_TAG .
+          docker push $IMAGE_TAG
+
 
   infrastructure:
     name: infrastructure
