@@ -36,8 +36,12 @@ jobs:
       TEST_ENV: 1
       GIN_MODE: release
     services:
-      postgres:
+      db:
         image: postgres:13.3-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: test
         ports:
           - 5432:5432
     steps:
