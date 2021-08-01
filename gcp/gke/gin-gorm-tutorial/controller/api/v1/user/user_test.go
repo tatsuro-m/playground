@@ -300,3 +300,7 @@ func TestController_Posts(t *testing.T) {
 		})
 	}
 }
+
+func sampleTest(t *testing.T) {
+	assert.Equal(t, 10, 100)
+}
