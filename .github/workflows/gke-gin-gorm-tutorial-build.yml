@@ -12,32 +12,15 @@ on:
 #      - main
 
 jobs:
-  setup:
-    name: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: check out
-        uses: actions/checkout@v2
-      - name: set up
-        uses: actions/setup-go@v2
-        with:
-          go-version: ^1.16.3
-        id: go
-      - run: go version
-      - name: Cache
-        uses: actions/cache@v2.1.0
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
   lint:
     name: go lint
-    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: set up golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16.3
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
@@ -46,7 +29,6 @@ jobs:
 
   test:
     name: go test
-    needs: setup
     runs-on: ubuntu-latest
     env:
       TEST_POSTGRESQL_URL: "postgres://postgres:password@db:5432/test?sslmode=disable"
@@ -60,10 +42,12 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v2
-      - name: debub
+      - name: set up golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16.3
+      - name: debug
         run: go version
-      - name: mod download
-        run: go mod download
       - name: install golang-migrate
         run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
       - name: db migrate
@@ -75,6 +59,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: set up golang
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.16.3
       - name: build
         run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
 
