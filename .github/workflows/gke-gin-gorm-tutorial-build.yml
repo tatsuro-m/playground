@@ -80,7 +80,7 @@ jobs:
         run: gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
       - name: image build and push
         run: |
-          IMAGE_TAG=$GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/$ENV_PREFIX-$APP_NAME-main/golang-api:${{ GITHUB_SHA }}
+          IMAGE_TAG=$GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/$ENV_PREFIX-$APP_NAME-main/golang-api:$GITHUB_SHA
           docker build -t $IMAGE_TAG .
           docker push $IMAGE_TAG
 
