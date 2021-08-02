@@ -105,13 +105,12 @@ jobs:
         run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
       - name: install CloudSQL Auth Proxy
         run: wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy && chmod +x cloud_sql_proxy
-      - name: run CloudSQL Auth Proxy
-        run: |
-          ./cloud_sql_proxy -instances=$GCP_PROJECT_ID:$GCP_REGION:$ENV_PREFIX-$APP_NAME-master-instance1=tcp:5432
-      - name: db migrate
+      - name: run migrate
         env:
           POSTGRESQL_URL: postgres://postgres:$TF_VAR_POSTGRES_PASSWORD@127.0.0.1:5432/$TF_VAR_POSTGRES_DB_NAME?sslmode=disable
-        run: migrate -database $POSTGRESQL_URL -path migrations up
+        run: |
+          ./cloud_sql_proxy -instances=$GCP_PROJECT_ID:$GCP_REGION:$ENV_PREFIX-$APP_NAME-master-instance1=tcp:5432
+          & migrate -database $POSTGRESQL_URL -path migrations up
 
 
   infrastructure:
