@@ -12,6 +12,7 @@ on:
 #      - main
 
 env:
+  GO_VERSION: 1.16.3
   ENV_PREFIX: stg
   APP_NAME: gin-gorm-tutorial
   GCP_REGION: asia-northeast1
@@ -28,7 +29,7 @@ jobs:
       - name: set up golang
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16.3
+          go-version: $GO_VERSION
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
@@ -57,7 +58,7 @@ jobs:
       - name: set up golang
         uses: actions/setup-go@v2
         with:
-          go-version: ^1.16.3
+          go-version: $GO_VERSION
       - name: install golang-migrate
         run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
       - name: db migrate
@@ -100,7 +101,7 @@ jobs:
       - name: set up golang
         uses: actions/setup-go@v2
         with:
-          go-version: ^1.16.3
+          go-version: $GO_VERSION
       - name: install golang-migrate
         run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
       - name: install CloudSQL Auth Proxy
