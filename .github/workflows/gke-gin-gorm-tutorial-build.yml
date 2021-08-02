@@ -92,27 +92,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
-        with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-      #  https://blog.fukkatsuso.com/posts/cloudsql-migration-action/  を参考にして改善する
       - name: install golang-migrate
         run: |
           curl -L https://packagecloud.io/golang-migrate/migrate/gpgkey | sudo apt-key add -
           echo "deb https://packagecloud.io/golang-migrate/migrate/ubuntu/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/migrate.list
           sudo apt-get update
           sudo apt-get install -y migrate
-      - name: install CloudSQL Auth Proxy
-        run: wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy && chmod +x cloud_sql_proxy
+      - name: run CloudSQL Auth Proxy
+        run: |
+          echo '${{ secrets.GCP_SA_KEY }}' > sa_key
+          docker run -d \
+            -v $PWD/sa_key:/config \
+            -p 127.0.0.1:5432:5432 \
+            gcr.io/cloudsql-docker/gce-proxy /cloud_sql_proxy \
+            -instances=$GCP_PROJECT_ID:$GCP_REGION:$ENV_PREFIX-$APP_NAME-master-instance1=tcp:0.0.0.0:3306 \
+            -credential_file=/config
       - name: run migrate
         env:
-          POSTGRESQL_URL: "postgres://postgres:$TF_VAR_POSTGRES_PASSWORD@localhost:5432/$ENV_PREFIX-$APP_NAME-$TF_VAR_POSTGRES_DB_NAME?sslmode=disable"
-        run: |
-          ./cloud_sql_proxy -instances=$GCP_PROJECT_ID:$GCP_REGION:$ENV_PREFIX-$APP_NAME-master-instance1=tcp:5432 &
-          sleep 3 &&
-          migrate -database $POSTGRESQL_URL -path migrations up
+          POSTGRESQL_URL: "postgres://postgres:$TF_VAR_POSTGRES_PASSWORD@127.0.0.1:5432/$ENV_PREFIX-$APP_NAME-$TF_VAR_POSTGRES_DB_NAME?sslmode=disable"
+        run: migrate -database $POSTGRESQL_URL -path migrations up
 
   infrastructure:
     name: infrastructure
