@@ -96,11 +96,13 @@ jobs:
         run: |
           echo '${{ secrets.GCP_SA_KEY }}' > sa_key
           docker run -d \
+            --name=sql_proxy
             -v $PWD/sa_key:/config \
             -p 127.0.0.1:5432:5432 \
             gcr.io/cloudsql-docker/gce-proxy /cloud_sql_proxy \
             -instances=$GCP_PROJECT_ID:$GCP_REGION:$ENV_PREFIX-$APP_NAME-master-instance1=tcp:0.0.0.0:5432 \
             -credential_file=/config
+            && docker logs sql_proxy
       - name: set up golang
         uses: actions/setup-go@v2
         with:
