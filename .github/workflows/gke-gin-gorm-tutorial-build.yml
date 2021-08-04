@@ -110,7 +110,7 @@ jobs:
       - name: view container log
         run: docker logs sql_proxy
       - name: run migrate
-        run: migrate -database ${{ secret.POSTGRESQL_URL }} -path migrations up
+        run: migrate -database ${{ secrets.POSTGRESQL_URL }} -path migrations up
 
   infrastructure:
     name: infrastructure
