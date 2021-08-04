@@ -110,9 +110,7 @@ jobs:
       - name: view container log
         run: docker logs sql_proxy
       - name: run migrate
-        env:
-          POSTGRESQL_URL: "postgres://postgres:$TF_VAR_POSTGRES_PASSWORD@127.0.0.1:5432/$ENV_PREFIX-$APP_NAME-$TF_VAR_POSTGRES_DB_NAME?sslmode=disable"
-        run: migrate -database $POSTGRESQL_URL -path migrations up
+        run: migrate -database ${{ secret.POSTGRESQL_URL }} -path migrations up
 
   infrastructure:
     name: infrastructure
