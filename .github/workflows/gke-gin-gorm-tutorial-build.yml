@@ -101,13 +101,14 @@ jobs:
             gcr.io/cloudsql-docker/gce-proxy /cloud_sql_proxy \
             -instances=$GCP_PROJECT_ID:$GCP_REGION:$ENV_PREFIX-$APP_NAME-master-instance1=tcp:0.0.0.0:5432 \
             -credential_file=/config
-            && docker logs sql_proxy
       - name: set up golang
         uses: actions/setup-go@v2
         with:
           go-version: 1.16.3
       - name: install golang-migrate
         run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+      - name: view container log
+        run: docker logs sql_proxy
       - name: run migrate
         env:
           POSTGRESQL_URL: "postgres://postgres:$TF_VAR_POSTGRES_PASSWORD@127.0.0.1:5432/$ENV_PREFIX-$APP_NAME-$TF_VAR_POSTGRES_DB_NAME?sslmode=disable"
