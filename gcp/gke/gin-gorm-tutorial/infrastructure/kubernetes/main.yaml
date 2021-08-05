@@ -1,3 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gin-gorm-tutorial
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -43,7 +48,7 @@ metadata:
   namespace: gin-gorm-tutorial
   annotations:
     #  ここも stg ベタ書きになっているけど環境に合わせて動的にしたい
-    iam.gke.io/gcp-service-account: stg-gin-gorm-tutorial-wi@playground-318023.iam.gserviceaccount.com
+    iam.gke.io/gcp-service-account: stg-gin-gorm-tutorial-main@playground-318023.iam.gserviceaccount.com
 
 ---
 apiVersion: v1
