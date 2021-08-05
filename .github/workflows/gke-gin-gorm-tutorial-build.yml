@@ -6,10 +6,10 @@ defaults:
     working-directory: ./gcp/gke/gin-gorm-tutorial
 on:
   push:
-#    paths:
-#      - "gcp/gke/gin-gorm-tutorial/**"
-#    branches-ignore:
-#      - main
+    paths:
+      - "gcp/gke/gin-gorm-tutorial/**"
+    branches-ignore:
+      - main
 
 env:
   ENV_PREFIX: stg
