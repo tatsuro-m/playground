@@ -92,6 +92,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
+          # GitHub Actions 上での work dir は関係無いのでリポジトリルートからのコンテキストパスを指定する必要がある
           context: ./gcp/gke/gin-gorm-tutorial
           push: true
           tags: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV_PREFIX }}-${{ env.APP_NAME }}-main/golang-api:${{ github.sha }}
