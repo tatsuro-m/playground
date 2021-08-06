@@ -1,61 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "mychart.fullname" . }}
-  labels:
-    {{- include "mychart.labels" . | nindent 4 }}
+  namespace: {{ .Values.namespace }}
+  name: {{ .Values.appName }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  replicas: 3
   selector:
     matchLabels:
-      {{- include "mychart.selectorLabels" . | nindent 6 }}
+      app: {{ .Values.appName }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
-      annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      namespace: {{ .Values.namespace }}
       labels:
-        {{- include "mychart.selectorLabels" . | nindent 8 }}
+        app: {{ .Values.appName }}
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      serviceAccountName: {{ include "mychart.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      serviceAccountName: {{.Values.mainServiceAccountName }}
       containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+        - name: {{ .Values.appName }}
+          image: {{ .Values.gcpRegion }}-docker.pkg.dev/{{ .Values.gcpProjectID }}/{{ .Values.envPrefix }}-{{ .Values.namespace }}-main/{{ .Values.appName }}:{{ .Values.dockerImageTag }}
+          env:
+            - name: DSN
+              valueFrom:
+                secretKeyRef:
+                  name: db-auth
+                  key: DSN
           ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+            - containerPort: 8080
+        - name: cloud-sql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.23.1
+          command:
+            - "/cloud_sql_proxy"
+            - "-instances={{ .Values.gcpProjectID }}:{{ .Values.gcpRegion }}:{{ .Values.envPrefix }}-{{ .Values.namespace }}-master-instance1=tcp:5432"
+          securityContext:
+            runAsNonRoot: true
