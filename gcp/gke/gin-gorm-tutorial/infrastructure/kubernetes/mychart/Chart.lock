@@ -1,0 +1,6 @@
+dependencies:
+- name: kubernetes-external-secrets
+  repository: https://external-secrets.github.io/kubernetes-external-secrets/
+  version: 8.3.0
+digest: sha256:8fd74aa5cc01a111729995769b532b401645f547e301eebf3756e4d0a4cf3578
+generated: "2021-08-06T21:51:46.658316+09:00"
