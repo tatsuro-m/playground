@@ -67,9 +67,9 @@ jobs:
 
   build:
     name: container image build
-    needs:
-      - lint
-      - test
+#    needs:
+#      - lint
+#      - test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -80,11 +80,13 @@ jobs:
           export_default_credentials: true
       - name: authenticate registry
         run: gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
-      - name: image build and push
-        run: |
-          IMAGE_TAG=$GCP_REGION-docker.pkg.dev/$GCP_PROJECT_ID/$ENV_PREFIX-$APP_NAME-main/golang-api:$GITHUB_SHA
-          docker build -t $IMAGE_TAG .
-          docker push $IMAGE_TAG
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV_PREFIX }}-${{ env.APP_NAME }}-main/golang-api:${{ env.GITHUB_SHA }}
 
   migration:
     name: db migrate
