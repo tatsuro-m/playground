@@ -87,7 +87,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV_PREFIX }}-${{ env.APP_NAME }}-main/golang-api:${{ env.GITHUB_SHA }}
+          tags: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV_PREFIX }}-${{ env.APP_NAME }}-main/golang-api:${{ github.sha }}
 
   migration:
     name: db migrate
