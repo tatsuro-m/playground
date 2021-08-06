@@ -85,6 +85,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
+          context: .
           push: true
           tags: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV_PREFIX }}-${{ env.APP_NAME }}-main/golang-api:${{ env.GITHUB_SHA }}
 
