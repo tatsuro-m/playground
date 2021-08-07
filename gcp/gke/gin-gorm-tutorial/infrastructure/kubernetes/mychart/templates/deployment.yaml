@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
   name: {{ .Values.appName }}
 spec:
   replicas: 3
@@ -10,14 +10,14 @@ spec:
       app: {{ .Values.appName }}
   template:
     metadata:
-      namespace: {{ .Values.namespace }}
+      namespace: {{ .Release.Namespace }}
       labels:
         app: {{ .Values.appName }}
     spec:
-      serviceAccountName: {{.Values.mainServiceAccountName }}
+      serviceAccountName: {{ .Values.mainServiceAccountName }}
       containers:
         - name: {{ .Values.appName }}
-          image: {{ .Values.gcpRegion }}-docker.pkg.dev/{{ .Values.gcpProjectID }}/{{ .Values.envPrefix }}-{{ .Values.namespace }}-main/{{ .Values.appName }}:{{ .Values.dockerImageTag }}
+          image: {{ .Values.gcpRegion }}-docker.pkg.dev/{{ .Values.gcpProjectID }}/{{ .Values.envPrefix }}-{{ .Release.Namespace }}-main/{{ .Values.appName }}:{{ .Values.dockerImageTag }}
           env:
             - name: DSN
               valueFrom:
@@ -30,6 +30,6 @@ spec:
           image: gcr.io/cloudsql-docker/gce-proxy:1.23.1
           command:
             - "/cloud_sql_proxy"
-            - "-instances={{ .Values.gcpProjectID }}:{{ .Values.gcpRegion }}:{{ .Values.envPrefix }}-{{ .Values.namespace }}-master-instance1=tcp:5432"
+            - "-instances={{ .Values.gcpProjectID }}:{{ .Values.gcpRegion }}:{{ .Values.envPrefix }}-{{ .Release.Namespace }}-master-instance1=tcp:5432"
           securityContext:
             runAsNonRoot: true

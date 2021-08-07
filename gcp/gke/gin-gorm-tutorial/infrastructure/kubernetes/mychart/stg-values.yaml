@@ -1,11 +1,5 @@
-gcpRegion: asia-northeast1
-gcpProjectID: playground-318023
-
 envPrefix: stg
-appName: golang-api
-namespace: gin-gorm-tutorial
-mainServiceAccountName: main-ksa
-dockerImageTag: latest
+dockerImageTag: v3
 
 # for https://github.com/external-secrets/kubernetes-external-secrets
 kubernetes-external-secrets:

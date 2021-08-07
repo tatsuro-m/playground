@@ -1,0 +1,6 @@
+envPrefix: prod
+
+# for https://github.com/external-secrets/kubernetes-external-secrets
+serviceAccount:
+  annotations:
+    iam.gke.io/gcp-service-account: prod-gin-gorm-tutorial-ex-sec@playground-318023.iam.gserviceaccount.com
