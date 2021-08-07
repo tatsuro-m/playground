@@ -4,4 +4,4 @@ dockerImageTag: 6aeb2c8ccac63f81bc0f3c559778774e5369eaa3
 # for https://github.com/external-secrets/kubernetes-external-secrets
 kubernetes-external-secrets:
   serviceAccount:
-    name: kubernetes-external-secrets
+    name: external-secrets-ksa
