@@ -8,6 +8,15 @@ on:
   push:
 
 jobs:
+  checkGitHubObj:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: echo github obj
+        run: |
+          echo ${{ github.event_name }}
+          echo ${{ github.head_ref }}
+
   createPullRequest:
     runs-on: ubuntu-latest
     steps:
