@@ -49,3 +49,11 @@ $ helm install test-deploy -f mychart/stg-values.yaml ./mychart/ --create-namesp
 - Argo CD の画面へは Service を割り当てるのではなく `kubectl port-forward` を使ってローカルホスト経由でアクセスする方法を取る
   - 現状のお試しレベルだと一般公開するのは不安が残るため
   - `kubectl port-forward svc/argocd-server -n argocd 8080:443`
+
+### デプロイ戦略
+検証環境でも本番環境でも、 `main ブランチのマニフェストの状態 = 対象クラスタの状態` となるようにするのが大切。  
+なので CI でコミットメッセージかタグなどを parse することによって「releaseするかどうか」のフラグを渡す。デフォルトはリリース無しで良い。    
+リリースがあろうとなかろうと、CI が動けば Docker イメージはビルドしてイメージレジストリに push しておくようにする。  
+この時、デプロイ先の環境（stg、prod、あるいはそのどちらも）を指定できるようにする。
+リリースフラグがあった場合には、そのコミットハッシュを使って対象環境の helm chart の values ファイルのイメージタグ部分を更新した PR を main をターゲットにして自動的に作成する。  
+ここで作られた PR を確認してマージすることによって Argo CD 経由で同期されるという方法。
