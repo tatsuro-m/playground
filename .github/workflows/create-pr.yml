@@ -16,6 +16,8 @@ jobs:
         run: |
           echo $GITHUB_EVENT_NAME
           echo $GITHUB_REF
+          echo $GITHUB_HEAD_REF
+          echo $GITHUB_BASE_REF
 
   createPullRequest:
     runs-on: ubuntu-latest
