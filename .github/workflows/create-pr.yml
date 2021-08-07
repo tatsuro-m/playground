@@ -14,8 +14,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: echo github obj
         run: |
-          echo ${{ github.event_name }}
-          echo ${{ github.head_ref }}
+          echo $GITHUB_EVENT_NAME
+          echo $GITHUB_REF
 
   createPullRequest:
     runs-on: ubuntu-latest
