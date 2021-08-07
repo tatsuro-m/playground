@@ -35,3 +35,16 @@ k8s の学習が主目的ですが余裕があれば [DataDog](https://www.datad
 - helm で複数環境にデプロイできるようにする
 
 やりたいことは随時書き足していってOK。
+
+## Kubernetes 関連の補足
+- 複数環境に展開できるようにアプリケーションは helm chart で管理する
+```shell
+$ helm install test-deploy -f mychart/stg-values.yaml ./mychart/ --create-namespace -n gin-gorm-tutorial
+```
+のように名前空間はマニフェストファイルではなく helm コマンドレベルで作成することとする
+
+- chart は Argo CD から更新の度に自動適用されるように設定する（手動ではなくデフォルトの自動設定を利用してOK）
+- Argo CD のセットアップは https://argo-cd.readthedocs.io/en/stable/getting_started/ を参考に行い、自動化はしない。手元から apply してパスワード変更する必要がある。
+  - https://argoproj.github.io/argo-cd/operator-manual/declarative-setup/ を参考に yml を使って設定したいが、後回しで良い
+- Argo CD の画面へは Service を割り当てるのではなく `kubectl port-forward` を使ってローカルホスト経由でアクセスする方法を取る
+  - 現状のお試しレベルだと一般公開するのは不安が残るため
