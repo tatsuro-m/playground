@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"gin-gorm-tutorial/controller/api/v1/ping"
 	"gin-gorm-tutorial/controller/api/v1/post"
 	"gin-gorm-tutorial/controller/api/v1/user"
 
@@ -44,6 +45,11 @@ func Router() *gin.Engine {
 		p.POST("", ctrl.Create)
 		p.PUT(id, ctrl.Update)
 		p.DELETE(id, ctrl.Delete)
+	}
+
+	{
+		ctrl := ping.Controller{}
+		v1.Group("/ping").GET("", ctrl.Index)
 	}
 
 	return r
