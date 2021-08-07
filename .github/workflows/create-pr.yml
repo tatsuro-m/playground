@@ -5,10 +5,8 @@ defaults:
     shell: bash
     working-directory: ./gcp/gke/gin-gorm-tutorial
 on:
-  push:
-    paths:
-      - "gcp/gke/gin-gorm-tutorial/**"
-      - '!gcp/gke/gin-gorm-tutorial/infrastructure/**'
+  pull_request:
+    types: [closed]
 
 jobs:
   checkGitHubObj:
@@ -29,8 +27,8 @@ jobs:
 
       - name: Make changes to pull request
         run: |
-         date +%s > report.txt
-         echo "test" >> report.txt
+          date +%s > report.txt
+          echo "test" >> report.txt
 
       - name: Create Pull Request
         id: cpr
