@@ -66,6 +66,7 @@ resource "google_container_node_pool" "main_node_pool" {
 
   node_config {
     machine_type = "e2-medium"
+    preemptible  = true
 
     workload_metadata_config {
       node_metadata = "GKE_METADATA_SERVER"
