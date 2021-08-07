@@ -14,7 +14,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Make changes to pull request
-        run: date +%s > report.txt
+        run: |
+         date +%s > report.txt
+         echo "test" >> report.txt
 
       - name: Create Pull Request
         id: cpr
