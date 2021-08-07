@@ -48,3 +48,4 @@ $ helm install test-deploy -f mychart/stg-values.yaml ./mychart/ --create-namesp
   - https://argoproj.github.io/argo-cd/operator-manual/declarative-setup/ を参考に yml を使って設定したいが、後回しで良い
 - Argo CD の画面へは Service を割り当てるのではなく `kubectl port-forward` を使ってローカルホスト経由でアクセスする方法を取る
   - 現状のお試しレベルだと一般公開するのは不安が残るため
+  - `kubectl port-forward svc/argocd-server -n argocd 8080:443`
