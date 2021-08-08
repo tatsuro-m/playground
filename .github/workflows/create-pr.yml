@@ -51,7 +51,7 @@ jobs:
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
-          branch: create-pull-request/${{ env.ENV }}/release
+          branch: create-pull-request/release/${{ env.ENV }}
           base: main
           delete-branch: true
           title: |
@@ -70,7 +70,7 @@ jobs:
           draft: false
 
   createPullRequestForProd:
-    if: ${{ 'create-pull-request/prod/release' != needs.outputBranchName.outputs.BRANCH_NAME }}
+    if: ${{ !contains(needs.outputBranchName.outputs.BRANCH_NAME, 'create-pull-request/release') }}
     env:
       ENV: prod
     runs-on: ubuntu-latest
@@ -90,7 +90,7 @@ jobs:
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
-          branch: create-pull-request/${{ env.ENV }}/release
+          branch: create-pull-request/release/${{ env.ENV }}
           base: main
           delete-branch: true
           title: |
