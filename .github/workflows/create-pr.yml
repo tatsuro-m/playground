@@ -31,7 +31,7 @@ jobs:
   createPullRequestForStg:
     # もっと良い方法があると思うがとりあえず。
     # マージコミットメッセージから取得したブランチ名が自動生成されたものならスキップする
-    if: !contains(needs.outputBranchName.outputs.BRANCH_NAME, 'create-pull-request/release')
+    if: ${{ !contains(needs.outputBranchName.outputs.BRANCH_NAME, 'create-pull-request/release') }}
     env:
       ENV: stg
     runs-on: ubuntu-latest
