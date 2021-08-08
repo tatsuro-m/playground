@@ -68,7 +68,6 @@ jobs:
             update container image
             ${{ env.ENV }} release
           assignees: tatsuro-m
-          reviewers: tatsuro-m
           draft: false
 
   automerge:
@@ -116,5 +115,4 @@ jobs:
             update container image
             ${{ env.ENV }} release
           assignees: tatsuro-m
-          reviewers: tatsuro-m
           draft: false
