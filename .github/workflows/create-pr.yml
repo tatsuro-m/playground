@@ -34,7 +34,7 @@ jobs:
       - name: chage docker image
         uses: mikefarah/yq@v4
         with:
-          cmd: IMAGE_TAG=${{ github.sha }} '.dockerImageTag = env(IMAGE_TAG)' -i stg-values.yaml
+          cmd: yq eval IMAGE_TAG=${{ github.sha }} '.dockerImageTag = env(IMAGE_TAG)' -i stg-values.yaml
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
