@@ -30,9 +30,8 @@ jobs:
 
   createPullRequestForStg:
     # もっと良い方法があると思うがとりあえず。
-    # マージコミットメッセージから取得したブランチ名が自動生成したブランチ名と一致するものならスキップする。
-    # こうしないと手動でマージボタンを押した際に無限ループになるため。
-    if: ${{ 'create-pull-request/stg/release' != needs.outputBranchName.outputs.BRANCH_NAME }}
+    # マージコミットメッセージから取得したブランチ名が自動生成されたものならスキップする
+    if: !contains(needs.outputBranchName.outputs.BRANCH_NAME, 'create-pull-request/release')
     env:
       ENV: stg
     runs-on: ubuntu-latest
