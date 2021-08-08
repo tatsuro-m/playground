@@ -34,7 +34,6 @@ jobs:
     if: ${{ !contains(needs.outputBranchName.outputs.BRANCH_NAME, 'create-pull-request/release') }}
     env:
       ENV: stg
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     runs-on: ubuntu-latest
     needs: outputBranchName
     steps:
@@ -71,6 +70,8 @@ jobs:
           draft: false
 
       - name: merge PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr merge ${{ steps.cpr.outputs.pull-request-url }}
 
   createPullRequestForProd:
