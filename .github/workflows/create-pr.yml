@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: chage docker image
-        uses: mikefarah/yq@v4
+        uses: mikefarah/yq@master
         with:
           cmd: IMAGE_TAG=${{ github.sha }} yq eval '.dockerImageTag = env(IMAGE_TAG)' -i stg-values.yaml
 
