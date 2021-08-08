@@ -3,7 +3,7 @@ name: create pull request
 defaults:
   run:
     shell: bash
-    working-directory: ./gcp/gke/gin-gorm-tutorial
+    working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/kubernetes/mychart
 on:
   push:
 
@@ -31,13 +31,12 @@ jobs:
     needs: outputBranchName
     steps:
       - uses: actions/checkout@v2
-      - name: Make changes to pull request
-        run: |
-          date +%s > report.txt
-          echo "test" >> report.txt
+      - name: chage docker image
+        uses: mikefarah/yq@v4
+        with:
+          cmd: IMAGE_TAG=${{ github.sha }} '.dockerImageTag = env(IMAGE_TAG)' -i stg-values.yaml
 
       - name: Create Pull Request
-        id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
