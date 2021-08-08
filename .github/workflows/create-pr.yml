@@ -5,22 +5,21 @@ defaults:
     shell: bash
     working-directory: ./gcp/gke/gin-gorm-tutorial
 on:
-  pull_request:
-    types: [closed]
+  push:
+#  pull_request:
+#    types: [closed]
 
 jobs:
-  checkGitHubObj:
+  debug:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: echo github obj
+      - name: echo commit message
         run: |
-          echo $GITHUB_EVENT_NAME
-          echo $GITHUB_REF
-          echo $GITHUB_HEAD_REF
-          echo $GITHUB_BASE_REF
+          git log -1 --pretty=format:"%s"
 
-  createPullRequest:
+  createPullRequestForStg:
+#    if: ${{ github.head_ref != 'create-pull-request/stg/release' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -39,10 +38,10 @@ jobs:
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
-          branch: create-pull-request/test
+          branch: create-pull-request/stg/release
           base: main
           delete-branch: true
-          title: '[Example] Create PR Test'
+          title: '[Release] Update Container Image'
           body: |
             Create PR test
             - Updated with *today's* date
@@ -54,8 +53,3 @@ jobs:
           assignees: tatsuro-m
           reviewers: tatsuro-m
           draft: false
-
-      - name: Check outputs
-        run: |
-          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
-          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
