@@ -76,7 +76,7 @@ jobs:
       - name: execute test
         run: go test -v ./...
 
-  terraform plan:
+  terraformPlan:
     name: terraform plan
     runs-on: ubuntu-latest
     needs:
@@ -116,7 +116,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  terraform apply:
+  terraformApply:
     name: terraform apply
     runs-on: ubuntu-latest
     needs:
