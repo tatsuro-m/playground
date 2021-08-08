@@ -13,7 +13,9 @@ on:
 jobs:
   outputBranchName:
     runs-on: ubuntu-latest
-    working-directory: ${{ env.WORK_DIR }}
+    defaults:
+      run:
+        working-directory: ${{ env.WORK_DIR }}
     outputs:
       BRANCH_NAME: ${{ steps.output.outputs.BRANCH_NAME }}
     steps:
