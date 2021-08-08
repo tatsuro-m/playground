@@ -17,7 +17,7 @@ jobs:
       - name: echo commit message
         run: |
           git log -1 --pretty=format:"%s"
-          git logs
+          git log
 
   createPullRequestForStg:
 #    if: ${{ github.head_ref != 'create-pull-request/stg/release' }}
