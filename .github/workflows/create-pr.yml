@@ -3,13 +3,17 @@ name: create pull request
 defaults:
   run:
     shell: bash
-    working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/kubernetes/mychart
+
+env:
+  WORK_DIR: ./gcp/gke/gin-gorm-tutorial/infrastructure/kubernetes/mychart
+
 on:
   push:
 
 jobs:
   outputBranchName:
     runs-on: ubuntu-latest
+    working-directory: ${{ env.WORK_DIR }}
     outputs:
       BRANCH_NAME: ${{ steps.output.outputs.BRANCH_NAME }}
     steps:
@@ -34,7 +38,7 @@ jobs:
       - name: chage docker image
         uses: mikefarah/yq@master
         with:
-          cmd: IMAGE_TAG=${{ github.sha }} yq eval '.dockerImageTag = env(IMAGE_TAG)' -i ./gcp/gke/gin-gorm-tutorial/infrastructure/kubernetes/mychart/stg-values.yaml
+          cmd: IMAGE_TAG=${{ github.sha }} yq eval '.dockerImageTag = env(IMAGE_TAG)' -i ${{ env.WORK_DIR }}/stg-values.yaml
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
