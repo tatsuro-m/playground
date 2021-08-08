@@ -6,8 +6,6 @@ defaults:
     working-directory: ./gcp/gke/gin-gorm-tutorial
 on:
   push:
-#  pull_request:
-#    types: [closed]
 
 jobs:
   debug:
@@ -16,7 +14,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: echo commit message
         run: |
-          echo $(git log -1 --pretty=format:"%s")
+          COMMIT_MESSGE=$(git log -1 --pretty=format:"%s")
+          echo ${COMMIT_MESSGE#*/}
 
   createPullRequestForStg:
 #    if: ${{ github.head_ref != 'create-pull-request/stg/release' }}
