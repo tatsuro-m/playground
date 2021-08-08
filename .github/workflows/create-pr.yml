@@ -14,7 +14,7 @@ jobs:
       BRANCH_NAME: ${{ steps.output.outputs.BRANCH_NAME }}
     steps:
       - uses: actions/checkout@v2
-      - name: echo commit message
+      - name: output branch name
         id: output
         # PRマージ時にデフォルトで作成されるコミットメッセージからブランチ名を力技で取得。。。
         # Merge pull request #9 from tatsuro-m/create-pull-request/stg/release → 'create-pull-request/stg/release'
