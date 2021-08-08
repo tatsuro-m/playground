@@ -121,7 +121,7 @@ jobs:
     name: terraform
     runs-on: ubuntu-latest
     needs: build
-    default:
+    defaults:
       run:
         working-directory: ${{ env.WORK_DIR }}/infrastructure/prod
     steps:
