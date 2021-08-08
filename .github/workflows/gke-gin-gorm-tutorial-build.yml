@@ -4,6 +4,7 @@ defaults:
   run:
     shell: bash
     working-directory: ./gcp/gke/gin-gorm-tutorial
+
 on:
   push:
     paths:
