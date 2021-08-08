@@ -4,7 +4,6 @@ defaults:
   run:
     shell: bash
     working-directory: ./gcp/gke/gin-gorm-tutorial
-
 on:
   push:
     paths:
@@ -19,6 +18,8 @@ env:
   GCP_PROJECT_ID: playground-318023
   TF_VAR_POSTGRES_DB_NAME: ${{ secrets.TF_VAR_POSTGRES_DB_NAME }}
   TF_VAR_POSTGRES_PASSWORD: ${{ secrets.TF_VAR_POSTGRES_PASSWORD }}
+  WORK_DIR: ./gcp/gke/gin-gorm-tutorial
+  GO_VERSION: 1.16.3
 
 jobs:
   lint:
@@ -29,12 +30,12 @@ jobs:
       - name: set up golang
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16.3
+          go-version: ${{ env.GO_VERSION }}
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.41.1
-          working-directory: ./gcp/gke/gin-gorm-tutorial
+          working-directory: ${{ env.WORK_DIR }}
 
   test:
     name: go test
@@ -58,7 +59,7 @@ jobs:
       - name: set up golang
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16.3
+          go-version: ${{ env.GO_VERSION }}
       - name: cache go module
         uses: actions/cache@v2
         with:
@@ -75,84 +76,15 @@ jobs:
       - name: execute test
         run: go test -v ./...
 
-  build:
-    name: container image build
+  terraform:
+    name: terraform
+    runs-on: ubuntu-latest
     needs:
       - lint
       - test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
-        with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-      - name: authenticate registry
-        run: gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          # GitHub Actions 上での work dir は関係無いのでリポジトリルートからのコンテキストパスを指定する必要がある
-          context: ./gcp/gke/gin-gorm-tutorial
-          push: true
-          tags: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV_PREFIX }}-${{ env.APP_NAME }}-main/golang-api:${{ github.sha }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-      - # Temp fix
-        # https://github.com/docker/build-push-action/issues/252
-        # https://github.com/moby/buildkit/issues/1896
-        name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-  migration:
-    name: db migrate
-    needs:
-      - lint
-      - test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: run CloudSQL Auth Proxy
-        run: |
-          echo '${{ secrets.GCP_SA_KEY }}' > sa_key
-          docker run --name=sql_proxy -d \
-            -v $PWD/sa_key:/config \
-            -p 127.0.0.1:5432:5432 \
-            gcr.io/cloudsql-docker/gce-proxy /cloud_sql_proxy \
-            -instances=$GCP_PROJECT_ID:$GCP_REGION:$ENV_PREFIX-$APP_NAME-master-instance1=tcp:0.0.0.0:5432 \
-            -credential_file=/config
-      - name: set up golang
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.16.3
-      - name: install golang-migrate
-        run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
-      - name: view container log
-        run: docker logs sql_proxy
-      - name: run migrate
-        run: |
-          migrate -database \
-          postgres://postgres:$TF_VAR_POSTGRES_PASSWORD@127.0.0.1:5432/$ENV_PREFIX-$APP_NAME-$TF_VAR_POSTGRES_DB_NAME?sslmode=disable \
-          -path migrations up
-
-  infrastructure:
-    name: infrastructure
-    runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/
+        working-directory: ${{ env.WORK_DIR }}/infrastructure/
 
     steps:
       - name: check out
@@ -169,40 +101,40 @@ jobs:
         with:
           terraform_version: 1.0.1
 
-      #      #  本番環境を apply したらどうなるかという差分を PR にコメントするために prod の方も init しておく
-      #      - name: Terraform Init for production env
-      #        run: terraform init
-      #        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/production
-      #
-      #      - name: Install tfnotify
-      #        id: install-tfnotify
-      #        run: |
-      #          sudo curl -fL -o tfnotify.tar.gz https://github.com/mercari/tfnotify/releases/download/v0.7.0/tfnotify_linux_amd64.tar.gz
-      #          sudo tar -C /usr/bin -xzf ./tfnotify.tar.gz
-      #
-      #      - name: Terraform Plan
-      #        id: plan
-      #        run: terraform plan | tfnotify -config ../../../.github/.tfnotify/github.yaml plan
-      #        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/production
-      #        env:
-      #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  本番環境を apply したらどうなるかという差分を PR にコメントするために prod の方も init しておく
+      - name: Terraform Init for production env
+        run: terraform init
+        working-directory: ${{ env.WORK_DIR }}/infrastructure/prod
+
+      - name: Install tfnotify
+        id: install-tfnotify
+        run: |
+          sudo curl -fL -o tfnotify.tar.gz https://github.com/mercari/tfnotify/releases/download/v0.7.0/tfnotify_linux_amd64.tar.gz
+          sudo tar -C /usr/bin -xzf ./tfnotify.tar.gz
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan | tfnotify -config ../../../.github/.tfnotify/github.yaml plan
+        working-directory: ${{ env.WORK_DIR }}/infrastructure/prod
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Terraform Init
         id: init
         run: terraform init
-        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/stg
+        working-directory: ${{ env.WORK_DIR }}/infrastructure/stg
 
       - name: terraform fmt
         id: fmt
         run: terraform fmt
-        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/stg
+        working-directory: ${{ env.WORK_DIR }}/infrastructure/stg
 
       - name: terraform validate
         id: validate
         run: terraform validate
-        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/stg
+        working-directory: ${{ env.WORK_DIR }}/infrastructure/stg
 
       - name: Terraform Apply
         id: apply
         run: terraform apply -auto-approve
-        working-directory: ./gcp/gke/gin-gorm-tutorial/infrastructure/stg
+        working-directory: ${{ env.WORK_DIR }}/infrastructure/stg
