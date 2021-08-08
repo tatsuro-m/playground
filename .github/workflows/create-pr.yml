@@ -16,8 +16,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: echo commit message
         run: |
-          git log -1 --pretty=format:"%s"
-          git log
+          echo $(git log -1 --pretty=format:"%s")
 
   createPullRequestForStg:
 #    if: ${{ github.head_ref != 'create-pull-request/stg/release' }}
