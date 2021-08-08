@@ -1,323 +1,323 @@
-name: staging delivery
-
-defaults:
-  run:
-    shell: bash
-    working-directory: ./gcp/gke/gin-gorm-tutorial
-on:
-  push:
-    paths:
-      - "gcp/gke/gin-gorm-tutorial/**"
-    branches:
-      - main
-
-env:
-  APP_NAME: gin-gorm-tutorial
-  GCP_REGION: asia-northeast1
-  GCP_PROJECT_ID: playground-318023
-  TF_VAR_POSTGRES_DB_NAME: ${{ secrets.TF_VAR_POSTGRES_DB_NAME }}
-  TF_VAR_POSTGRES_PASSWORD: ${{ secrets.TF_VAR_POSTGRES_PASSWORD }}
-  WORK_DIR: ./gcp/gke/gin-gorm-tutorial
-  GO_VERSION: 1.16.3
-
-jobs:
-  lint:
-    name: go lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: set up golang
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ env.GO_VERSION }}
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.41.1
-          working-directory: ${{ env.WORK_DIR }}
-
-  test:
-    name: go test
-    runs-on: ubuntu-latest
-    env:
-      TEST_POSTGRESQL_URL: "postgres://postgres:password@localhost:5432/test?sslmode=disable"
-      DSN: "host=localhost user=postgres password=password dbname=test port=5432 sslmode=disable TimeZone=Asia/Tokyo"
-      TEST_ENV: 1
-      GIN_MODE: release
-    services:
-      db:
-        image: postgres:13.3-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: test
-        ports:
-          - 5432:5432
-    steps:
-      - uses: actions/checkout@v2
-      - name: set up golang
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ env.GO_VERSION }}
-      - name: cache go module
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: install golang-migrate
-        run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
-      - name: db migrate
-        run: migrate -database $TEST_POSTGRESQL_URL -path migrations up
-      - name: execute test
-        run: go test -v ./...
-
-  build:
-    name: container image build
-    needs:
-      - lint
-      - test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
-        with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-      - name: authenticate registry
-        run: gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: ${{ env.WORK_DIR }}
-          push: true
-          tags: |
-            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/stg-${{ env.APP_NAME }}-main/golang-api:${{ github.sha }}
-            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/prod-${{ env.APP_NAME }}-main/golang-api:${{ github.sha }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-      - # Temp fix
-        # https://github.com/docker/build-push-action/issues/252
-        # https://github.com/moby/buildkit/issues/1896
-        name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-  terraform:
-    name: terraform
-    runs-on: ubuntu-latest
-    needs: build
-    default:
-      run:
-        working-directory: ${{ env.WORK_DIR }}/infrastructure/prod
-    steps:
-      - name: check out
-        uses: actions/checkout@v2
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@master
-        with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.0.1
-
-      - name: Terraform Init
-        id: init
-        run: terraform init
-
-      - name: terraform fmt
-        id: fmt
-        run: terraform fmt
-
-      - name: terraform validate
-        id: validate
-        run: terraform validate
-
-      - name: Terraform Apply
-        id: apply
-        run: terraform apply -auto-approve
-
-  migrationToStg:
-    name: db migrate to stg
-    needs:
-      - terraform
-    runs-on: ubuntu-latest
-    env:
-      ENV_PREFIX: stg
-    steps:
-      - uses: actions/checkout@v2
-      - name: run CloudSQL Auth Proxy
-        run: |
-          echo '${{ secrets.GCP_SA_KEY }}' > sa_key
-          docker run --name=sql_proxy -d \
-            -v $PWD/sa_key:/config \
-            -p 127.0.0.1:5432:5432 \
-            gcr.io/cloudsql-docker/gce-proxy /cloud_sql_proxy \
-            -instances=$GCP_PROJECT_ID:$GCP_REGION:$ENV_PREFIX-$APP_NAME-master-instance1=tcp:0.0.0.0:5432 \
-            -credential_file=/config
-      - name: set up golang
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ env.GO_VERSION }}
-      - name: install golang-migrate
-        run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
-      - name: view container log
-        run: docker logs sql_proxy
-      - name: run migrate
-        run: |
-          migrate -database \
-          postgres://postgres:$TF_VAR_POSTGRES_PASSWORD@127.0.0.1:5432/$ENV_PREFIX-$APP_NAME-$TF_VAR_POSTGRES_DB_NAME?sslmode=disable \
-          -path migrations up
-
-  migrationToProd:
-    name: db migrate to prod
-    needs:
-      - terraform
-    runs-on: ubuntu-latest
-    env:
-      ENV_PREFIX: prod
-    steps:
-      - uses: actions/checkout@v2
-      - name: run CloudSQL Auth Proxy
-        run: |
-          echo '${{ secrets.GCP_SA_KEY }}' > sa_key
-          docker run --name=sql_proxy -d \
-            -v $PWD/sa_key:/config \
-            -p 127.0.0.1:5432:5432 \
-            gcr.io/cloudsql-docker/gce-proxy /cloud_sql_proxy \
-            -instances=$GCP_PROJECT_ID:$GCP_REGION:$ENV_PREFIX-$APP_NAME-master-instance1=tcp:0.0.0.0:5432 \
-            -credential_file=/config
-      - name: set up golang
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ env.GO_VERSION }}
-      - name: install golang-migrate
-        run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
-      - name: view container log
-        run: docker logs sql_proxy
-      - name: run migrate
-        run: |
-          migrate -database \
-          postgres://postgres:$TF_VAR_POSTGRES_PASSWORD@127.0.0.1:5432/$ENV_PREFIX-$APP_NAME-$TF_VAR_POSTGRES_DB_NAME?sslmode=disable \
-          -path migrations up
-
-  outputBranchName:
-    runs-on: ubuntu-latest
-    needs:
-      - migrationToStg
-      - migrationToProd
-    outputs:
-      BRANCH_NAME: ${{ steps.output.outputs.BRANCH_NAME }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: output branch name
-        id: output
-        # PRマージ時にデフォルトで作成されるコミットメッセージからブランチ名を力技で取得。。。
-        # Merge pull request #9 from tatsuro-m/create-pull-request/stg/release → 'create-pull-request/stg/release'
-        run: |
-          COMMIT_MESSGE=$(git log -1 --pretty=format:"%s")
-          echo "::set-output name=BRANCH_NAME::${COMMIT_MESSGE#*/}"
-
-  createPullRequestForStg:
-    # もっと良い方法があると思うがとりあえず。
-    # マージコミットメッセージから取得したブランチ名が自動生成されたものならスキップする。条件は contain 関数で判断。
-    if: ${{ !contains(needs.outputBranchName.outputs.BRANCH_NAME, 'create-pull-request/release') }}
-    env:
-      ENV: stg
-      WORK_DIR: ${{ env.WORK_DIR }}/infrastructure/kubernetes/mychart
-    runs-on: ubuntu-latest
-    needs: outputBranchName
-    steps:
-      - uses: actions/checkout@v2
-      - name: chage docker image
-        uses: mikefarah/yq@master
-        with:
-          cmd: IMAGE_TAG=${{ github.sha }} yq eval '.dockerImageTag = env(IMAGE_TAG)' -i ${{ env.WORK_DIR }}/${{ env.ENV }}-values.yaml
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: |
-            [${{ env.ENV }}] update container image
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          signoff: false
-          branch: create-pull-request/release/${{ env.ENV }}
-          base: main
-          delete-branch: true
-          title: |
-            [${{ env.ENV }}] Update Container Image
-          body: |
-            [${{ env.ENV }}] Update Container Image
-            - Updated helm chart container image
-            - Auto-generated by [create-pull-request][1]
-
-            [1]: https://github.com/peter-evans/create-pull-request
-          labels: |
-            update container image
-            ${{ env.ENV }} release
-          assignees: tatsuro-m
-          draft: false
-
-      - name: merge PR
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr merge ${{ steps.cpr.outputs.pull-request-url }} --merge
-
-  createPullRequestForProd:
-    if: ${{ !contains(needs.outputBranchName.outputs.BRANCH_NAME, 'create-pull-request/release') }}
-    env:
-      ENV: prod
-      WORK_DIR: ${{ env.WORK_DIR }}/infrastructure/kubernetes/mychart
-    runs-on: ubuntu-latest
-    needs: outputBranchName
-    steps:
-      - uses: actions/checkout@v2
-      - name: chage docker image
-        uses: mikefarah/yq@master
-        with:
-          cmd: IMAGE_TAG=${{ github.sha }} yq eval '.dockerImageTag = env(IMAGE_TAG)' -i ${{ env.WORK_DIR }}/${{ env.ENV }}-values.yaml
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: |
-            [${{ env.ENV }}] update container image
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          signoff: false
-          branch: create-pull-request/release/${{ env.ENV }}
-          base: main
-          delete-branch: true
-          title: |
-            [${{ env.ENV }}] Update Container Image
-          body: |
-            [${{ env.ENV }}] Update Container Image
-            - Updated helm chart container image
-            - Auto-generated by [create-pull-request][1]
-
-            [1]: https://github.com/peter-evans/create-pull-request
-          labels: |
-            update container image
-            ${{ env.ENV }} release
-          assignees: tatsuro-m
-          draft: false
+#name: staging delivery
+#
+#defaults:
+#  run:
+#    shell: bash
+#    working-directory: ./gcp/gke/gin-gorm-tutorial
+#on:
+#  push:
+#    paths:
+#      - "gcp/gke/gin-gorm-tutorial/**"
+#    branches:
+#      - main
+#
+#env:
+#  APP_NAME: gin-gorm-tutorial
+#  GCP_REGION: asia-northeast1
+#  GCP_PROJECT_ID: playground-318023
+#  TF_VAR_POSTGRES_DB_NAME: ${{ secrets.TF_VAR_POSTGRES_DB_NAME }}
+#  TF_VAR_POSTGRES_PASSWORD: ${{ secrets.TF_VAR_POSTGRES_PASSWORD }}
+#  WORK_DIR: ./gcp/gke/gin-gorm-tutorial
+#  GO_VERSION: 1.16.3
+#
+#jobs:
+#  lint:
+#    name: go lint
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: set up golang
+#        uses: actions/setup-go@v2
+#        with:
+#          go-version: ${{ env.GO_VERSION }}
+#      - name: golangci-lint
+#        uses: golangci/golangci-lint-action@v2
+#        with:
+#          version: v1.41.1
+#          working-directory: ${{ env.WORK_DIR }}
+#
+#  test:
+#    name: go test
+#    runs-on: ubuntu-latest
+#    env:
+#      TEST_POSTGRESQL_URL: "postgres://postgres:password@localhost:5432/test?sslmode=disable"
+#      DSN: "host=localhost user=postgres password=password dbname=test port=5432 sslmode=disable TimeZone=Asia/Tokyo"
+#      TEST_ENV: 1
+#      GIN_MODE: release
+#    services:
+#      db:
+#        image: postgres:13.3-alpine
+#        env:
+#          POSTGRES_USER: postgres
+#          POSTGRES_PASSWORD: password
+#          POSTGRES_DB: test
+#        ports:
+#          - 5432:5432
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: set up golang
+#        uses: actions/setup-go@v2
+#        with:
+#          go-version: ${{ env.GO_VERSION }}
+#      - name: cache go module
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cache/go-build
+#            ~/go/pkg/mod
+#          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+#          restore-keys: |
+#            ${{ runner.os }}-go-
+#      - name: install golang-migrate
+#        run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+#      - name: db migrate
+#        run: migrate -database $TEST_POSTGRESQL_URL -path migrations up
+#      - name: execute test
+#        run: go test -v ./...
+#
+#  build:
+#    name: container image build
+#    needs:
+#      - lint
+#      - test
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Set up Cloud SDK
+#        uses: google-github-actions/setup-gcloud@master
+#        with:
+#          service_account_key: ${{ secrets.GCP_SA_KEY }}
+#          export_default_credentials: true
+#      - name: authenticate registry
+#        run: gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v1
+#      - name: Cache Docker layers
+#        uses: actions/cache@v2
+#        with:
+#          path: /tmp/.buildx-cache
+#          key: ${{ runner.os }}-buildx-${{ github.sha }}
+#          restore-keys: |
+#            ${{ runner.os }}-buildx-
+#      - name: Build and push
+#        uses: docker/build-push-action@v2
+#        with:
+#          context: ${{ env.WORK_DIR }}
+#          push: true
+#          tags: |
+#            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/stg-${{ env.APP_NAME }}-main/golang-api:${{ github.sha }}
+#            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/prod-${{ env.APP_NAME }}-main/golang-api:${{ github.sha }}
+#          cache-from: type=local,src=/tmp/.buildx-cache
+#          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+#      - # Temp fix
+#        # https://github.com/docker/build-push-action/issues/252
+#        # https://github.com/moby/buildkit/issues/1896
+#        name: Move cache
+#        run: |
+#          rm -rf /tmp/.buildx-cache
+#          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+#
+#  terraform:
+#    name: terraform
+#    runs-on: ubuntu-latest
+#    needs: build
+#    default:
+#      run:
+#        working-directory: ${{ env.WORK_DIR }}/infrastructure/prod
+#    steps:
+#      - name: check out
+#        uses: actions/checkout@v2
+#
+#      - name: Set up Cloud SDK
+#        uses: google-github-actions/setup-gcloud@master
+#        with:
+#          service_account_key: ${{ secrets.GCP_SA_KEY }}
+#          export_default_credentials: true
+#
+#      - name: Setup Terraform
+#        uses: hashicorp/setup-terraform@v1
+#        with:
+#          terraform_version: 1.0.1
+#
+#      - name: Terraform Init
+#        id: init
+#        run: terraform init
+#
+#      - name: terraform fmt
+#        id: fmt
+#        run: terraform fmt
+#
+#      - name: terraform validate
+#        id: validate
+#        run: terraform validate
+#
+#      - name: Terraform Apply
+#        id: apply
+#        run: terraform apply -auto-approve
+#
+#  migrationToStg:
+#    name: db migrate to stg
+#    needs:
+#      - terraform
+#    runs-on: ubuntu-latest
+#    env:
+#      ENV_PREFIX: stg
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: run CloudSQL Auth Proxy
+#        run: |
+#          echo '${{ secrets.GCP_SA_KEY }}' > sa_key
+#          docker run --name=sql_proxy -d \
+#            -v $PWD/sa_key:/config \
+#            -p 127.0.0.1:5432:5432 \
+#            gcr.io/cloudsql-docker/gce-proxy /cloud_sql_proxy \
+#            -instances=$GCP_PROJECT_ID:$GCP_REGION:$ENV_PREFIX-$APP_NAME-master-instance1=tcp:0.0.0.0:5432 \
+#            -credential_file=/config
+#      - name: set up golang
+#        uses: actions/setup-go@v2
+#        with:
+#          go-version: ${{ env.GO_VERSION }}
+#      - name: install golang-migrate
+#        run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+#      - name: view container log
+#        run: docker logs sql_proxy
+#      - name: run migrate
+#        run: |
+#          migrate -database \
+#          postgres://postgres:$TF_VAR_POSTGRES_PASSWORD@127.0.0.1:5432/$ENV_PREFIX-$APP_NAME-$TF_VAR_POSTGRES_DB_NAME?sslmode=disable \
+#          -path migrations up
+#
+#  migrationToProd:
+#    name: db migrate to prod
+#    needs:
+#      - terraform
+#    runs-on: ubuntu-latest
+#    env:
+#      ENV_PREFIX: prod
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: run CloudSQL Auth Proxy
+#        run: |
+#          echo '${{ secrets.GCP_SA_KEY }}' > sa_key
+#          docker run --name=sql_proxy -d \
+#            -v $PWD/sa_key:/config \
+#            -p 127.0.0.1:5432:5432 \
+#            gcr.io/cloudsql-docker/gce-proxy /cloud_sql_proxy \
+#            -instances=$GCP_PROJECT_ID:$GCP_REGION:$ENV_PREFIX-$APP_NAME-master-instance1=tcp:0.0.0.0:5432 \
+#            -credential_file=/config
+#      - name: set up golang
+#        uses: actions/setup-go@v2
+#        with:
+#          go-version: ${{ env.GO_VERSION }}
+#      - name: install golang-migrate
+#        run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+#      - name: view container log
+#        run: docker logs sql_proxy
+#      - name: run migrate
+#        run: |
+#          migrate -database \
+#          postgres://postgres:$TF_VAR_POSTGRES_PASSWORD@127.0.0.1:5432/$ENV_PREFIX-$APP_NAME-$TF_VAR_POSTGRES_DB_NAME?sslmode=disable \
+#          -path migrations up
+#
+#  outputBranchName:
+#    runs-on: ubuntu-latest
+#    needs:
+#      - migrationToStg
+#      - migrationToProd
+#    outputs:
+#      BRANCH_NAME: ${{ steps.output.outputs.BRANCH_NAME }}
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: output branch name
+#        id: output
+#        # PRマージ時にデフォルトで作成されるコミットメッセージからブランチ名を力技で取得。。。
+#        # Merge pull request #9 from tatsuro-m/create-pull-request/stg/release → 'create-pull-request/stg/release'
+#        run: |
+#          COMMIT_MESSGE=$(git log -1 --pretty=format:"%s")
+#          echo "::set-output name=BRANCH_NAME::${COMMIT_MESSGE#*/}"
+#
+#  createPullRequestForStg:
+#    # もっと良い方法があると思うがとりあえず。
+#    # マージコミットメッセージから取得したブランチ名が自動生成されたものならスキップする。条件は contain 関数で判断。
+#    if: ${{ !contains(needs.outputBranchName.outputs.BRANCH_NAME, 'create-pull-request/release') }}
+#    env:
+#      ENV: stg
+#      WORK_DIR: ${{ env.WORK_DIR }}/infrastructure/kubernetes/mychart
+#    runs-on: ubuntu-latest
+#    needs: outputBranchName
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: chage docker image
+#        uses: mikefarah/yq@master
+#        with:
+#          cmd: IMAGE_TAG=${{ github.sha }} yq eval '.dockerImageTag = env(IMAGE_TAG)' -i ${{ env.WORK_DIR }}/${{ env.ENV }}-values.yaml
+#      - name: Create Pull Request
+#        id: cpr
+#        uses: peter-evans/create-pull-request@v3
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          commit-message: |
+#            [${{ env.ENV }}] update container image
+#          committer: GitHub <noreply@github.com>
+#          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+#          signoff: false
+#          branch: create-pull-request/release/${{ env.ENV }}
+#          base: main
+#          delete-branch: true
+#          title: |
+#            [${{ env.ENV }}] Update Container Image
+#          body: |
+#            [${{ env.ENV }}] Update Container Image
+#            - Updated helm chart container image
+#            - Auto-generated by [create-pull-request][1]
+#
+#            [1]: https://github.com/peter-evans/create-pull-request
+#          labels: |
+#            update container image
+#            ${{ env.ENV }} release
+#          assignees: tatsuro-m
+#          draft: false
+#
+#      - name: merge PR
+#        env:
+#          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        run: gh pr merge ${{ steps.cpr.outputs.pull-request-url }} --merge
+#
+#  createPullRequestForProd:
+#    if: ${{ !contains(needs.outputBranchName.outputs.BRANCH_NAME, 'create-pull-request/release') }}
+#    env:
+#      ENV: prod
+#      WORK_DIR: ${{ env.WORK_DIR }}/infrastructure/kubernetes/mychart
+#    runs-on: ubuntu-latest
+#    needs: outputBranchName
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: chage docker image
+#        uses: mikefarah/yq@master
+#        with:
+#          cmd: IMAGE_TAG=${{ github.sha }} yq eval '.dockerImageTag = env(IMAGE_TAG)' -i ${{ env.WORK_DIR }}/${{ env.ENV }}-values.yaml
+#      - name: Create Pull Request
+#        uses: peter-evans/create-pull-request@v3
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          commit-message: |
+#            [${{ env.ENV }}] update container image
+#          committer: GitHub <noreply@github.com>
+#          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+#          signoff: false
+#          branch: create-pull-request/release/${{ env.ENV }}
+#          base: main
+#          delete-branch: true
+#          title: |
+#            [${{ env.ENV }}] Update Container Image
+#          body: |
+#            [${{ env.ENV }}] Update Container Image
+#            - Updated helm chart container image
+#            - Auto-generated by [create-pull-request][1]
+#
+#            [1]: https://github.com/peter-evans/create-pull-request
+#          labels: |
+#            update container image
+#            ${{ env.ENV }} release
+#          assignees: tatsuro-m
+#          draft: false
