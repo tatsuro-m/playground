@@ -72,6 +72,7 @@ jobs:
           draft: false
 
   automerge:
+    needs: createPullRequestForStg
     runs-on: ubuntu-latest
     steps:
       - name: automerge
