@@ -21,14 +21,11 @@ jobs:
           echo "::set-output name=BRANCH_NAME::${COMMIT_MESSGE#*/}"
 
   createPullRequestForStg:
-#    if: ${{ github.head_ref != 'create-pull-request/stg/release' }}
+    if: 'create-pull-request/stg/release' == needs.outputBranchName.outputs.BRANCH_NAME
     runs-on: ubuntu-latest
     needs: outputBranchName
     steps:
       - uses: actions/checkout@v2
-      - name: echo branch name
-        run: echo ${{ needs.outputBranchName.outputs.BRANCH_NAME }}
-
       - name: Make changes to pull request
         run: |
           date +%s > report.txt
