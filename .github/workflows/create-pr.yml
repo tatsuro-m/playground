@@ -30,7 +30,7 @@ jobs:
 
   createPullRequestForStg:
     # もっと良い方法があると思うがとりあえず。
-    # マージコミットメッセージから取得したブランチ名が自動生成されたものならスキップする
+    # マージコミットメッセージから取得したブランチ名が自動生成されたものならスキップする。条件は contain 関数で判断。
     if: ${{ !contains(needs.outputBranchName.outputs.BRANCH_NAME, 'create-pull-request/release') }}
     env:
       ENV: stg
