@@ -1,5 +1,5 @@
 envPrefix: stg
-dockerImageTag: 5083ed06fb177071eb4a2fbfd0c380d763ffbc79
+dockerImageTag: ad7cab0513a82bea1538ab4770130847b1ee7b21
 # for https://github.com/external-secrets/kubernetes-external-secrets
 kubernetes-external-secrets:
   serviceAccount:
