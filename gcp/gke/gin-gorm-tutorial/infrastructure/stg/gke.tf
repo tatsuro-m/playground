@@ -53,15 +53,18 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
+  network    = google_compute_network.main_vpc.id
+  subnetwork = google_compute_subnetwork.main.id
+
   workload_identity_config {
     identity_namespace = "${data.google_project.project.project_id}.svc.id.goog"
   }
 }
 
 resource "google_container_node_pool" "main_node_pool" {
-  name       = "${local.app_prefix}-main"
-  location   = var.default_region
-  cluster    = google_container_cluster.primary.name
+  name     = "${local.app_prefix}-main"
+  location = var.default_region
+  cluster  = google_container_cluster.primary.name
 
   autoscaling {
     min_node_count = 0
