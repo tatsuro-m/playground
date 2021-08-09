@@ -8,7 +8,7 @@ const displayWord = (word) => {
   console.log(`受け取った word: ${word}`);
 }
 
-displayWord("hogehoge");
+displayWord("zx!!!!!!!!");
 
 const getRandomWord = () => {
   return Math.random().toString(32).substring(2);
