@@ -62,12 +62,13 @@ resource "google_container_cluster" "primary" {
 }
 
 resource "google_container_node_pool" "main_node_pool" {
-  name     = "${local.app_prefix}-main"
-  location = var.default_region
-  cluster  = google_container_cluster.primary.name
+  name               = "${local.app_prefix}-main"
+  location           = var.default_region
+  cluster            = google_container_cluster.primary.name
+  initial_node_count = 1
 
   autoscaling {
-    min_node_count = 1
+    min_node_count = 0
     max_node_count = 3
   }
 
