@@ -8,12 +8,17 @@ resource "google_project_iam_member" "role1" {
   member = "serviceAccount:${google_service_account.node_pool.email}"
 }
 
+resource "google_project_iam_member" "role2" {
+  role   = "roles/logging.logWriter"
+  member = "serviceAccount:${google_service_account.node_pool.email}"
+}
+
 resource "google_service_account" "workload_identity" {
   account_id   = "${local.app_prefix}-main"
   display_name = "gke workload identity service account"
 }
 
-resource "google_project_iam_member" "role2" {
+resource "google_project_iam_member" "role3" {
   role   = "roles/cloudsql.client"
   member = "serviceAccount:${google_service_account.workload_identity.email}"
 }
