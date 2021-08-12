@@ -20,8 +20,6 @@ package grpctest_test
 
 import (
 	"testing"
-
-	"google.golang.org/grpc/internal/grpctest"
 )
 
 type s struct {
@@ -57,5 +55,5 @@ func (s *s) Teardown(t *testing.T) {
 }
 
 func TestExample(t *testing.T) {
-	grpctest.RunSubTests(t, &s{})
+	RunSubTests(t, &s{})
 }

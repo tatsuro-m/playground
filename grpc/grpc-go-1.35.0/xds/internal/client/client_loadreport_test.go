@@ -33,7 +33,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/internal/grpctest"
 	"google.golang.org/grpc/status"
-	"google.golang.org/grpc/xds/internal/client"
 	"google.golang.org/grpc/xds/internal/client/bootstrap"
 	"google.golang.org/grpc/xds/internal/testutils/fakeserver"
 	"google.golang.org/grpc/xds/internal/version"
@@ -64,7 +63,7 @@ func (s) TestLRSClient(t *testing.T) {
 	}
 	defer sCleanup()
 
-	xdsC, err := client.NewWithConfigForTesting(&bootstrap.Config{
+	xdsC, err := NewWithConfigForTesting(&bootstrap.Config{
 		BalancerName: fs.Address,
 		Creds:        grpc.WithTransportCredentials(insecure.NewCredentials()),
 		NodeProto:    &v2corepb.Node{},

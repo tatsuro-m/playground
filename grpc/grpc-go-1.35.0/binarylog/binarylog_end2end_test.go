@@ -30,7 +30,6 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/binarylog"
 	pb "google.golang.org/grpc/binarylog/grpc_binarylog_v1"
 	"google.golang.org/grpc/grpclog"
 	iblog "google.golang.org/grpc/internal/binarylog"
@@ -54,7 +53,7 @@ func init() {
 	// Setting environment variable in tests doesn't work because of the init
 	// orders. Set the loggers directly here.
 	iblog.SetLogger(iblog.AllLogger)
-	binarylog.SetSink(testSink)
+	SetSink(testSink)
 }
 
 var testSink = &testBinLogSink{}

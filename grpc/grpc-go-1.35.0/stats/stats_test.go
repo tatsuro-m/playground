@@ -33,7 +33,6 @@ import (
 	"google.golang.org/grpc/internal/grpctest"
 	testpb "google.golang.org/grpc/interop/grpc_testing"
 	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/stats"
 	"google.golang.org/grpc/status"
 )
 
@@ -175,8 +174,8 @@ func (s *testServer) StreamingOutputCall(in *testpb.StreamingOutputCallRequest, 
 type test struct {
 	t                  *testing.T
 	compress           string
-	clientStatsHandler stats.Handler
-	serverStatsHandler stats.Handler
+	clientStatsHandler Handler
+	serverStatsHandler Handler
 
 	testServer testpb.TestServiceServer // nil means none
 	// srv and srvAddr are set once startServer is called.
@@ -201,7 +200,7 @@ type testConfig struct {
 // newTest returns a new test using the provided testing.T and
 // environment.  It is returned with default values. Tests should
 // modify it before calling its startServer and clientConn methods.
-func newTest(t *testing.T, tc *testConfig, ch stats.Handler, sh stats.Handler) *test {
+func newTest(t *testing.T, tc *testConfig, ch Handler, sh Handler) *test {
 	te := &test{
 		t:                  t,
 		compress:           tc.compress,
@@ -438,9 +437,9 @@ const (
 func checkBegin(t *testing.T, d *gotData, e *expectedData) {
 	var (
 		ok bool
-		st *stats.Begin
+		st *Begin
 	)
-	if st, ok = d.s.(*stats.Begin); !ok {
+	if st, ok = d.s.(*Begin); !ok {
 		t.Fatalf("got %T, want Begin", d.s)
 	}
 	if d.ctx == nil {
@@ -459,9 +458,9 @@ func checkBegin(t *testing.T, d *gotData, e *expectedData) {
 func checkInHeader(t *testing.T, d *gotData, e *expectedData) {
 	var (
 		ok bool
-		st *stats.InHeader
+		st *InHeader
 	)
-	if st, ok = d.s.(*stats.InHeader); !ok {
+	if st, ok = d.s.(*InHeader); !ok {
 		t.Fatalf("got %T, want InHeader", d.s)
 	}
 	if d.ctx == nil {
@@ -493,7 +492,7 @@ func checkInHeader(t *testing.T, d *gotData, e *expectedData) {
 			}
 		}
 
-		if connInfo, ok := d.ctx.Value(connCtxKey{}).(*stats.ConnTagInfo); ok {
+		if connInfo, ok := d.ctx.Value(connCtxKey{}).(*ConnTagInfo); ok {
 			if connInfo.RemoteAddr != st.RemoteAddr {
 				t.Fatalf("connInfo.RemoteAddr = %v, want %v", connInfo.RemoteAddr, st.RemoteAddr)
 			}
@@ -503,7 +502,7 @@ func checkInHeader(t *testing.T, d *gotData, e *expectedData) {
 		} else {
 			t.Fatalf("got context %v, want one with connCtxKey", d.ctx)
 		}
-		if rpcInfo, ok := d.ctx.Value(rpcCtxKey{}).(*stats.RPCTagInfo); ok {
+		if rpcInfo, ok := d.ctx.Value(rpcCtxKey{}).(*RPCTagInfo); ok {
 			if rpcInfo.FullMethodName != st.FullMethod {
 				t.Fatalf("rpcInfo.FullMethod = %s, want %v", rpcInfo.FullMethodName, st.FullMethod)
 			}
@@ -516,9 +515,9 @@ func checkInHeader(t *testing.T, d *gotData, e *expectedData) {
 func checkInPayload(t *testing.T, d *gotData, e *expectedData) {
 	var (
 		ok bool
-		st *stats.InPayload
+		st *InPayload
 	)
-	if st, ok = d.s.(*stats.InPayload); !ok {
+	if st, ok = d.s.(*InPayload); !ok {
 		t.Fatalf("got %T, want InPayload", d.s)
 	}
 	if d.ctx == nil {
@@ -569,9 +568,9 @@ func checkInPayload(t *testing.T, d *gotData, e *expectedData) {
 func checkInTrailer(t *testing.T, d *gotData, e *expectedData) {
 	var (
 		ok bool
-		st *stats.InTrailer
+		st *InTrailer
 	)
-	if st, ok = d.s.(*stats.InTrailer); !ok {
+	if st, ok = d.s.(*InTrailer); !ok {
 		t.Fatalf("got %T, want InTrailer", d.s)
 	}
 	if d.ctx == nil {
@@ -588,9 +587,9 @@ func checkInTrailer(t *testing.T, d *gotData, e *expectedData) {
 func checkOutHeader(t *testing.T, d *gotData, e *expectedData) {
 	var (
 		ok bool
-		st *stats.OutHeader
+		st *OutHeader
 	)
-	if st, ok = d.s.(*stats.OutHeader); !ok {
+	if st, ok = d.s.(*OutHeader); !ok {
 		t.Fatalf("got %T, want OutHeader", d.s)
 	}
 	if d.ctx == nil {
@@ -614,7 +613,7 @@ func checkOutHeader(t *testing.T, d *gotData, e *expectedData) {
 			}
 		}
 
-		if rpcInfo, ok := d.ctx.Value(rpcCtxKey{}).(*stats.RPCTagInfo); ok {
+		if rpcInfo, ok := d.ctx.Value(rpcCtxKey{}).(*RPCTagInfo); ok {
 			if rpcInfo.FullMethodName != st.FullMethod {
 				t.Fatalf("rpcInfo.FullMethod = %s, want %v", rpcInfo.FullMethodName, st.FullMethod)
 			}
@@ -635,9 +634,9 @@ func checkOutHeader(t *testing.T, d *gotData, e *expectedData) {
 func checkOutPayload(t *testing.T, d *gotData, e *expectedData) {
 	var (
 		ok bool
-		st *stats.OutPayload
+		st *OutPayload
 	)
-	if st, ok = d.s.(*stats.OutPayload); !ok {
+	if st, ok = d.s.(*OutPayload); !ok {
 		t.Fatalf("got %T, want OutPayload", d.s)
 	}
 	if d.ctx == nil {
@@ -688,9 +687,9 @@ func checkOutPayload(t *testing.T, d *gotData, e *expectedData) {
 func checkOutTrailer(t *testing.T, d *gotData, e *expectedData) {
 	var (
 		ok bool
-		st *stats.OutTrailer
+		st *OutTrailer
 	)
-	if st, ok = d.s.(*stats.OutTrailer); !ok {
+	if st, ok = d.s.(*OutTrailer); !ok {
 		t.Fatalf("got %T, want OutTrailer", d.s)
 	}
 	if d.ctx == nil {
@@ -707,9 +706,9 @@ func checkOutTrailer(t *testing.T, d *gotData, e *expectedData) {
 func checkEnd(t *testing.T, d *gotData, e *expectedData) {
 	var (
 		ok bool
-		st *stats.End
+		st *End
 	)
-	if st, ok = d.s.(*stats.End); !ok {
+	if st, ok = d.s.(*End); !ok {
 		t.Fatalf("got %T, want End", d.s)
 	}
 	if d.ctx == nil {
@@ -746,9 +745,9 @@ func checkEnd(t *testing.T, d *gotData, e *expectedData) {
 func checkConnBegin(t *testing.T, d *gotData, e *expectedData) {
 	var (
 		ok bool
-		st *stats.ConnBegin
+		st *ConnBegin
 	)
-	if st, ok = d.s.(*stats.ConnBegin); !ok {
+	if st, ok = d.s.(*ConnBegin); !ok {
 		t.Fatalf("got %T, want ConnBegin", d.s)
 	}
 	if d.ctx == nil {
@@ -760,9 +759,9 @@ func checkConnBegin(t *testing.T, d *gotData, e *expectedData) {
 func checkConnEnd(t *testing.T, d *gotData, e *expectedData) {
 	var (
 		ok bool
-		st *stats.ConnEnd
+		st *ConnEnd
 	)
-	if st, ok = d.s.(*stats.ConnEnd); !ok {
+	if st, ok = d.s.(*ConnEnd); !ok {
 		t.Fatalf("got %T, want ConnEnd", d.s)
 	}
 	if d.ctx == nil {
@@ -777,21 +776,21 @@ type statshandler struct {
 	gotConn []*gotData
 }
 
-func (h *statshandler) TagConn(ctx context.Context, info *stats.ConnTagInfo) context.Context {
+func (h *statshandler) TagConn(ctx context.Context, info *ConnTagInfo) context.Context {
 	return context.WithValue(ctx, connCtxKey{}, info)
 }
 
-func (h *statshandler) TagRPC(ctx context.Context, info *stats.RPCTagInfo) context.Context {
+func (h *statshandler) TagRPC(ctx context.Context, info *RPCTagInfo) context.Context {
 	return context.WithValue(ctx, rpcCtxKey{}, info)
 }
 
-func (h *statshandler) HandleConn(ctx context.Context, s stats.ConnStats) {
+func (h *statshandler) HandleConn(ctx context.Context, s ConnStats) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	h.gotConn = append(h.gotConn, &gotData{ctx, s.IsClient(), s})
 }
 
-func (h *statshandler) HandleRPC(ctx context.Context, s stats.RPCStats) {
+func (h *statshandler) HandleRPC(ctx context.Context, s RPCStats) {
 	h.mu.Lock()
 	defer h.mu.Unlock()
 	h.gotRPC = append(h.gotRPC, &gotData{ctx, s.IsClient(), s})
@@ -820,7 +819,7 @@ func checkServerStats(t *testing.T, got []*gotData, expect *expectedData, checkF
 
 	var rpcctx context.Context
 	for i := 0; i < len(got); i++ {
-		if _, ok := got[i].s.(stats.RPCStats); ok {
+		if _, ok := got[i].s.(RPCStats); ok {
 			if rpcctx != nil && got[i].ctx != rpcctx {
 				t.Fatalf("got different contexts with stats %T", got[i].s)
 			}
@@ -889,7 +888,7 @@ func testServerStats(t *testing.T, tc *testConfig, cc *rpcConfig, checkFuncs []f
 
 	for {
 		h.mu.Lock()
-		if _, ok := h.gotConn[len(h.gotConn)-1].s.(*stats.ConnEnd); ok {
+		if _, ok := h.gotConn[len(h.gotConn)-1].s.(*ConnEnd); ok {
 			h.mu.Unlock()
 			break
 		}
@@ -1051,10 +1050,10 @@ func checkClientStats(t *testing.T, got []*gotData, expect *expectedData, checkF
 		t.Fatalf("got %v stats, want %v stats", len(got), expectLen)
 	}
 
-	var tagInfoInCtx *stats.RPCTagInfo
+	var tagInfoInCtx *RPCTagInfo
 	for i := 0; i < len(got); i++ {
-		if _, ok := got[i].s.(stats.RPCStats); ok {
-			tagInfoInCtxNew, _ := got[i].ctx.Value(rpcCtxKey{}).(*stats.RPCTagInfo)
+		if _, ok := got[i].s.(RPCStats); ok {
+			tagInfoInCtxNew, _ := got[i].ctx.Value(rpcCtxKey{}).(*RPCTagInfo)
 			if tagInfoInCtx != nil && tagInfoInCtx != tagInfoInCtxNew {
 				t.Fatalf("got context containing different tagInfo with stats %T", got[i].s)
 			}
@@ -1064,55 +1063,55 @@ func checkClientStats(t *testing.T, got []*gotData, expect *expectedData, checkF
 
 	for _, s := range got {
 		switch s.s.(type) {
-		case *stats.Begin:
+		case *Begin:
 			if checkFuncs[begin].c <= 0 {
 				t.Fatalf("unexpected stats: %T", s.s)
 			}
 			checkFuncs[begin].f(t, s, expect)
 			checkFuncs[begin].c--
-		case *stats.OutHeader:
+		case *OutHeader:
 			if checkFuncs[outHeader].c <= 0 {
 				t.Fatalf("unexpected stats: %T", s.s)
 			}
 			checkFuncs[outHeader].f(t, s, expect)
 			checkFuncs[outHeader].c--
-		case *stats.OutPayload:
+		case *OutPayload:
 			if checkFuncs[outPayload].c <= 0 {
 				t.Fatalf("unexpected stats: %T", s.s)
 			}
 			checkFuncs[outPayload].f(t, s, expect)
 			checkFuncs[outPayload].c--
-		case *stats.InHeader:
+		case *InHeader:
 			if checkFuncs[inHeader].c <= 0 {
 				t.Fatalf("unexpected stats: %T", s.s)
 			}
 			checkFuncs[inHeader].f(t, s, expect)
 			checkFuncs[inHeader].c--
-		case *stats.InPayload:
+		case *InPayload:
 			if checkFuncs[inPayload].c <= 0 {
 				t.Fatalf("unexpected stats: %T", s.s)
 			}
 			checkFuncs[inPayload].f(t, s, expect)
 			checkFuncs[inPayload].c--
-		case *stats.InTrailer:
+		case *InTrailer:
 			if checkFuncs[inTrailer].c <= 0 {
 				t.Fatalf("unexpected stats: %T", s.s)
 			}
 			checkFuncs[inTrailer].f(t, s, expect)
 			checkFuncs[inTrailer].c--
-		case *stats.End:
+		case *End:
 			if checkFuncs[end].c <= 0 {
 				t.Fatalf("unexpected stats: %T", s.s)
 			}
 			checkFuncs[end].f(t, s, expect)
 			checkFuncs[end].c--
-		case *stats.ConnBegin:
+		case *ConnBegin:
 			if checkFuncs[connBegin].c <= 0 {
 				t.Fatalf("unexpected stats: %T", s.s)
 			}
 			checkFuncs[connBegin].f(t, s, expect)
 			checkFuncs[connBegin].c--
-		case *stats.ConnEnd:
+		case *ConnEnd:
 			if checkFuncs[connEnd].c <= 0 {
 				t.Fatalf("unexpected stats: %T", s.s)
 			}
@@ -1183,7 +1182,7 @@ func testClientStats(t *testing.T, tc *testConfig, cc *rpcConfig, checkFuncs map
 
 	for {
 		h.mu.Lock()
-		if _, ok := h.gotConn[len(h.gotConn)-1].s.(*stats.ConnEnd); ok {
+		if _, ok := h.gotConn[len(h.gotConn)-1].s.(*ConnEnd); ok {
 			h.mu.Unlock()
 			break
 		}
@@ -1309,19 +1308,19 @@ func (s) TestTags(t *testing.T) {
 	b := []byte{5, 2, 4, 3, 1}
 	tCtx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	ctx := stats.SetTags(tCtx, b)
-	if tg := stats.OutgoingTags(ctx); !reflect.DeepEqual(tg, b) {
+	ctx := SetTags(tCtx, b)
+	if tg := OutgoingTags(ctx); !reflect.DeepEqual(tg, b) {
 		t.Errorf("OutgoingTags(%v) = %v; want %v", ctx, tg, b)
 	}
-	if tg := stats.Tags(ctx); tg != nil {
+	if tg := Tags(ctx); tg != nil {
 		t.Errorf("Tags(%v) = %v; want nil", ctx, tg)
 	}
 
-	ctx = stats.SetIncomingTags(tCtx, b)
-	if tg := stats.Tags(ctx); !reflect.DeepEqual(tg, b) {
+	ctx = SetIncomingTags(tCtx, b)
+	if tg := Tags(ctx); !reflect.DeepEqual(tg, b) {
 		t.Errorf("Tags(%v) = %v; want %v", ctx, tg, b)
 	}
-	if tg := stats.OutgoingTags(ctx); tg != nil {
+	if tg := OutgoingTags(ctx); tg != nil {
 		t.Errorf("OutgoingTags(%v) = %v; want nil", ctx, tg)
 	}
 }
@@ -1330,19 +1329,19 @@ func (s) TestTrace(t *testing.T) {
 	b := []byte{5, 2, 4, 3, 1}
 	tCtx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	ctx := stats.SetTrace(tCtx, b)
-	if tr := stats.OutgoingTrace(ctx); !reflect.DeepEqual(tr, b) {
+	ctx := SetTrace(tCtx, b)
+	if tr := OutgoingTrace(ctx); !reflect.DeepEqual(tr, b) {
 		t.Errorf("OutgoingTrace(%v) = %v; want %v", ctx, tr, b)
 	}
-	if tr := stats.Trace(ctx); tr != nil {
+	if tr := Trace(ctx); tr != nil {
 		t.Errorf("Trace(%v) = %v; want nil", ctx, tr)
 	}
 
-	ctx = stats.SetIncomingTrace(tCtx, b)
-	if tr := stats.Trace(ctx); !reflect.DeepEqual(tr, b) {
+	ctx = SetIncomingTrace(tCtx, b)
+	if tr := Trace(ctx); !reflect.DeepEqual(tr, b) {
 		t.Errorf("Trace(%v) = %v; want %v", ctx, tr, b)
 	}
-	if tr := stats.OutgoingTrace(ctx); tr != nil {
+	if tr := OutgoingTrace(ctx); tr != nil {
 		t.Errorf("OutgoingTrace(%v) = %v; want nil", ctx, tr)
 	}
 }

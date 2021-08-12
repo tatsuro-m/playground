@@ -31,7 +31,6 @@ import (
 	"testing"
 
 	"golang.org/x/sys/unix"
-	"google.golang.org/grpc/internal/channelz"
 	"google.golang.org/grpc/internal/grpctest"
 )
 
@@ -78,7 +77,7 @@ func (s) TestGetSocketOpt(t *testing.T) {
 			t.Fatalf("failed to SetsockoptTimeval(%v,%v,%v,%v) due to %v", int(fd), syscall.SOL_SOCKET, syscall.SO_SNDTIMEO, sendTimeout, err)
 		}
 	})
-	sktopt := channelz.GetSocketOption(conn)
+	sktopt := GetSocketOption(conn)
 	if !reflect.DeepEqual(sktopt.Linger, l) {
 		t.Fatalf("get socket option linger, want: %v, got %v", l, sktopt.Linger)
 	}
@@ -92,7 +91,7 @@ func (s) TestGetSocketOpt(t *testing.T) {
 		t.Fatalf("TCPInfo.State want 1 (TCP_ESTABLISHED), got %v", sktopt)
 	}
 
-	sktopt = channelz.GetSocketOption(ln)
+	sktopt = GetSocketOption(ln)
 	if sktopt == nil || sktopt.TCPInfo == nil || sktopt.TCPInfo.State != 10 {
 		t.Fatalf("TCPInfo.State want 10 (TCP_LISTEN), got %v", sktopt)
 	}

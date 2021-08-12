@@ -23,7 +23,6 @@ import (
 	"github.com/golang/protobuf/jsonpb"
 	wrapperspb "github.com/golang/protobuf/ptypes/wrappers"
 	"google.golang.org/grpc/internal/grpctest"
-	scpb "google.golang.org/grpc/internal/proto/grpc_service_config"
 )
 
 type s struct {
@@ -36,21 +35,21 @@ func Test(t *testing.T) {
 
 // TestXdsConfigMarshalToJSON is an example to print json format of xds_config.
 func (s) TestXdsConfigMarshalToJSON(t *testing.T) {
-	c := &scpb.XdsConfig{
-		ChildPolicy: []*scpb.LoadBalancingConfig{
-			{Policy: &scpb.LoadBalancingConfig_Grpclb{
-				Grpclb: &scpb.GrpcLbConfig{},
+	c := &XdsConfig{
+		ChildPolicy: []*LoadBalancingConfig{
+			{Policy: &LoadBalancingConfig_Grpclb{
+				Grpclb: &GrpcLbConfig{},
 			}},
-			{Policy: &scpb.LoadBalancingConfig_RoundRobin{
-				RoundRobin: &scpb.RoundRobinConfig{},
+			{Policy: &LoadBalancingConfig_RoundRobin{
+				RoundRobin: &RoundRobinConfig{},
 			}},
 		},
-		FallbackPolicy: []*scpb.LoadBalancingConfig{
-			{Policy: &scpb.LoadBalancingConfig_Grpclb{
-				Grpclb: &scpb.GrpcLbConfig{},
+		FallbackPolicy: []*LoadBalancingConfig{
+			{Policy: &LoadBalancingConfig_Grpclb{
+				Grpclb: &GrpcLbConfig{},
 			}},
-			{Policy: &scpb.LoadBalancingConfig_PickFirst{
-				PickFirst: &scpb.PickFirstConfig{},
+			{Policy: &LoadBalancingConfig_PickFirst{
+				PickFirst: &PickFirstConfig{},
 			}},
 		},
 		EdsServiceName: "eds.service.name",

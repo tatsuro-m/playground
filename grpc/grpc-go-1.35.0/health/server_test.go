@@ -22,7 +22,6 @@ import (
 	"testing"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/health"
 	healthgrpc "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/internal/grpctest"
 )
@@ -38,6 +37,6 @@ func Test(t *testing.T) {
 // Make sure the service implementation complies with the proto definition.
 func (s) TestRegister(t *testing.T) {
 	s := grpc.NewServer()
-	healthgrpc.RegisterHealthServer(s, health.NewServer())
+	healthgrpc.RegisterHealthServer(s, NewServer())
 	s.Stop()
 }

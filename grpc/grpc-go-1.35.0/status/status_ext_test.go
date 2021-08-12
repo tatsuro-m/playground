@@ -25,7 +25,6 @@ import (
 	"github.com/golang/protobuf/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/internal/grpctest"
-	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/grpc_testing"
 )
 
@@ -37,7 +36,7 @@ func Test(t *testing.T) {
 	grpctest.RunSubTests(t, s{})
 }
 
-func errWithDetails(t *testing.T, s *status.Status, details ...proto.Message) error {
+func errWithDetails(t *testing.T, s *Status, details ...proto.Message) error {
 	t.Helper()
 	res, err := s.WithDetails(details...)
 	if err != nil {
@@ -48,8 +47,8 @@ func errWithDetails(t *testing.T, s *status.Status, details ...proto.Message) er
 
 func (s) TestErrorIs(t *testing.T) {
 	// Test errors.
-	testErr := status.Error(codes.Internal, "internal server error")
-	testErrWithDetails := errWithDetails(t, status.New(codes.Internal, "internal server error"), &grpc_testing.Empty{})
+	testErr := Error(codes.Internal, "internal server error")
+	testErrWithDetails := errWithDetails(t, New(codes.Internal, "internal server error"), &grpc_testing.Empty{})
 
 	// Test cases.
 	testCases := []struct {
@@ -57,13 +56,13 @@ func (s) TestErrorIs(t *testing.T) {
 		want       bool
 	}{
 		{err1: testErr, err2: nil, want: false},
-		{err1: testErr, err2: status.Error(codes.Internal, "internal server error"), want: true},
-		{err1: testErr, err2: status.Error(codes.Internal, "internal error"), want: false},
-		{err1: testErr, err2: status.Error(codes.Unknown, "internal server error"), want: false},
+		{err1: testErr, err2: Error(codes.Internal, "internal server error"), want: true},
+		{err1: testErr, err2: Error(codes.Internal, "internal error"), want: false},
+		{err1: testErr, err2: Error(codes.Unknown, "internal server error"), want: false},
 		{err1: testErr, err2: errors.New("non-grpc error"), want: false},
-		{err1: testErrWithDetails, err2: status.Error(codes.Internal, "internal server error"), want: false},
-		{err1: testErrWithDetails, err2: errWithDetails(t, status.New(codes.Internal, "internal server error"), &grpc_testing.Empty{}), want: true},
-		{err1: testErrWithDetails, err2: errWithDetails(t, status.New(codes.Internal, "internal server error"), &grpc_testing.Empty{}, &grpc_testing.Empty{}), want: false},
+		{err1: testErrWithDetails, err2: Error(codes.Internal, "internal server error"), want: false},
+		{err1: testErrWithDetails, err2: errWithDetails(t, New(codes.Internal, "internal server error"), &grpc_testing.Empty{}), want: true},
+		{err1: testErrWithDetails, err2: errWithDetails(t, New(codes.Internal, "internal server error"), &grpc_testing.Empty{}, &grpc_testing.Empty{}), want: false},
 	}
 
 	for _, tc := range testCases {

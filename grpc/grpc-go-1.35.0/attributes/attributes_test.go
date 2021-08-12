@@ -22,14 +22,12 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-
-	"google.golang.org/grpc/attributes"
 )
 
 func ExampleAttributes() {
 	type keyOne struct{}
 	type keyTwo struct{}
-	a := attributes.New(keyOne{}, 1, keyTwo{}, "two")
+	a := New(keyOne{}, 1, keyTwo{}, "two")
 	fmt.Println("Key one:", a.Value(keyOne{}))
 	fmt.Println("Key two:", a.Value(keyTwo{}))
 	// Output:
@@ -40,7 +38,7 @@ func ExampleAttributes() {
 func ExampleAttributes_WithValues() {
 	type keyOne struct{}
 	type keyTwo struct{}
-	a := attributes.New(keyOne{}, 1)
+	a := New(keyOne{}, 1)
 	a = a.WithValues(keyTwo{}, "two")
 	fmt.Println("Key one:", a.Value(keyOne{}))
 	fmt.Println("Key two:", a.Value(keyTwo{}))
@@ -52,8 +50,8 @@ func ExampleAttributes_WithValues() {
 // Test that two attributes with the same content are `reflect.DeepEqual`.
 func TestDeepEqual(t *testing.T) {
 	type keyOne struct{}
-	a1 := attributes.New(keyOne{}, 1)
-	a2 := attributes.New(keyOne{}, 1)
+	a1 := New(keyOne{}, 1)
+	a2 := New(keyOne{}, 1)
 	if !reflect.DeepEqual(a1, a2) {
 		t.Fatalf("reflect.DeepEqual(%+v, %+v), want true, got false", a1, a2)
 	}
