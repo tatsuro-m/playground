@@ -1,0 +1,12 @@
+syntax = "proto3";
+package chat;
+option go_package = "./chat";
+
+message Message {
+  string title = 1;
+  string body = 2;
+}
+
+service ChatService {
+  rpc SayHello(Message) returns (Message) {}
+}
