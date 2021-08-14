@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  db:
+    platform: linux/x86_64
+    image: mysql:8.0.26
+    environment:
+      MYSQL_ROOT_PASSWORD: dbpass
+      MYSQL_DATABASE: hackernews
+    volumes:
+      - ./internal/pkg/db/migrations/mysql/data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/go/src/app
+    command: sh -c "sleep 5 && go run server.go"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  migration:
+    build:
+      context: .
+      dockerfile: migration.dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./internal/pkg/db/migrations/mysql/:/go/src/app/mysql
+    command: sh -c "migrate -database mysql://root:dbpass@tcp\(db:3306\)/hackernews -path mysql/ up"
+    depends_on:
+      - db
