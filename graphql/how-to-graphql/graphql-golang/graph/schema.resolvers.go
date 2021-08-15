@@ -8,6 +8,9 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/tatsuro-m/hackernews/internal/users"
+	"github.com/tatsuro-m/hackernews/pkg/jwt"
+
 	"github.com/tatsuro-m/hackernews/internal/links"
 
 	"github.com/tatsuro-m/hackernews/graph/generated"
@@ -24,15 +27,47 @@ func (r *mutationResolver) CreateLink(ctx context.Context, input *model.NewLink)
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (string, error) {
-	panic(fmt.Errorf("not implemented"))
+	var user users.User
+	user.Username = input.Username
+	user.Password = input.Password
+	user.Create()
+
+	token, err := jwt.GenerateToken(user.Username)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
 
 func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string, error) {
-	panic(fmt.Errorf("not implemented"))
+	var user users.User
+	user.Username = input.Username
+	user.Password = input.Password
+	correct := user.Authenticate()
+
+	if !correct {
+		return "", &users.WrongUsernameOrPasswordError{}
+	}
+	token, err := jwt.GenerateToken(user.Username)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
 
 func (r *mutationResolver) RefreshToken(ctx context.Context, input model.RefreshTokenInput) (string, error) {
-	panic(fmt.Errorf("not implemented"))
+	username, err := jwt.ParseToken(input.Token)
+	if err != nil {
+		return "", fmt.Errorf("access denied")
+	}
+	token, err := jwt.GenerateToken(username)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
 
 func (r *queryResolver) Links(ctx context.Context) ([]*model.Link, error) {

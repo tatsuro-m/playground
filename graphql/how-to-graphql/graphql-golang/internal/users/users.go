@@ -58,3 +58,23 @@ func GetUserIdByUsername(username string) (int, error) {
 
 	return id, nil
 }
+
+func (u *User) Authenticate() bool {
+	statement, err := database.Db.Prepare("select Password from Users WHERE Username = ?")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	row := statement.QueryRow(u.Username)
+
+	var hashedPassword string
+	err = row.Scan(&hashedPassword)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false
+		} else {
+			log.Fatalln(err)
+		}
+	}
+
+	return CheckPasswordHash(u.Password, hashedPassword)
+}
