@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/tatsuro-m/hackernews/internal/auth"
+
 	"github.com/tatsuro-m/hackernews/graph"
 	"github.com/tatsuro-m/hackernews/graph/generated"
 
@@ -24,6 +26,7 @@ func main() {
 	}
 
 	router := chi.NewRouter()
+	router.Use(auth.MiddleWare())
 
 	database.InitDB()
 	server := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
