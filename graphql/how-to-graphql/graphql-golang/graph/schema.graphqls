@@ -32,7 +32,6 @@ input NewUser {
     password: String!
 }
 
-
 input Login {
     username: String!
     password: String!
