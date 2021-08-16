@@ -44,7 +44,7 @@ input DeleteLink {
 
 type Mutation {
     createLink(input: NewLink): Link!
-    deleteLink(input: DeleteLink): Link!
+    deleteLink(input: DeleteLink): Boolean!
     createUser(input: NewUser): String!
     login(input: Login!): String!
     # we'll talk about this in authentication section

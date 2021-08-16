@@ -71,7 +71,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	CreateLink(ctx context.Context, input *model.NewLink) (*model.Link, error)
-	DeleteLink(ctx context.Context, input *model.DeleteLink) (*model.Link, error)
+	DeleteLink(ctx context.Context, input *model.DeleteLink) (bool, error)
 	CreateUser(ctx context.Context, input *model.NewUser) (string, error)
 	Login(ctx context.Context, input model.Login) (string, error)
 	RefreshToken(ctx context.Context, input model.RefreshTokenInput) (string, error)
@@ -322,7 +322,7 @@ input DeleteLink {
 
 type Mutation {
     createLink(input: NewLink): Link!
-    deleteLink(input: DeleteLink): Link!
+    deleteLink(input: DeleteLink): Boolean!
     createUser(input: NewUser): String!
     login(input: Login!): String!
     # we'll talk about this in authentication section
@@ -683,9 +683,9 @@ func (ec *executionContext) _Mutation_deleteLink(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Link)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNLink2ᚖgithubᚗcomᚋtatsuroᚑmᚋhackernewsᚋgraphᚋmodelᚐLink(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {

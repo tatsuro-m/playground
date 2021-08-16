@@ -36,8 +36,9 @@ func (r *mutationResolver) CreateLink(ctx context.Context, input *model.NewLink)
 	return &model.Link{ID: strconv.FormatInt(linkID, 10), Title: link.Title, Address: link.Address, User: graphqlUser}, nil
 }
 
-func (r *mutationResolver) DeleteLink(ctx context.Context, input *model.DeleteLink) (*model.Link, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) DeleteLink(ctx context.Context, input *model.DeleteLink) (bool, error) {
+	success := links.DeleteByID(input.ID)
+	return success, nil
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input *model.NewUser) (string, error) {

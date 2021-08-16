@@ -1,6 +1,7 @@
 package links
 
 import (
+	"fmt"
 	"log"
 
 	database "github.com/tatsuro-m/hackernews/internal/pkg/db/migrations/mysql"
@@ -63,4 +64,18 @@ func GetAll() []Link {
 	}
 
 	return links
+}
+
+func DeleteByID(id string) bool {
+	statement, err := database.Db.Prepare("DELETE FROM Links WHERE ID=?")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	_, err = statement.Exec(id)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	return true
 }
