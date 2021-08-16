@@ -40,6 +40,31 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
+func GetAll() []User {
+	stmt, err := database.Db.Prepare("SELECT * FROM Users")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer stmt.Close()
+	rows, err := stmt.Query()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer rows.Close()
+	var resultUsers []User
+
+	for rows.Next() {
+		var user User
+		err := rows.Scan(&user.ID, &user.Username, &user.Password)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		resultUsers = append(resultUsers, user)
+	}
+
+	return resultUsers
+}
+
 func GetUserIdByUsername(username string) (int, error) {
 	statement, err := database.Db.Prepare("select ID from Users WHERE Username = ?")
 	if err != nil {

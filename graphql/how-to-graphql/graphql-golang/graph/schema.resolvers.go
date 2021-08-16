@@ -100,7 +100,15 @@ func (r *queryResolver) Links(ctx context.Context) ([]*model.Link, error) {
 }
 
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	var resultUsers []*model.User
+	var dbUsers []users.User
+	dbUsers = users.GetAll()
+
+	for _, user := range dbUsers {
+		resultUsers = append(resultUsers, &model.User{ID: user.ID, Name: user.Username})
+	}
+
+	return resultUsers, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
