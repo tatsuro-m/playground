@@ -8,15 +8,12 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/tatsuro-m/hackernews/internal/auth"
-
-	"github.com/tatsuro-m/hackernews/internal/users"
-	"github.com/tatsuro-m/hackernews/pkg/jwt"
-
-	"github.com/tatsuro-m/hackernews/internal/links"
-
 	"github.com/tatsuro-m/hackernews/graph/generated"
 	"github.com/tatsuro-m/hackernews/graph/model"
+	"github.com/tatsuro-m/hackernews/internal/auth"
+	"github.com/tatsuro-m/hackernews/internal/links"
+	"github.com/tatsuro-m/hackernews/internal/users"
+	"github.com/tatsuro-m/hackernews/pkg/jwt"
 )
 
 func (r *mutationResolver) CreateLink(ctx context.Context, input *model.NewLink) (*model.Link, error) {
@@ -100,6 +97,10 @@ func (r *queryResolver) Links(ctx context.Context) ([]*model.Link, error) {
 	}
 
 	return resultLinks, nil
+}
+
+func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 // Mutation returns generated.MutationResolver implementation.
