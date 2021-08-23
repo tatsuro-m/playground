@@ -5,7 +5,7 @@ resource "google_cloud_run_service" "default" {
   template {
     spec {
       containers {
-        image = "us-docker.pkg.dev/cloudrun/container/hello"
+        image = "asia-northeast1-docker.pkg.dev/playground-318023/stg-cloud-run-main/golang-api:v2"
       }
     }
   }
