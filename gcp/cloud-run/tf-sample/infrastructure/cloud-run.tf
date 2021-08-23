@@ -1,9 +1,20 @@
+resource "google_service_account" "crun" {
+  account_id   = "${local.app_prefix}-crun"
+  display_name = "cloud run default service account"
+}
+
+resource "google_project_iam_member" "role1" {
+  role   = "roles/artifactregistry.reader"
+  member = "serviceAccount:${google_service_account.crun.email}"
+}
+
 resource "google_cloud_run_service" "default" {
   name     = "${local.app_prefix}-default"
   location = var.default_region
 
   template {
     spec {
+      service_account_name = google_service_account.crun.email
       containers {
         image = "asia-northeast1-docker.pkg.dev/playground-318023/stg-cloud-run-main/golang-api:v2"
       }
