@@ -1,6 +1,6 @@
 resource "google_cloud_run_service" "default" {
   name     = "${local.app_prefix}-default"
-  location = "asia-northeast1"
+  location = var.default_region
 
   template {
     spec {
@@ -31,4 +31,15 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
   service  = google_cloud_run_service.default.name
 
   policy_data = data.google_iam_policy.noauth.policy_data
+}
+
+
+resource "google_artifact_registry_repository" "main" {
+  provider = google-beta
+  project  = "playground-318023"
+
+  location      = var.default_region
+  repository_id = "${local.app_prefix}-main"
+  description   = "main golang repository"
+  format        = "DOCKER"
 }
