@@ -10,6 +10,15 @@ resource "google_cloud_run_service" "default" {
     }
   }
 
+  metadata {
+    annotations = {
+      "autoscaling.knative.dev/minScale" = "0"
+      "autoscaling.knative.dev/maxScale" = "10"
+      "run.googleapis.com/client-name"   = "terraform"
+    }
+  }
+
+
   traffic {
     percent         = 100
     latest_revision = true
