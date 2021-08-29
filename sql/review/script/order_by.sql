@@ -1,0 +1,17 @@
+SELECT *
+FROM city
+ORDER BY ID ASC;
+
+SELECT *
+FROM city
+ORDER BY ID DESC;
+
+SELECT *
+FROM city
+WHERE CountryCode = 'JPN'
+ORDER BY ID DESC;
+
+SELECT *
+FROM city
+WHERE CountryCode = 'JPN'
+ORDER BY Name ASC;
