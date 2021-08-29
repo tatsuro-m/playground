@@ -1,0 +1,7 @@
+SELECT *
+FROM city
+WHERE Population BETWEEN 1 AND 9999999;
+
+SELECT *
+FROM city
+WHERE Population BETWEEN 1 AND 1000;
