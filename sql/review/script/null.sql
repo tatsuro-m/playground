@@ -1,0 +1,8 @@
+# NULL 判定
+SELECT *
+FROM city
+WHERE Name IS NULL;
+
+SELECT *
+FROM city
+WHERE Name IS NOT NULL;
