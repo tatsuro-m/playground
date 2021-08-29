@@ -1,0 +1,9 @@
+SELECT *
+FROM city
+WHERE CountryCode = 'JPN'
+ORDER BY Name ASC LIMIT 10 OFFSET 1;
+
+SELECT *
+FROM city
+WHERE CountryCode = 'JPN'
+LIMIT 10 OFFSET 1;
