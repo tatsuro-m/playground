@@ -1,0 +1,5 @@
+DELETE FROM city
+WHERE ID = 11111;
+
+DELETE FROM city
+WHERE ID = 9999 AND Name = 'sample';
