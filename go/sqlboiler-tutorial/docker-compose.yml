@@ -45,7 +45,6 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - ./models/:/go/src/app/models
-      - ./sqlboiler.toml:/go/src/app/sqlboiler.toml
+      - .:/go/src/app
     depends_on:
       - db
