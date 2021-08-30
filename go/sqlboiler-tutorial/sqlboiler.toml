@@ -4,3 +4,4 @@ host = "db"
 user = "postgres"
 pass = "password"
 sslmode = "disable"
+blacklist = ["schema_migrations"]
