@@ -23,27 +23,32 @@ import (
 
 // User is an object representing the database table.
 type User struct {
-	ID   int    `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Name string `boil:"name" json:"name" toml:"name" yaml:"name"`
+	ID    int    `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Name  string `boil:"name" json:"name" toml:"name" yaml:"name"`
+	Email string `boil:"email" json:"email" toml:"email" yaml:"email"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var UserColumns = struct {
-	ID   string
-	Name string
+	ID    string
+	Name  string
+	Email string
 }{
-	ID:   "id",
-	Name: "name",
+	ID:    "id",
+	Name:  "name",
+	Email: "email",
 }
 
 var UserTableColumns = struct {
-	ID   string
-	Name string
+	ID    string
+	Name  string
+	Email string
 }{
-	ID:   "users.id",
-	Name: "users.name",
+	ID:    "users.id",
+	Name:  "users.name",
+	Email: "users.email",
 }
 
 // Generated where
@@ -95,11 +100,13 @@ func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
 }
 
 var UserWhere = struct {
-	ID   whereHelperint
-	Name whereHelperstring
+	ID    whereHelperint
+	Name  whereHelperstring
+	Email whereHelperstring
 }{
-	ID:   whereHelperint{field: "\"users\".\"id\""},
-	Name: whereHelperstring{field: "\"users\".\"name\""},
+	ID:    whereHelperint{field: "\"users\".\"id\""},
+	Name:  whereHelperstring{field: "\"users\".\"name\""},
+	Email: whereHelperstring{field: "\"users\".\"email\""},
 }
 
 // UserRels is where relationship names are stored.
@@ -119,8 +126,8 @@ func (*userR) NewStruct() *userR {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "name"}
-	userColumnsWithoutDefault = []string{}
+	userAllColumns            = []string{"id", "name", "email"}
+	userColumnsWithoutDefault = []string{"email"}
 	userColumnsWithDefault    = []string{"id", "name"}
 	userPrimaryKeyColumns     = []string{"id"}
 )
