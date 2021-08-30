@@ -10,6 +10,9 @@ COPY go.mod go.sum ./
 RUN go mod download
 EXPOSE 8080
 
+RUN go install github.com/volatiletech/sqlboiler/v4@latest && \
+    go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
+
 CMD ["go", "run", "main.go"]
 
 

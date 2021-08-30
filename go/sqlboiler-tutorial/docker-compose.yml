@@ -38,6 +38,6 @@ services:
       - ./migrations/:/go/src/app/migrations
     environment:
       DEV_POSTGRESQL_URL: ${DEV_POSTGRESQL_URL}
-    command: sh -c "migrate -database ${DEV_POSTGRESQL_URL} -path migrations up
+    command: sh -c "migrate -database ${DEV_POSTGRESQL_URL} -path migrations up"
     depends_on:
       - db
