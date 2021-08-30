@@ -5,13 +5,10 @@ ENV CGO_ENABLED 0
 ENV TZ=Asia/Tokyo
 WORKDIR ${ROOT}
 
-RUN apk update && apk add git postgresql-client
+RUN apk update && apk add git
 COPY go.mod go.sum ./
 RUN go mod download
 EXPOSE 8080
-
-RUN go install github.com/volatiletech/sqlboiler/v4@latest && \
-    go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
 
 CMD ["go", "run", "main.go"]
 

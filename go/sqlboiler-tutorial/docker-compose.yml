@@ -15,7 +15,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
       target: dev
     tty: true
     stdin_open: true
@@ -29,7 +29,7 @@ services:
   migration:
     build:
       context: .
-      dockerfile: migration.dockerfile
+      dockerfile: docker/migration.dockerfile
     tty: true
     stdin_open: true
     volumes:
@@ -41,7 +41,7 @@ services:
   boiler:
     build:
       context: .
-      dockerfile: boiler.dockerfile
+      dockerfile: docker/boiler.dockerfile
     tty: true
     stdin_open: true
     volumes:
