@@ -37,3 +37,15 @@ services:
     command: sh -c "migrate -database postgres://postgres:password@db:5432/postgres?sslmode=disable -path migrations up"
     depends_on:
       - db
+
+  boiler:
+    build:
+      context: .
+      dockerfile: boiler.dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./models/:/go/src/app/models
+      - ./sqlboiler.toml:/go/src/app/sqlboiler.toml
+    depends_on:
+      - db
