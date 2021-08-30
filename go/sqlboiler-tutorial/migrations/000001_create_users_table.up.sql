@@ -1,0 +1,5 @@
+CREATE TABLE users
+(
+    id   int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name varchar(20) NOT NULL DEFAULT ''
+);

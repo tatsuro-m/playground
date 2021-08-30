@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: development
+      POSTGRES_DB: postgres
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
@@ -26,16 +26,14 @@ services:
     depends_on:
       - db
 
-#  migration:
-#    build:
-#      context: .
-#      dockerfile: migration.dockerfile
-#    tty: true
-#    stdin_open: true
-#    volumes:
-#      - ./migrations/:/go/src/app/migrations
-#    environment:
-#      DEV_POSTGRESQL_URL: ${DEV_POSTGRESQL_URL}
-#    command: sh -c "migrate -database ${DEV_POSTGRESQL_URL} -path migrations up"
-#    depends_on:
-#      - db
+  migration:
+    build:
+      context: .
+      dockerfile: migration.dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./migrations/:/go/src/app/migrations
+    command: sh -c "migrate -database postgres://postgres:password@db:5432/postgres?sslmode=disable -path migrations up"
+    depends_on:
+      - db
