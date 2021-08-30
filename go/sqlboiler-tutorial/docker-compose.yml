@@ -26,6 +26,18 @@ services:
     depends_on:
       - db
 
+  test:
+    build:
+      context: .
+      dockerfile: docker/test.dockerfile
+    tty: true
+    stdin_open: true
+    command: go test -v ./...
+    volumes:
+      - .:/go/src/app
+    depends_on:
+      - db
+
   migration:
     build:
       context: .
