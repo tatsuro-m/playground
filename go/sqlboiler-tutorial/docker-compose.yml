@@ -19,8 +19,6 @@ services:
       target: dev
     tty: true
     stdin_open: true
-    environment:
-      DSN: "host=db user=postgres password=password dbname=development port=5432 sslmode=disable TimeZone=Asia/Tokyo"
     volumes:
       - .:/go/src/app
     ports:
@@ -28,16 +26,16 @@ services:
     depends_on:
       - db
 
-  migration:
-    build:
-      context: .
-      dockerfile: migration.dockerfile
-    tty: true
-    stdin_open: true
-    volumes:
-      - ./migrations/:/go/src/app/migrations
-    environment:
-      DEV_POSTGRESQL_URL: ${DEV_POSTGRESQL_URL}
-    command: sh -c "migrate -database ${DEV_POSTGRESQL_URL} -path migrations up"
-    depends_on:
-      - db
+#  migration:
+#    build:
+#      context: .
+#      dockerfile: migration.dockerfile
+#    tty: true
+#    stdin_open: true
+#    volumes:
+#      - ./migrations/:/go/src/app/migrations
+#    environment:
+#      DEV_POSTGRESQL_URL: ${DEV_POSTGRESQL_URL}
+#    command: sh -c "migrate -database ${DEV_POSTGRESQL_URL} -path migrations up"
+#    depends_on:
+#      - db
