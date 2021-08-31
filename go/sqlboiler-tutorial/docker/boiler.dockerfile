@@ -9,4 +9,4 @@ RUN apk update && apk add git postgresql-client
 RUN go install github.com/volatiletech/sqlboiler/v4@latest && \
     go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-psql@latest
 
-CMD ["sqlboiler", "psql", "--wipe"]
+CMD ["sqlboiler", "psql"]
