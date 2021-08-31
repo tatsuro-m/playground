@@ -2,22 +2,22 @@ package user
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"math/rand"
+	"sqlboiler-tutorial/db"
 	"sqlboiler-tutorial/models"
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
 
-func Insert(d *sql.DB) {
+func Insert() {
 	random, err := MakeRandomStr(10)
 	if err != nil {
 		return
 	}
 
 	u := models.User{Name: "test", Email: random + "@example.com"}
-	u.Insert(context.Background(), d, boil.Infer())
+	u.Insert(context.Background(), db.GetDB(), boil.Infer())
 }
 
 func MakeRandomStr(digit uint32) (string, error) {
