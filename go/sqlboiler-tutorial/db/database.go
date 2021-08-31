@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/volatiletech/sqlboiler/v4/boil"
+
 	_ "github.com/lib/pq"
 )
 
@@ -18,6 +20,7 @@ func Init() error {
 		return err
 	}
 
+	boil.DebugMode = true
 	d = db
 	return nil
 }
