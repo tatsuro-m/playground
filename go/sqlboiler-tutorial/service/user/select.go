@@ -17,3 +17,7 @@ func GetUserByName(name string) (*models.User, error) {
 func GetUserByID(id int) (*models.User, error) {
 	return models.FindUser(context.Background(), db.GetDB(), id)
 }
+
+func Count() (int64, error) {
+	return models.Users().Count(context.Background(), db.GetDB())
+}

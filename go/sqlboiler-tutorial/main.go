@@ -29,10 +29,24 @@ func main() {
 	u, _ = user.GetUserByID(1)
 	fmt.Println(u)
 
+	count, _ := user.Count()
+	fmt.Printf("全レコード数: %d\n", count)
+
 	printSharp()
 	fmt.Println("insert")
 	printHyphen()
 	user.Insert()
+
+	printSharp()
+	fmt.Println("update")
+	printHyphen()
+	u, _ = user.UpdateByID(1)
+	fmt.Println(u)
+
+	printSharp()
+	fmt.Println("delete")
+	printHyphen()
+	u, _ = user.DeleteByID(1)
 
 	printHyphen()
 }
