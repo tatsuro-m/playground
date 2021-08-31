@@ -28,6 +28,7 @@ type User struct {
 	Email     string    `boil:"email" json:"email" toml:"email" yaml:"email"`
 	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	Phone     string    `boil:"phone" json:"phone" toml:"phone" yaml:"phone"`
 
 	R *userR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L userL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -39,12 +40,14 @@ var UserColumns = struct {
 	Email     string
 	CreatedAt string
 	UpdatedAt string
+	Phone     string
 }{
 	ID:        "id",
 	Name:      "name",
 	Email:     "email",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
+	Phone:     "phone",
 }
 
 var UserTableColumns = struct {
@@ -53,12 +56,14 @@ var UserTableColumns = struct {
 	Email     string
 	CreatedAt string
 	UpdatedAt string
+	Phone     string
 }{
 	ID:        "users.id",
 	Name:      "users.name",
 	Email:     "users.email",
 	CreatedAt: "users.created_at",
 	UpdatedAt: "users.updated_at",
+	Phone:     "users.phone",
 }
 
 // Generated where
@@ -136,12 +141,14 @@ var UserWhere = struct {
 	Email     whereHelperstring
 	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpertime_Time
+	Phone     whereHelperstring
 }{
 	ID:        whereHelperint{field: "\"users\".\"id\""},
 	Name:      whereHelperstring{field: "\"users\".\"name\""},
 	Email:     whereHelperstring{field: "\"users\".\"email\""},
 	CreatedAt: whereHelpertime_Time{field: "\"users\".\"created_at\""},
 	UpdatedAt: whereHelpertime_Time{field: "\"users\".\"updated_at\""},
+	Phone:     whereHelperstring{field: "\"users\".\"phone\""},
 }
 
 // UserRels is where relationship names are stored.
@@ -161,9 +168,9 @@ func (*userR) NewStruct() *userR {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "name", "email", "created_at", "updated_at"}
-	userColumnsWithoutDefault = []string{"email"}
-	userColumnsWithDefault    = []string{"id", "name", "created_at", "updated_at"}
+	userAllColumns            = []string{"id", "name", "email", "created_at", "updated_at", "phone"}
+	userColumnsWithoutDefault = []string{}
+	userColumnsWithDefault    = []string{"id", "name", "email", "created_at", "updated_at", "phone"}
 	userPrimaryKeyColumns     = []string{"id"}
 )
 

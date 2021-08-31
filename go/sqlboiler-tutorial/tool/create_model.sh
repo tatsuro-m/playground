@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # ローカル開発用のスクリプト
+# db コンテナを先に立ち上げておく必要がある。
 
 # 0. マイグレーションファイルの作成
 # docker compose run --rm migration migrate create -ext sql -dir migrations -seq migration_file_name
