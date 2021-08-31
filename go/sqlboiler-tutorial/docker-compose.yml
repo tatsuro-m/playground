@@ -10,6 +10,7 @@ services:
       TZ: Asia/Tokyo
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
 
@@ -36,6 +37,12 @@ services:
     build:
       context: .
       dockerfile: docker/test.dockerfile
+    environment:
+      DB_HOST: db
+      DB_NAME: test
+      DB_USER: postgres
+      DB_PASSWORD: password
+      TEST_ENV: 1
     tty: true
     stdin_open: true
     command: go test -v ./...

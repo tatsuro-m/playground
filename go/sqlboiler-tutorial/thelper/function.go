@@ -1,0 +1,60 @@
+package thelper
+
+import (
+	"context"
+	"fmt"
+	"sqlboiler-tutorial/db"
+	"sqlboiler-tutorial/models"
+	"strconv"
+	"testing"
+
+	"github.com/volatiletech/sqlboiler/v4/boil"
+)
+
+func InsertUser(t *testing.T, num int) []models.User {
+	t.Helper()
+
+	d := db.GetDB()
+	users := make([]models.User, 0)
+
+	for i := 0; i < num; i++ {
+		u := models.User{
+			Name:  "test" + strconv.Itoa(i),
+			Email: fmt.Sprintf("test%d@example.com", i),
+			Phone: fmt.Sprintf("%d-1234-5678", i),
+		}
+
+		err := u.Insert(context.Background(), d, boil.Infer())
+		if err != nil {
+			return nil
+		}
+		users = append(users, u)
+	}
+
+	return users
+}
+
+func InsertPost(t *testing.T, num int, userID int) []models.Post {
+	t.Helper()
+
+	d := db.GetDB()
+	ctx := context.Background()
+	user, err := models.FindUser(ctx, d, userID)
+	if err != nil {
+		return nil
+	}
+
+	posts := make([]models.Post, 0)
+
+	for i := 0; i < num; i++ {
+		p := models.Post{Title: "test" + strconv.Itoa(i)}
+		err := p.SetUser(ctx, d, true, user)
+
+		if err != nil {
+			return nil
+		}
+		posts = append(posts, p)
+	}
+
+	return posts
+}
