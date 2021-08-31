@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"math/rand"
 	"sqlboiler-tutorial/models"
 
@@ -10,16 +11,29 @@ import (
 )
 
 func Insert(d *sql.DB) {
-	u := models.User{Name: "test", Email: RandomString(5) + "@example.com"}
+	random, err := MakeRandomStr(10)
+	if err != nil {
+		return
+	}
+
+	u := models.User{Name: "test", Email: random + "@example.com"}
 	u.Insert(context.Background(), d, boil.Infer())
 }
 
-func RandomString(n int) string {
-	var letter = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+func MakeRandomStr(digit uint32) (string, error) {
+	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letter[rand.Intn(len(letter))]
+	// 乱数を生成
+	b := make([]byte, digit)
+	if _, err := rand.Read(b); err != nil {
+		return "", errors.New("unexpected error...")
 	}
-	return string(b)
+
+	// letters からランダムに取り出して文字列を生成
+	var result string
+	for _, v := range b {
+		// index が letters の長さに収まるように調整
+		result += string(letters[int(v)%len(letters)])
+	}
+	return result, nil
 }
