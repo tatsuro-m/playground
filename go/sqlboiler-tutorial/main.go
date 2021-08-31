@@ -2,9 +2,18 @@ package main
 
 import (
 	"fmt"
+	"sqlboiler-tutorial/db"
+	"sqlboiler-tutorial/service/user"
 )
 
 func main() {
-	fmt.Println("Hello World!")
-	fmt.Println("sqlboiler の動作確認のためには別の go ファイルを run してください！")
+	err := db.Init()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	d := db.GetDB()
+
+	user.Insert(d)
 }

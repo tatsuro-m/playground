@@ -18,6 +18,11 @@ services:
       context: .
       dockerfile: docker/Dockerfile
       target: dev
+    environment:
+      DB_HOST: db
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: password
     tty: true
     stdin_open: true
     volumes:
