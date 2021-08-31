@@ -13,7 +13,7 @@ docker compose run --rm migration
 # 2. 変更されたDBスキーマを元に model ファイルを作り直す
 docker compose run --rm boiler
 
-# 3. model のテストもあるのでテスト全体を実行
+# 3. 念の為テスト全体を実行
 docker compose run --rm test
 
 # 全て通ったら作成されたコードを利用して実装へ
