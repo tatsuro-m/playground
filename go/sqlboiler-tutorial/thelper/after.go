@@ -3,6 +3,7 @@ package thelper
 import (
 	"context"
 	"fmt"
+	"log"
 	"sqlboiler-tutorial/db"
 	"testing"
 
@@ -12,21 +13,32 @@ import (
 func FinalizeTest(t *testing.T) {
 	t.Helper()
 
-	var tableNames []string
 	d := db.GetDB()
 	ctx := context.Background()
 
-	err := queries.Raw("select tablename \n  from pg_tables \n  where schemaname not like 'pg_%' and schemaname != 'information_schema'").Bind(ctx, d, &tableNames)
+	rows, err := queries.Raw("select tablename \n  from pg_tables \n  where schemaname not like 'pg_%' and schemaname != 'information_schema'").Query(d)
 	if err != nil {
 		fmt.Println(err)
 		return
+	}
+	defer rows.Close()
+
+	var tableNames []string
+	for rows.Next() {
+		var tableName string
+		err := rows.Scan(&tableName)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		tableNames = append(tableNames, tableName)
 	}
 
 	excludeTables := append(make([]string, 0), "schema_migrations")
 
 	for _, name := range tableNames {
 		if notContains(excludeTables, name) {
-			d.Exec(fmt.Sprintf("TRUNCATE TABLE %s CASCADE", name))
+			queries.Raw(fmt.Sprintf("TRUNCATE TABLE %s CASCADE", name)).ExecContext(ctx, d)
 		}
 	}
 }
