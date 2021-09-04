@@ -48,7 +48,7 @@ func InsertPost(t *testing.T, num int, userID int) []models.Post {
 
 	for i := 0; i < num; i++ {
 		p := models.Post{Title: "test" + strconv.Itoa(i)}
-		err := p.SetUser(ctx, d, true, user)
+		err := user.AddPosts(ctx, d, true, &p)
 
 		if err != nil {
 			return nil
