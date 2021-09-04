@@ -85,3 +85,11 @@ func DeleteByID(id int) (*models.User, error) {
 
 	return u, nil
 }
+func GetPostsByUserID(userID int) ([]*models.Post, error) {
+	u, err := GetUserByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return u.Posts().All(context.Background(), db.GetDB())
+}

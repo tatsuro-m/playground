@@ -18,3 +18,20 @@ func TestGetAllUsers(t *testing.T) {
 
 	assert.Equal(t, recordNum, actual)
 }
+
+func TestGetPostsByUserID(t *testing.T) {
+	thelper.SetupTest(t)
+	defer thelper.FinalizeTest(t)
+
+	users := thelper.InsertUser(t, 2)
+	u := users[0]
+	thelper.InsertPost(t, 5, u.ID)
+	otherUser := users[len(users)-1]
+	thelper.InsertPost(t, 2, otherUser.ID)
+
+	posts, _ := GetPostsByUserID(u.ID)
+	assert.Equal(t, 5, len(posts))
+
+	posts, _ = GetPostsByUserID(otherUser.ID)
+	assert.Equal(t, 2, len(posts))
+}
