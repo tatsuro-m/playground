@@ -29,6 +29,7 @@ func TestGetPostsByUserID(t *testing.T) {
 	otherUser := users[len(users)-1]
 	thelper.InsertPost(t, 2, otherUser.ID)
 
+	// それぞれの user の posts だけ返ってくるか確認する
 	posts, _ := GetPostsByUserID(u.ID)
 	assert.Equal(t, 5, len(posts))
 
