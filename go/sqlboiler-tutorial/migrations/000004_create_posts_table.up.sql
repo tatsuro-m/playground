@@ -6,3 +6,6 @@ CREATE TABLE posts
     created_at timestamptz               NOT NULL DEFAULT current_timestamp,
     updated_at timestamptz               NOT NULL DEFAULT current_timestamp
 );
+
+ALTER TABLE posts
+    ADD FOREIGN KEY (user_id) REFERENCES users (id);

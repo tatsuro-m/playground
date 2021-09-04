@@ -15,6 +15,7 @@ func InsertUser(t *testing.T, num int) []models.User {
 	t.Helper()
 
 	d := db.GetDB()
+	ctx := context.Background()
 	users := make([]models.User, 0)
 
 	for i := 0; i < num; i++ {
@@ -24,7 +25,7 @@ func InsertUser(t *testing.T, num int) []models.User {
 			Phone: fmt.Sprintf("%d-1234-5678", i),
 		}
 
-		err := u.Insert(context.Background(), d, boil.Infer())
+		err := u.Insert(ctx, d, boil.Infer())
 		if err != nil {
 			return nil
 		}

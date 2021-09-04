@@ -28,3 +28,11 @@ func Init() error {
 func GetDB() *sql.DB {
 	return d
 }
+
+func Close() {
+	err := d.Close()
+
+	if err != nil {
+		return
+	}
+}

@@ -1,7 +1,6 @@
 package thelper
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"sqlboiler-tutorial/db"
@@ -14,7 +13,6 @@ func FinalizeTest(t *testing.T) {
 	t.Helper()
 
 	d := db.GetDB()
-	ctx := context.Background()
 
 	rows, err := queries.Raw("select tablename \n  from pg_tables \n  where schemaname not like 'pg_%' and schemaname != 'information_schema'").Query(d)
 	if err != nil {
@@ -38,9 +36,11 @@ func FinalizeTest(t *testing.T) {
 
 	for _, name := range tableNames {
 		if notContains(excludeTables, name) {
-			queries.Raw(fmt.Sprintf("TRUNCATE TABLE %s CASCADE", name)).ExecContext(ctx, d)
+			queries.Raw(fmt.Sprintf("TRUNCATE TABLE %s CASCADE", name)).Exec(d)
 		}
 	}
+
+	db.Close()
 }
 
 func notContains(s []string, e string) bool {
