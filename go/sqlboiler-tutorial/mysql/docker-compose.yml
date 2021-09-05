@@ -1,0 +1,78 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:13.3-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+      TZ: Asia/Tokyo
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: dev
+    environment:
+      DB_HOST: db
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: password
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/go/src/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  test:
+    build:
+      context: .
+      dockerfile: docker/test.dockerfile
+    environment:
+      DB_HOST: db
+      DB_NAME: test
+      DB_USER: postgres
+      DB_PASSWORD: password
+      TEST_ENV: 1
+    tty: true
+    stdin_open: true
+    command: go test -v ./...
+    volumes:
+      - .:/go/src/app
+    depends_on:
+      - db
+
+  migration:
+    build:
+      context: .
+      dockerfile: docker/migration.dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./migrations/:/go/src/app/migrations
+    environment:
+      DEV_POSTGRESQL_URL: ${DEV_POSTGRESQL_URL}
+      TEST_POSTGRESQL_URL: ${TEST_POSTGRESQL_URL}
+    command: sh -c "migrate -database ${DEV_POSTGRESQL_URL} -path migrations up && migrate -database ${TEST_POSTGRESQL_URL} -path migrations up"
+    depends_on:
+      - db
+
+  boiler:
+    build:
+      context: .
+      dockerfile: docker/boiler.dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/go/src/app
+    depends_on:
+      - db
