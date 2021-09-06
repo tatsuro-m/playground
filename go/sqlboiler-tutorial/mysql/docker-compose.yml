@@ -1,18 +1,16 @@
 version: "3.8"
 services:
   db:
-    image: postgres:13.3-alpine
+    platform: linux/x86_64
+    image: mysql:8.0.26
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postgres
-      PGDATA: /var/lib/postgresql/data/pgdata
-      TZ: Asia/Tokyo
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mysql
     volumes:
-      - ./tmp/db:/var/lib/postgresql/data
+      - ./tmp/db/data:/var/lib/mysql
       - ./initdb:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432"
+      - "3306:3306"
 
   web:
     build:
@@ -21,8 +19,8 @@ services:
       target: dev
     environment:
       DB_HOST: db
-      DB_NAME: postgres
-      DB_USER: postgres
+      DB_NAME: mysql
+      DB_USER: root
       DB_PASSWORD: password
     tty: true
     stdin_open: true
@@ -40,7 +38,7 @@ services:
     environment:
       DB_HOST: db
       DB_NAME: test
-      DB_USER: postgres
+      DB_USER: mysql
       DB_PASSWORD: password
       TEST_ENV: 1
     tty: true
@@ -59,10 +57,7 @@ services:
     stdin_open: true
     volumes:
       - ./migrations/:/go/src/app/migrations
-    environment:
-      DEV_POSTGRESQL_URL: ${DEV_POSTGRESQL_URL}
-      TEST_POSTGRESQL_URL: ${TEST_POSTGRESQL_URL}
-    command: sh -c "migrate -database ${DEV_POSTGRESQL_URL} -path migrations up && migrate -database ${TEST_POSTGRESQL_URL} -path migrations up"
+    command: sh -c "migrate -database mysql://root:password@tcp\(db:3306\)/mysql -path migrations/ up"
     depends_on:
       - db
 
