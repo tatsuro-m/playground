@@ -1,4 +1,4 @@
-module sqlboiler-tutorial
+module sqlboiler-tutorial-mysql
 
 require (
 	github.com/friendsofgo/errors v0.9.2
