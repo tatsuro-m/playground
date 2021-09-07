@@ -3,8 +3,8 @@ no-tests = true
 
 [mysql]
 dbname = "mysql"
-host = "tcp(db)"
+host = "db"
 user = "root"
 pass = "password"
 sslmode = "false"
-blacklist = ["schema_migrations"]
+whitelist = ["users", "posts"]
