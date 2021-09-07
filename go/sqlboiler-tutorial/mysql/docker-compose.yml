@@ -5,7 +5,7 @@ services:
     image: mysql:8.0.26
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: mysql
+      MYSQL_DATABASE: dev
     volumes:
       - ./tmp/db/data:/var/lib/mysql
       - ./initdb:/docker-entrypoint-initdb.d
@@ -19,7 +19,7 @@ services:
       target: dev
     environment:
       DB_HOST: db
-      DB_NAME: mysql
+      DB_NAME: dev
       DB_USER: root
       DB_PASSWORD: password
     tty: true
@@ -57,7 +57,7 @@ services:
     stdin_open: true
     volumes:
       - ./migrations/:/go/src/app/migrations
-    command: sh -c "migrate -database mysql://root:password@tcp\(db:3306\)/mysql -path migrations/ up && migrate -database mysql://root:password@tcp\(db:3306\)/test -path migrations/ up"
+    command: sh -c "migrate -database mysql://root:password@tcp\(db:3306\)/dev -path migrations/ up && migrate -database mysql://root:password@tcp\(db:3306\)/test -path migrations/ up"
     depends_on:
       - db
 
