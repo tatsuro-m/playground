@@ -7,15 +7,15 @@ import (
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
 
-	_ "github.com/lib/pq"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var d *sql.DB
 
 func Init() error {
-	dsn := fmt.Sprintf("host=%s dbname=%s user=%s password=%s sslmode=disable",
-		os.Getenv("DB_HOST"), os.Getenv("DB_NAME"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"))
-	db, err := sql.Open("postgres", dsn)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s",
+		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return err
 	}

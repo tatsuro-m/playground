@@ -38,7 +38,7 @@ services:
     environment:
       DB_HOST: db
       DB_NAME: test
-      DB_USER: mysql
+      DB_USER: root
       DB_PASSWORD: password
       TEST_ENV: 1
     tty: true
