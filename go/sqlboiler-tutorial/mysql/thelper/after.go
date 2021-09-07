@@ -3,7 +3,7 @@ package thelper
 import (
 	"fmt"
 	"log"
-	"sqlboiler-tutorial/db"
+	"sqlboiler-tutorial-mysql/db"
 	"testing"
 
 	"github.com/volatiletech/sqlboiler/v4/queries"

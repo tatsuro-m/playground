@@ -2,8 +2,8 @@ package post
 
 import (
 	"context"
-	"sqlboiler-tutorial/db"
-	"sqlboiler-tutorial/models"
+	"sqlboiler-tutorial-mysql/db"
+	"sqlboiler-tutorial-mysql/models"
 )
 
 func GetAllPosts() ([]*models.Post, error) {

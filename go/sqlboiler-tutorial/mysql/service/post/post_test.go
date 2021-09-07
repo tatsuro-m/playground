@@ -2,8 +2,8 @@ package post
 
 import (
 	"context"
-	"sqlboiler-tutorial/db"
-	"sqlboiler-tutorial/thelper"
+	"sqlboiler-tutorial-mysql/db"
+	"sqlboiler-tutorial-mysql/thelper"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

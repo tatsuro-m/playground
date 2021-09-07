@@ -2,7 +2,7 @@ package thelper
 
 import (
 	"os"
-	"sqlboiler-tutorial/db"
+	"sqlboiler-tutorial-mysql/db"
 	"testing"
 )
 

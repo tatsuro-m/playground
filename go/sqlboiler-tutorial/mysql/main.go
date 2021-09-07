@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"sqlboiler-tutorial/db"
+	"sqlboiler-tutorial-mysql/db"
 )
 
 func main() {

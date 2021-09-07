@@ -3,8 +3,8 @@ package thelper
 import (
 	"context"
 	"fmt"
-	"sqlboiler-tutorial/db"
-	"sqlboiler-tutorial/models"
+	"sqlboiler-tutorial-mysql/db"
+	"sqlboiler-tutorial-mysql/models"
 	"strconv"
 	"testing"
 

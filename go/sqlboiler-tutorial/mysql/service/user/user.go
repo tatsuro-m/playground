@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"math/rand"
-	"sqlboiler-tutorial/db"
-	"sqlboiler-tutorial/models"
+	"sqlboiler-tutorial-mysql/db"
+	"sqlboiler-tutorial-mysql/models"
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )

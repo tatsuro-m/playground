@@ -1,7 +1,7 @@
 package user
 
 import (
-	"sqlboiler-tutorial/thelper"
+	"sqlboiler-tutorial-mysql/thelper"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
