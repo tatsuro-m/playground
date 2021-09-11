@@ -28,5 +28,5 @@ func TestGetUser(t *testing.T) {
 	p := thelper.InsertPost(t, 1, u.ID)[0]
 
 	actual, _ := p.User().One(context.Background(), db.GetDB())
-	assert.Equal(t, u, actual)
+	assert.Equal(t, u.Email, actual.Email)
 }
