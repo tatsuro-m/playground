@@ -19,14 +19,14 @@ func truncateTable() {
 	d := db.GetDB()
 	tableNames := getTableNames()
 
+	queries.Raw("SET FOREIGN_KEY_CHECKS = 0").Exec(d)
 	for _, name := range tableNames {
 		if notContains(getExcludeTables(), name) {
-			cmds := []string{"SET FOREIGN_KEY_CHECKS = 0", fmt.Sprintf("TRUNCATE TABLE %s", name), "SET FOREIGN_KEY_CHECKS = 1"}
-			for _, c := range cmds {
-				queries.Raw(c).Exec(d)
-			}
+			c := fmt.Sprintf("TRUNCATE TABLE %s", name)
+			queries.Raw(c).Exec(d)
 		}
 	}
+	queries.Raw("SET FOREIGN_KEY_CHECKS = 1").Exec(d)
 
 	db.Close()
 }
