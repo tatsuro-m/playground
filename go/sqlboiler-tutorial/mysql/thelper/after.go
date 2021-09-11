@@ -21,7 +21,7 @@ func truncateTable() {
 
 	for _, name := range tableNames {
 		if notContains(getExcludeTables(), name) {
-			cmds := []string{"SET FOREIGN_KEY_CHECKS = 0", fmt.Sprintf("TRUNCATE TABLE %s CASCADE", name), "SET FOREIGN_KEY_CHECKS = 1"}
+			cmds := []string{"SET FOREIGN_KEY_CHECKS = 0", fmt.Sprintf("TRUNCATE TABLE %s", name), "SET FOREIGN_KEY_CHECKS = 1"}
 			for _, c := range cmds {
 				queries.Raw(c).Exec(d)
 			}
