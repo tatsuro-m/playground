@@ -7,4 +7,4 @@ host = "db"
 user = "root"
 pass = "password"
 sslmode = "false"
-whitelist = ["users", "posts"]
+blacklist = ["schema_migrations"]
