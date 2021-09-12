@@ -20,6 +20,7 @@ const uiConfig = {
   signInFlow: 'popup',
   signInOptions: [
     firebase.auth.EmailAuthProvider.PROVIDER_ID,
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
   ],
   callbacks: {
     // Avoid redirects after sign-in.
