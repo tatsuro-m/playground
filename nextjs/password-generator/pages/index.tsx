@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Grid, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core'
 import DisplayBlock from '../components/DisplayBlock'
@@ -13,6 +13,8 @@ const useStyles = makeStyles({
 
 export const Home: React.VFC = () => {
   const classes = useStyles()
+  const [password, changePassword] = useState('hogehoge')
+  console.log(changePassword)
 
   return (
     <>
@@ -26,7 +28,7 @@ export const Home: React.VFC = () => {
             <Grid container justifyContent="center">
               <Grid item xs={10}>
                 <Box m={8}>
-                  <DisplayBlock />
+                  <DisplayBlock password={password} />
                 </Box>
               </Grid>
             </Grid>

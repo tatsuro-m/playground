@@ -10,12 +10,16 @@ const useStyles = makeStyles({
   },
 })
 
-const DisplayBlock: React.VFC = () => {
+interface Props {
+  password: string
+}
+
+const DisplayBlock: React.VFC<Props> = (props) => {
   const classes = useStyles()
 
   return (
     <Paper className={classes.background}>
-      ここに実際のパスワードが表示されるんだよ！
+      <p>{props.password}</p>
     </Paper>
   )
 }
