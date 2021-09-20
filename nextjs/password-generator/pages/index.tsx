@@ -17,9 +17,13 @@ import LengthSlider from '../components/LengthSlider'
 const useStyles = makeStyles({
   background: {
     background: '#0a2d4d',
-    height: 800,
+    height: 500,
     width: '100%',
   },
+  reloadButton: {
+    fontSize: '5em',
+  },
+  bottomPaper: {},
 })
 
 export const Home: React.VFC = () => {
@@ -83,7 +87,7 @@ export const Home: React.VFC = () => {
                       <DisplayBlock password={password} />
                     </Box>
                   </Grid>
-                  <Grid item xs={5}>
+                  <Grid item xs={4}>
                     <Box m={2}>
                       <KindDropdown
                         kind={kind}
@@ -91,12 +95,13 @@ export const Home: React.VFC = () => {
                       />
                     </Box>
                   </Grid>
-                  <Grid item xs={2}>
+                  <Grid item xs={1}>
                     <Button>
                       <CachedIcon
                         fontSize="large"
                         color="primary"
                         onClick={handlePasswordChange}
+                        className={classes.reloadButton}
                       />
                     </Button>
                   </Grid>
@@ -105,8 +110,8 @@ export const Home: React.VFC = () => {
                       <CopyButton password={password} />
                     </Box>
                   </Grid>
-                  <Grid item xs={12}>
-                    <Paper>
+                  <Grid item xs={10}>
+                    <Paper className={classes.bottomPaper}>
                       <Grid container>
                         <Grid item xs={1} />
                         <Grid item xs={5}>
@@ -117,7 +122,8 @@ export const Home: React.VFC = () => {
                             handleBlur={handleBlur}
                           />
                         </Grid>
-                        <Grid item xs={3}>
+                        <Box pr={10} />
+                        <Grid item xs={2}>
                           <FormControlLabel
                             control={
                               <Checkbox
@@ -130,7 +136,7 @@ export const Home: React.VFC = () => {
                             label="数字"
                           />
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={2}>
                           <FormControlLabel
                             control={
                               <Checkbox
