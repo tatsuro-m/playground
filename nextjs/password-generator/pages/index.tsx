@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Box, Grid, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core'
 import DisplayBlock from '../components/DisplayBlock'
+import KindDropdown from '../components/KindDropdown'
 
 const useStyles = makeStyles({
   background: {
@@ -13,8 +14,14 @@ const useStyles = makeStyles({
 
 export const Home: React.VFC = () => {
   const classes = useStyles()
-  const [password, changePassword] = useState('hogehoge')
-  console.log(changePassword)
+  const [password] = useState('hogehoge')
+  const [kind, setKind] = useState('random')
+
+  const handleKindChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    if (['random', 'simple', 'pin'].includes(event.target.value)) {
+      setKind(event.target.value)
+    }
+  }
 
   return (
     <>
@@ -29,6 +36,14 @@ export const Home: React.VFC = () => {
               <Grid item xs={10}>
                 <Box m={8}>
                   <DisplayBlock password={password} />
+                </Box>
+              </Grid>
+              <Grid item xs={4}>
+                <Box m={2}>
+                  <KindDropdown
+                    kind={kind}
+                    handleKindChange={handleKindChange}
+                  />
                 </Box>
               </Grid>
             </Grid>
