@@ -1,6 +1,7 @@
 import React from 'react'
 import { makeStyles } from '@mui/styles'
 import { Box, Grid, Paper } from '@mui/material'
+import DisplayBlock from '../components/DisplayBlock'
 
 const useStyles = makeStyles({
   background: {
@@ -22,7 +23,11 @@ export const Home: React.VFC = () => {
       <Grid container justifyContent='center'>
         <Grid item xs={10}>
           <Paper elevation={6} className={classes.background}>
-            ここに書く
+            <Grid container justifyContent='center'>
+              <Grid item xs={10}>
+                <DisplayBlock/>
+              </Grid>
+            </Grid>
           </Paper>
         </Grid>
       </Grid>
