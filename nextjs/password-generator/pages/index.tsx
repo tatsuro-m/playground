@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { Box, Button, Grid, Paper } from '@material-ui/core'
+import { Box, Button, CssBaseline, Grid, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core'
 import DisplayBlock from '../components/DisplayBlock'
 import KindDropdown from '../components/KindDropdown'
+import CachedIcon from '@material-ui/icons/Cached'
 
 const useStyles = makeStyles({
   background: {
@@ -50,7 +51,9 @@ export const Home: React.VFC = () => {
                     </Box>
                   </Grid>
                   <Grid item xs={2}>
-                    <Button>ここにリロードアイコン</Button>
+                    <Button>
+                      <CachedIcon fontSize="large" color="primary" />
+                    </Button>
                   </Grid>
                   <Grid item xs={5}>
                     <Box m={2}>
