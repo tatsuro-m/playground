@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core'
 import DisplayBlock from '../components/DisplayBlock'
 import KindDropdown from '../components/KindDropdown'
 import CachedIcon from '@material-ui/icons/Cached'
+import CopyButton from '../components/CopyButton'
 
 const useStyles = makeStyles({
   background: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles({
 
 export const Home: React.VFC = () => {
   const classes = useStyles()
-  const [password] = useState('hogehoge')
+  const [password] = useState('hcaoighaonvalghalnaogaoge')
   const [kind, setKind] = useState('random')
 
   const handleKindChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -57,9 +58,7 @@ export const Home: React.VFC = () => {
                   </Grid>
                   <Grid item xs={5}>
                     <Box m={2}>
-                      <Button color="secondary">
-                        安全なパスワードをコピー
-                      </Button>
+                      <CopyButton password={password} />
                     </Box>
                   </Grid>
                 </Grid>

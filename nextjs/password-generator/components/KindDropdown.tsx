@@ -10,7 +10,6 @@ const useStyles = makeStyles({
   dropdown: {
     background: '#0f4170',
     color: '#ffffff',
-    boaderColor: '#ffffff',
   },
 })
 
