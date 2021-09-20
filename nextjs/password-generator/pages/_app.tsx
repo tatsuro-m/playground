@@ -15,7 +15,7 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>
       <Head>
-        <title>Mypp</title>
+        <title>Password Generator</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
