@@ -1,3 +1,6 @@
+# これは何
+久々に React と TypeScript を触って遊んでみるプロジェクト。
+
 # NextJS Typescript Boilerplate
 
 Bootstrap a developer-friendly NextJS app configured with:
