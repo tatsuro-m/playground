@@ -1,5 +1,13 @@
 import React, { useState } from 'react'
-import { Box, Button, Grid, makeStyles, Paper } from '@material-ui/core'
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  makeStyles,
+  Paper,
+} from '@material-ui/core'
 import DisplayBlock from '../components/DisplayBlock'
 import KindDropdown from '../components/KindDropdown'
 import CachedIcon from '@material-ui/icons/Cached'
@@ -40,6 +48,17 @@ export const Home: React.VFC = () => {
     } else if (length > 300) {
       setLength(300)
     }
+  }
+
+  const [isInclude, setIsInclude] = useState({
+    number: true,
+    symbol: false,
+  })
+  const handleChecked = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIsInclude({
+      ...isInclude,
+      [event.target.name]: event.target.checked,
+    })
   }
 
   return (
@@ -88,6 +107,32 @@ export const Home: React.VFC = () => {
                             handleSliderChange={handleSliderChange}
                             handleInputChange={handleInputChange}
                             handleBlur={handleBlur}
+                          />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={isInclude.number}
+                                onChange={handleChecked}
+                                name="number"
+                                color="primary"
+                              />
+                            }
+                            label="数字"
+                          />
+                        </Grid>
+                        <Grid item xs={3}>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={isInclude.symbol}
+                                onChange={handleChecked}
+                                name="symbol"
+                                color="primary"
+                              />
+                            }
+                            label="記号"
                           />
                         </Grid>
                       </Grid>
