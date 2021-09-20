@@ -1,13 +1,13 @@
 import React from 'react'
-import { makeStyles } from '@mui/styles'
-import { Box, Grid, Paper } from '@mui/material'
+import { Box, Grid, Paper } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import DisplayBlock from '../components/DisplayBlock'
 
 const useStyles = makeStyles({
   background: {
     background: '#0a2d4d',
     height: 800,
-    width: '100%',
+    width: '100%'
   }
 })
 
@@ -25,14 +25,14 @@ export const Home: React.VFC = () => {
           <Paper elevation={6} className={classes.background}>
             <Grid container justifyContent='center'>
               <Grid item xs={10}>
-                <DisplayBlock/>
+                <DisplayBlock />
               </Grid>
             </Grid>
           </Paper>
         </Grid>
       </Grid>
 
-      <Box mb={5}/>
+      <Box mb={5} />
     </>
   )
 }

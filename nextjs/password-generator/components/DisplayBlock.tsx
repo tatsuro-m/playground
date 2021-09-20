@@ -1,6 +1,6 @@
 import React from 'react'
-import { Paper } from '@mui/material'
-import { makeStyles } from '@mui/styles'
+import { Paper } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles({
   background: {
@@ -13,7 +13,7 @@ const useStyles = makeStyles({
 const DisplayBlock: React.VFC = () => {
   const classes = useStyles()
 
-  return <Paper className={classes.background}>ここに実際のパスワードが表示される</Paper>
+  return <Paper className={classes.background}>ここに実際のパスワードが表示されるんだよ！</Paper>
 }
 
 export default DisplayBlock
