@@ -1,3 +1,7 @@
+# これは何
+https://1password.com/jp/password-generator/
+にあるようなパスワードジェネレータを React で作成するサンプル。ライブラリなどは何を使ってもOK。コーディングチャレンジだと思って楽しんでみる。
+
 # NextJS Typescript Boilerplate
 
 Bootstrap a developer-friendly NextJS app configured with:
