@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Box, Button, Grid, Paper } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core'
+import { Box, Button, Grid, makeStyles, Paper } from '@material-ui/core'
 import DisplayBlock from '../components/DisplayBlock'
 import KindDropdown from '../components/KindDropdown'
 import CachedIcon from '@material-ui/icons/Cached'
 import CopyButton from '../components/CopyButton'
+import LengthSlider from '../components/LengthSlider'
 
 const useStyles = makeStyles({
   background: {
@@ -22,6 +22,23 @@ export const Home: React.VFC = () => {
   const handleKindChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     if (['random', 'simple', 'pin'].includes(event.target.value)) {
       setKind(event.target.value)
+    }
+  }
+
+  const [length, setLength] = useState(12)
+  const handleSliderChange = (event: any, newValue: number) => {
+    setLength(newValue)
+  }
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLength(Number(event.target.value))
+  }
+
+  const handleBlur = () => {
+    if (length < 0) {
+      setLength(0)
+    } else if (length > 300) {
+      setLength(300)
     }
   }
 
@@ -60,6 +77,21 @@ export const Home: React.VFC = () => {
                     <Box m={2}>
                       <CopyButton password={password} />
                     </Box>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Paper>
+                      <Grid container>
+                        <Grid item xs={1} />
+                        <Grid item xs={5}>
+                          <LengthSlider
+                            length={length}
+                            handleSliderChange={handleSliderChange}
+                            handleInputChange={handleInputChange}
+                            handleBlur={handleBlur}
+                          />
+                        </Grid>
+                      </Grid>
+                    </Paper>
                   </Grid>
                 </Grid>
               </Grid>
