@@ -5,15 +5,19 @@ import { makeStyles } from '@material-ui/core'
 const useStyles = makeStyles({
   background: {
     background: '#ffffff',
-    height: 200,
-    width: '80%',
-  }
+    height: 150,
+    width: '100%',
+  },
 })
 
 const DisplayBlock: React.VFC = () => {
   const classes = useStyles()
 
-  return <Paper className={classes.background}>ここに実際のパスワードが表示されるんだよ！</Paper>
+  return (
+    <Paper className={classes.background}>
+      ここに実際のパスワードが表示されるんだよ！
+    </Paper>
+  )
 }
 
 export default DisplayBlock

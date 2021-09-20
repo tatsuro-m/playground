@@ -25,7 +25,9 @@ export const Home: React.VFC = () => {
           <Paper elevation={6} className={classes.background}>
             <Grid container justifyContent="center">
               <Grid item xs={10}>
-                <DisplayBlock />
+                <Box m={8}>
+                  <DisplayBlock />
+                </Box>
               </Grid>
             </Grid>
           </Paper>
