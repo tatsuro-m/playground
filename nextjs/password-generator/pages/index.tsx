@@ -24,7 +24,7 @@ const useStyles = makeStyles({
 
 export const Home: React.VFC = () => {
   const classes = useStyles()
-  const [password] = useState('hcaoighaonvalghalnaogaoge')
+  const [password, setPassword] = useState('hcaoighaonvalghalnaogaoge')
   const [kind, setKind] = useState('random')
 
   const handleKindChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -61,6 +61,10 @@ export const Home: React.VFC = () => {
     })
   }
 
+  const handlePasswordChange = () => {
+    setPassword('changed!')
+  }
+
   return (
     <>
       <Grid container justifyContent="center">
@@ -89,7 +93,11 @@ export const Home: React.VFC = () => {
                   </Grid>
                   <Grid item xs={2}>
                     <Button>
-                      <CachedIcon fontSize="large" color="primary" />
+                      <CachedIcon
+                        fontSize="large"
+                        color="primary"
+                        onClick={handlePasswordChange}
+                      />
                     </Button>
                   </Grid>
                   <Grid item xs={5}>
