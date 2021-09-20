@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Grid, Paper } from '@material-ui/core'
+import { Box, Button, Grid, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core'
 import DisplayBlock from '../components/DisplayBlock'
 import KindDropdown from '../components/KindDropdown'
@@ -29,26 +29,42 @@ export const Home: React.VFC = () => {
         <h1>Password Generator!</h1>
       </Grid>
 
-      <Grid container justifyContent="center">
+      <Grid container>
+        <Grid item xs={1} />
         <Grid item xs={10}>
           <Paper elevation={6} className={classes.background}>
             <Grid container justifyContent="center">
               <Grid item xs={10}>
-                <Box m={8}>
-                  <DisplayBlock password={password} />
-                </Box>
-              </Grid>
-              <Grid item xs={4}>
-                <Box m={2}>
-                  <KindDropdown
-                    kind={kind}
-                    handleKindChange={handleKindChange}
-                  />
-                </Box>
+                <Grid container justifyContent="center">
+                  <Grid item xs={12}>
+                    <Box m={2}>
+                      <DisplayBlock password={password} />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <Box m={2}>
+                      <KindDropdown
+                        kind={kind}
+                        handleKindChange={handleKindChange}
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Button>ここにリロードアイコン</Button>
+                  </Grid>
+                  <Grid item xs={5}>
+                    <Box m={2}>
+                      <Button color="secondary">
+                        安全なパスワードをコピー
+                      </Button>
+                    </Box>
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Paper>
         </Grid>
+        <Grid item xs={1} />
       </Grid>
 
       <Box mb={5} />
