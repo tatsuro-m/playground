@@ -8,7 +8,9 @@ interface Props {
 
 const useStyles = makeStyles({
   dropdown: {
-    background: '#1e89ea',
+    background: '#0f4170',
+    color: '#ffffff',
+    boaderColor: '#ffffff',
   },
 })
 
@@ -22,6 +24,7 @@ const KindDropdown: React.VFC<Props> = (props) => {
       value={props.kind}
       onChange={props.handleKindChange}
       className={classes.dropdown}
+      variant="outlined"
     >
       <MenuItem value="random">ランダムなパスワード</MenuItem>
       <MenuItem value="simple">覚えやすいパスワード</MenuItem>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Button, CssBaseline, Grid, Paper } from '@material-ui/core'
+import { Box, Button, Grid, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core'
 import DisplayBlock from '../components/DisplayBlock'
 import KindDropdown from '../components/KindDropdown'
