@@ -40,10 +40,12 @@ export const Home: React.VFC = () => {
   const [length, setLength] = useState(12)
   const handleSliderChange = (event: any, newValue: number) => {
     setLength(newValue)
+    handlePasswordChange()
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLength(Number(event.target.value))
+    handlePasswordChange()
   }
 
   const handleBlur = () => {
@@ -52,6 +54,7 @@ export const Home: React.VFC = () => {
     } else if (length > 300) {
       setLength(300)
     }
+    handlePasswordChange()
   }
 
   const [isInclude, setIsInclude] = useState({
@@ -63,6 +66,7 @@ export const Home: React.VFC = () => {
       ...isInclude,
       [event.target.name]: event.target.checked,
     })
+    handlePasswordChange()
   }
 
   const handlePasswordChange = () => {
@@ -78,7 +82,7 @@ export const Home: React.VFC = () => {
   const getTargetString = (): string => {
     const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     const num = '0123456789'
-    const symbol = '%()!'
+    const symbol = '%()!&^@*+'
 
     if (isInclude.number && isInclude.symbol) {
       return alphabet + num + symbol
