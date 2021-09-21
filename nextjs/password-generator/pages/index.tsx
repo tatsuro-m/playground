@@ -66,7 +66,29 @@ export const Home: React.VFC = () => {
   }
 
   const handlePasswordChange = () => {
-    setPassword('changed!')
+    const s = getTargetString()
+
+    setPassword(
+      Array.from(crypto.getRandomValues(new Uint8Array(length)))
+        .map((n) => s[n % s.length])
+        .join('')
+    )
+  }
+
+  const getTargetString = (): string => {
+    const alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    const num = '0123456789'
+    const symbol = '%()!'
+
+    if (isInclude.number && isInclude.symbol) {
+      return alphabet + num + symbol
+    } else if (isInclude.number) {
+      return alphabet + num
+    } else if (isInclude.symbol) {
+      return alphabet + symbol
+    }
+
+    return alphabet
   }
 
   return (
