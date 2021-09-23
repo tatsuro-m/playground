@@ -32,8 +32,17 @@ export const Home: React.VFC = () => {
   const [kind, setKind] = useState('random')
 
   const handleKindChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    if (['random', 'simple', 'pin'].includes(event.target.value)) {
-      setKind(event.target.value)
+    const newValue = event.target.value
+    if (['random', 'pin'].includes(newValue)) {
+      setKind(newValue)
+    }
+
+    if (newValue === 'pin') {
+      setIsInclude({
+        number: true,
+        symbol: false,
+      })
+      setLength(4)
     }
   }
 
@@ -156,6 +165,7 @@ export const Home: React.VFC = () => {
                                 onChange={handleChecked}
                                 name="number"
                                 color="primary"
+                                disabled={kind === 'pin'}
                               />
                             }
                             label="数字"
@@ -169,6 +179,7 @@ export const Home: React.VFC = () => {
                                 onChange={handleChecked}
                                 name="symbol"
                                 color="primary"
+                                disabled={kind === 'pin'}
                               />
                             }
                             label="記号"

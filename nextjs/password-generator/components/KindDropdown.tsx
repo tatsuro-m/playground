@@ -27,7 +27,6 @@ const KindDropdown: React.VFC<Props> = (props) => {
       variant="outlined"
     >
       <MenuItem value="random">ランダムなパスワード</MenuItem>
-      <MenuItem value="simple">覚えやすいパスワード</MenuItem>
       <MenuItem value="pin">暗証番号</MenuItem>
     </Select>
   )
