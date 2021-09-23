@@ -66,7 +66,6 @@ export const Home: React.VFC = () => {
       ...isInclude,
       [event.target.name]: event.target.checked,
     })
-    handlePasswordChange()
   }
 
   const handlePasswordChange = () => {
