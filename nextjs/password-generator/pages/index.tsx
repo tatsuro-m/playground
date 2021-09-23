@@ -92,7 +92,9 @@ export const Home: React.VFC = () => {
     const num = '0123456789'
     const symbol = '%()!&^@*+'
 
-    if (isInclude.number && isInclude.symbol) {
+    if (kind === 'pin') {
+      return num
+    } else if (isInclude.number && isInclude.symbol) {
       return alphabet + num + symbol
     } else if (isInclude.number) {
       return alphabet + num
