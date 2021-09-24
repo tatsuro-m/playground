@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -49,12 +49,10 @@ export const Home: React.VFC = () => {
   const [length, setLength] = useState(12)
   const handleSliderChange = (event: any, newValue: number) => {
     setLength(newValue)
-    handlePasswordChange()
   }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLength(Number(event.target.value))
-    handlePasswordChange()
   }
 
   const handleBlur = () => {
@@ -63,7 +61,6 @@ export const Home: React.VFC = () => {
     } else if (length > 300) {
       setLength(300)
     }
-    handlePasswordChange()
   }
 
   const [isInclude, setIsInclude] = useState({
@@ -104,6 +101,8 @@ export const Home: React.VFC = () => {
 
     return alphabet
   }
+
+  useEffect(handlePasswordChange, [isInclude, length, kind])
 
   return (
     <>
