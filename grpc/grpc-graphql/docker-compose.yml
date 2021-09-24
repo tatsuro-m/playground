@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  article_grpc:
+    image: grpc/go
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./article/:/go/article
