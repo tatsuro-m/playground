@@ -20,7 +20,7 @@ services:
     tty: true
     stdin_open: true
     environment:
-      DB_HOST: db
+      DB_HOST: gin_db
       DB_NAME: dev
       DB_USER: root
       DB_PASSWORD: password
