@@ -60,6 +60,9 @@ services:
       target: dev
     volumes:
       - ./graphql/:/go/src/app
+    environment:
+      GIN_API_HOST: gin_web
+      GIN_API_PORT: "8080"
     tty: true
     stdin_open: true
     ports:
