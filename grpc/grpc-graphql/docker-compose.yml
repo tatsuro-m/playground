@@ -41,6 +41,6 @@ services:
     tty: true
     stdin_open: true
     volumes:
-      - .:/go/src/app
+      - ./article/:/go/src/app
     depends_on:
       - article_db

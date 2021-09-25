@@ -3,7 +3,7 @@ no-tests = true
 
 [mysql]
 dbname = "dev"
-host = "db"
+host = "article_db"
 user = "root"
 pass = "password"
 sslmode = "false"
