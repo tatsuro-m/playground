@@ -2,8 +2,7 @@ package post
 
 import (
 	"fmt"
-	"gin/db"
-	"gin/models"
+	"gin/service/post"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +12,7 @@ type Controller struct{}
 
 // GET /posts
 func (ctrl Controller) Index(c *gin.Context) {
-	posts, err := models.Posts().All(c, db.GetDB())
+	posts, err := post.Service{}.GetAll()
 
 	if err != nil {
 		c.AbortWithStatus(http.StatusNotFound)
