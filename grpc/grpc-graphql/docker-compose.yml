@@ -20,3 +20,27 @@ services:
       - ./article/initdb:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
+
+  article_migration:
+    build:
+      context: .
+      dockerfile: article/docker/migration.dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./article/migrations/:/go/src/app/migrations
+    # マイグレーションファイル作成コマンド: migrate create -ext sql -dir migrations/ -seq file_name
+    command: sh -c "migrate -database mysql://root:password@tcp\(db:3306\)/dev -path migrations/ up && migrate -database mysql://root:password@tcp\(db:3306\)/test -path migrations/ up"
+    depends_on:
+      - article_db
+
+  article_boiler:
+    build:
+      context: .
+      dockerfile: article/docker/boiler.dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/go/src/app
+    depends_on:
+      - article_db

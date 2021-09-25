@@ -1,0 +1,10 @@
+wipe = true
+no-tests = true
+
+[mysql]
+dbname = "dev"
+host = "db"
+user = "root"
+pass = "password"
+sslmode = "false"
+blacklist = ["schema_migrations"]
