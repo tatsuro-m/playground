@@ -2,13 +2,14 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Todo {
+type Post {
   id: ID!
-  text: String!
-  done: Boolean!
+  title: String!
+  createdAt: String!
+  updatedAt: String!
 }
 
 type Query {
-  todos: [Todo!]!
+  posts: [Post!]!
 }
 
