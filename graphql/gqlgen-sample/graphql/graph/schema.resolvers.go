@@ -8,12 +8,16 @@ import (
 	"fmt"
 	"graphql/graph/generated"
 	"graphql/graph/model"
+	"graphql/models"
 	"graphql/service/post"
 	"strconv"
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost) (*model.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	dbPost := models.Post{Title: input.Title}
+	p, err := post.Service{}.CreatePost(dbPost)
+
+	return &p, err
 }
 
 func (r *queryResolver) Posts(ctx context.Context) ([]*model.Post, error) {
