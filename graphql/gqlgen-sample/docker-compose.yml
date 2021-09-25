@@ -22,6 +22,13 @@ services:
       - ./graphql/:/go/src/app
     tty: true
     stdin_open: true
+    environment:
+      DB_HOST: graph_db
+      DB_NAME: dev
+      DB_USER: root
+      DB_PASSWORD: password
+    depends_on:
+      - graph_db
     ports:
       - "8080:8080"
 

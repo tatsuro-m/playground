@@ -8,11 +8,30 @@ import (
 	"fmt"
 	"graphql/graph/generated"
 	"graphql/graph/model"
+	"graphql/service/post"
+	"strconv"
 )
 
 func (r *queryResolver) Posts(ctx context.Context) ([]*model.Post, error) {
-	fmt.Println("posts query が呼ばれた")
-	return nil, nil
+	dbPosts, err := post.Service{}.GetAll()
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	res := make([]*model.Post, 0)
+	for _, dp := range dbPosts {
+		graphPost := &model.Post{
+			ID:        strconv.Itoa(dp.ID),
+			Title:     dp.Title,
+			CreatedAt: dp.CreatedAt,
+			UpdatedAt: dp.UpdatedAt,
+		}
+
+		res = append(res, graphPost)
+	}
+
+	return res, nil
 }
 
 // Query returns generated.QueryResolver implementation.
