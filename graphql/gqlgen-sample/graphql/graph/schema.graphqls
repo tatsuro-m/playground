@@ -23,7 +23,7 @@ type Query {
 
 type Mutation {
     createPost(input: NewPost): Post!
-    deletePost(input: DeletePost): Boolean!
+    deletePost(input: DeletePost): ID!
 }
 
 scalar Time
