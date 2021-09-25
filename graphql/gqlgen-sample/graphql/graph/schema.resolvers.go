@@ -17,7 +17,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost)
 	dbPost := models.Post{Title: input.Title}
 	p, err := post.Service{}.CreatePost(dbPost)
 
-	return &p, err
+	return &model.Post{ID: strconv.Itoa(p.ID), Title: p.Title, CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt}, err
 }
 
 func (r *mutationResolver) DeletePost(ctx context.Context, input *model.DeletePost) (string, error) {
@@ -27,7 +27,7 @@ func (r *mutationResolver) DeletePost(ctx context.Context, input *model.DeletePo
 		return "", err
 	}
 
-	return p.ID, nil
+	return strconv.Itoa(p.ID), nil
 }
 
 func (r *queryResolver) Posts(ctx context.Context) ([]*model.Post, error) {
