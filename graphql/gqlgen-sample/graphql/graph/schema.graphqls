@@ -3,14 +3,22 @@
 # https://gqlgen.com/getting-started/
 
 type Post {
-  id: ID!
-  title: String!
-  createdAt: Time!
-  updatedAt: Time!
+    id: ID!
+    title: String!
+    createdAt: Time!
+    updatedAt: Time!
+}
+
+input NewPost {
+    title:String!
 }
 
 type Query {
-  posts: [Post!]!
+    posts: [Post!]!
+}
+
+type Mutation {
+    createPost(input: NewPost): Post!
 }
 
 scalar Time

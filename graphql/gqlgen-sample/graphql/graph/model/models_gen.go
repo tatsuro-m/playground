@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+type NewPost struct {
+	Title string `json:"title"`
+}
+
 type Post struct {
 	ID        string    `json:"id"`
 	Title     string    `json:"title"`

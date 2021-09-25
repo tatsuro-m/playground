@@ -12,6 +12,10 @@ import (
 	"strconv"
 )
 
+func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost) (*model.Post, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) Posts(ctx context.Context) ([]*model.Post, error) {
 	dbPosts, err := post.Service{}.GetAll()
 	if err != nil {
@@ -34,7 +38,11 @@ func (r *queryResolver) Posts(ctx context.Context) ([]*model.Post, error) {
 	return res, nil
 }
 
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
