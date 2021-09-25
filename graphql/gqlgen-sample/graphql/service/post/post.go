@@ -2,8 +2,8 @@ package post
 
 import (
 	"context"
-	"gin/db"
-	"gin/models"
+	"graphql/db"
+	"graphql/models"
 )
 
 type Service struct{}
