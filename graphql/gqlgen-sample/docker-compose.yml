@@ -8,8 +8,8 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: dev
     volumes:
-      - ./gin/tmp/db/data:/var/lib/mysql
-      - ./gin/initdb:/docker-entrypoint-initdb.d
+      - ./graphql/tmp/db/data:/var/lib/mysql
+      - ./graphql/initdb:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
 
@@ -27,12 +27,12 @@ services:
 
   graph_migration:
     build:
-      context: ./gin
+      context: ./graphql
       dockerfile: docker/migration.dockerfile
     tty: true
     stdin_open: true
     volumes:
-      - ./gin/migrations/:/go/src/app/migrations
+      - ./graphql/migrations/:/go/src/app/migrations
     # マイグレーションファイル作成コマンド: migrate create -ext sql -dir migrations/ -seq file_name
     command: sh -c "migrate -database mysql://root:password@tcp\(graph_db:3306\)/dev -path migrations/ up && migrate -database mysql://root:password@tcp\(graph_db:3306\)/test -path migrations/ up"
     depends_on:
@@ -40,11 +40,11 @@ services:
 
   graph_boiler:
     build:
-      context: ./gin
+      context: ./graphql
       dockerfile: docker/boiler.dockerfile
     tty: true
     stdin_open: true
     volumes:
-      - ./gin/:/go/src/app
+      - ./graphql/:/go/src/app
     depends_on:
       - graph_db
