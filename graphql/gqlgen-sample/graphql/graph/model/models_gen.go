@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+type DeletePost struct {
+	ID string `json:"id"`
+}
+
 type NewPost struct {
 	Title string `json:"title"`
 }

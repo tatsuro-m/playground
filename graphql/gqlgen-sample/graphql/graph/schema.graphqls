@@ -13,12 +13,17 @@ input NewPost {
     title:String!
 }
 
+input DeletePost {
+    id: ID!
+}
+
 type Query {
     posts: [Post!]!
 }
 
 type Mutation {
     createPost(input: NewPost): Post!
+    deletePost(input: DeletePost): Boolean!
 }
 
 scalar Time
