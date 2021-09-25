@@ -24,7 +24,8 @@ func (s Service) CreatePost(post models.Post) (model.Post, error) {
 		return model.Post{}, err
 	}
 
-	// 一意性制約の付いていない title カラムで検索して返しているだけなので今回入れたレコードか保証できないのが微妙。
-	p, err := models.Posts(models.PostWhere.Title.EQ(post.Title)).One(ctx, d)
+	posts, err := models.Posts(models.PostWhere.Title.EQ(post.Title)).All(ctx, d)
+	p := posts[len(posts)-1]
+
 	return model.Post{ID: strconv.Itoa(p.ID), Title: p.Title, CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt}, nil
 }
