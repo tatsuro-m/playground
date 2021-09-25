@@ -52,3 +52,15 @@ services:
       - ./gin/:/go/src/app
     depends_on:
       - gin_db
+
+  graph_server:
+    build:
+      context: ./graphql
+      dockerfile: docker/Dockerfile
+      target: dev
+    volumes:
+      - ./graphql/:/go/src/app
+    tty: true
+    stdin_open: true
+    ports:
+      - "8081:8080"
