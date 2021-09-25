@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  gin_db:
+    platform: linux/x86_64
+    image: mysql:8.0.26
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: dev
+    volumes:
+      - ./gin/tmp/db/data:/var/lib/mysql
+      - ./gin/initdb:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+  gin_web:
+    build:
+      context: ./gin
+      dockerfile: docker/Dockerfile
+      target: dev
+    tty: true
+    stdin_open: true
+    depends_on:
+      - gin_db
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./gin/:/go/src/app/
+  gin_migration:
+    build:
+      context: ./gin
+      dockerfile: docker/migration.dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./gin/migrations/:/go/src/app/migrations
+    # マイグレーションファイル作成コマンド: migrate create -ext sql -dir migrations/ -seq file_name
+    command: sh -c "migrate -database mysql://root:password@tcp\(gin_db:3306\)/dev -path migrations/ up && migrate -database mysql://root:password@tcp\(gin_db:3306\)/test -path migrations/ up"
+    depends_on:
+      - gin_db
+  gin_boiler:
+    build:
+      context: ./gin
+      dockerfile: docker/boiler.dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./gin/:/go/src/app
+    depends_on:
+      - gin_db
