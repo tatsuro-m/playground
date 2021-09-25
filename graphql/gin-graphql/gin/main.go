@@ -1,7 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"gin/db"
+)
 
 func main() {
-	fmt.Println("Hello World!!")
+	err := db.Init()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("Hello World!")
 }
