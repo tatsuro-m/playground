@@ -8,3 +8,15 @@ services:
     volumes:
       - ./article/:/go/article
     entrypoint: protoc ./article/article.proto --go_out=plugins=grpc:.
+
+  article_db:
+    platform: linux/x86_64
+    image: mysql:8.0.26
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: dev
+    volumes:
+      - ./article/tmp/db/data:/var/lib/mysql
+      - ./article/initdb:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
