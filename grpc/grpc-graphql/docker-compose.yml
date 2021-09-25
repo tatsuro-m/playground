@@ -7,3 +7,4 @@ services:
     stdin_open: true
     volumes:
       - ./article/:/go/article
+    entrypoint: protoc ./article/article.proto --go_out=plugins=grpc:.
