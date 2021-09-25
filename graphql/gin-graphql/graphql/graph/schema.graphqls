@@ -5,11 +5,12 @@
 type Post {
   id: ID!
   title: String!
-  createdAt: String!
-  updatedAt: String!
+  createdAt: Time!
+  updatedAt: Time!
 }
 
 type Query {
   posts: [Post!]!
 }
 
+scalar Time
