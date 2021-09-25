@@ -1,8 +1,5 @@
-- GraphQL Server (gqlgen)
-- Gin API Server
-
-を組み合わせたマイクロサービス構成を作ってみる。  
+GraphQL Server (gqlgen) で orm も利用したバックエンドを書いてみる。  
+resolver からは他のマイクロサービスを叩くのではなく直接 RDB に接続する構成にする。  
 余裕があれば簡単なフロントエンドアプリも。
 
-Gin API はクライアントから直接叩くことはせず、 GraphQL 経由で叩いてフロントに返す。  
-認証は全て GraphQL で行い、 API には jwt トークンを渡して認可を行う。
+認証には jwt トークンを利用する。
