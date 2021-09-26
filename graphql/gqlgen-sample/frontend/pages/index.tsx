@@ -1,4 +1,4 @@
-import client from '../apollo-client'
+import client from '../src/apollo-client'
 import { gql } from '@apollo/client'
 import { GetStaticProps } from 'next'
 import React from 'react'
