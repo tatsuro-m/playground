@@ -16,7 +16,7 @@ import {
 export const getStaticProps: GetStaticProps = async () => {
   const { data } = await client.query({
     query: gql`
-      query Posts {
+      query {
         posts {
           id
           title
