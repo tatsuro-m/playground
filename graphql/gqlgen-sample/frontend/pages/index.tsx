@@ -4,6 +4,7 @@ import { GetStaticProps } from 'next'
 import React from 'react'
 import {
   Box,
+  Button,
   Paper,
   Table,
   TableBody,
@@ -12,8 +13,8 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core'
-import { auth, uiConfig } from '../src/lib/firebase'
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
+import { auth } from '../src/lib/firebase'
+import Link from 'next/link'
 
 export const getStaticProps: GetStaticProps = async () => {
   const { data } = await client.query({
@@ -50,9 +51,18 @@ interface Props {
 export const Home: React.VFC<Props> = (props) => {
   return (
     <Box m={10}>
-      <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
+      {auth.currentUser ? (
+        <Button variant="contained" onClick={() => auth.signOut()}>
+          ログアウト
+        </Button>
+      ) : (
+        <Link href="/sign_in">
+          <Button variant="contained" color="primary">
+            ログイン画面
+          </Button>
+        </Link>
+      )}
       <p>
-        {' '}
         {auth.currentUser
           ? auth.currentUser.displayName + 'でログインしています'
           : 'ログインしていません'}
