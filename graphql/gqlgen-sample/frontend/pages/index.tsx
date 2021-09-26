@@ -12,6 +12,8 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core'
+import { auth, uiConfig } from '../src/lib/firebase'
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth'
 
 export const getStaticProps: GetStaticProps = async () => {
   const { data } = await client.query({
@@ -48,6 +50,13 @@ interface Props {
 export const Home: React.VFC<Props> = (props) => {
   return (
     <Box m={10}>
+      <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
+      <p>
+        {' '}
+        {auth.currentUser
+          ? auth.currentUser.displayName + 'でログインしています'
+          : 'ログインしていません'}
+      </p>
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>
