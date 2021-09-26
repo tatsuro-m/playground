@@ -15,7 +15,7 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   return (
     <>
       <Head>
-        <title>Password Generator</title>
+        <title>graphql sample</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
