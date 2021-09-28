@@ -4,6 +4,7 @@ import (
 	"graphql/db"
 	"graphql/graph"
 	"graphql/graph/generated"
+	"graphql/middleware"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -38,6 +39,8 @@ func main() {
 
 	// Setting up Gin
 	r := gin.Default()
+
+	r.Use(middleware.GinContextToContext())
 
 	r.POST("/query", graphqlHandler())
 	r.GET("/", playgroundHandler())
