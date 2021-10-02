@@ -13,7 +13,7 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core'
-import { auth, onLogout } from '../src/lib/firebase'
+import {auth, firebaseUser, onLogout} from '../src/lib/firebase'
 import Link from 'next/link'
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -51,7 +51,7 @@ interface Props {
 export const Home: React.VFC<Props> = (props) => {
   return (
     <Box m={10}>
-      {auth.currentUser ? (
+      {firebaseUser() ? (
         <Button variant="contained" onClick={() => onLogout()}>
           ログアウト
         </Button>
@@ -63,8 +63,8 @@ export const Home: React.VFC<Props> = (props) => {
         </Link>
       )}
       <p>
-        {auth.currentUser
-          ? auth.currentUser.displayName + 'でログインしています'
+        {firebaseUser
+          ? firebaseUser().displayName + 'でログインしています'
           : 'ログインしていません'}
       </p>
       <TableContainer component={Paper}>

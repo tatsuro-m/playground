@@ -1,8 +1,9 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { auth } from './lib/firebase'
+import { firebaseUser } from './lib/firebase'
 
 const getJWT = async () => {
-  return await auth.currentUser.getIdToken(true)
+  return await firebaseUser().getIdToken(true)
 }
 
 const client = new ApolloClient({
@@ -11,7 +12,7 @@ const client = new ApolloClient({
   headers: {
     // TODO https://www.apollographql.com/docs/react/networking/authentication/#reset-store-on-logout
     // ログアウト時にキャッシュを飛ばす必要があるかも
-    authorization: auth.currentUser ? `Bearer: ${getJWT()}` : '',
+    authorization: firebaseUser() ? `Bearer: ${getJWT()}` : '',
   },
 })
 

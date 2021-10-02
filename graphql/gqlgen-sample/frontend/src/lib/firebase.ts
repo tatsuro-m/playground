@@ -14,24 +14,6 @@ export const config = {
 !firebase.apps.length ? firebase.initializeApp(config) : firebase.app()
 
 export const auth = firebase.auth()
-export const Firebase = firebase
-
-export const Login = () => {
-  const provider = new firebase.auth.GoogleAuthProvider()
-  firebase
-    .auth()
-    .signInWithPopup(provider)
-    .then(function (result: any) {
-      return result
-    })
-    .catch(function (error) {
-      console.log(error)
-      const errorCode = error.code
-      console.log(errorCode)
-      const errorMessage = error.message
-      console.log(errorMessage)
-    })
-}
 
 // ログイン状態の検知
 export const listenAuthState = (dispatch: any) => {
@@ -54,14 +36,13 @@ export const listenAuthState = (dispatch: any) => {
   })
 }
 
-export const firebaseUser = () => {
+export const firebaseUser = (): firebase.User | null => {
   return firebase.auth().currentUser
 }
 
-// Logout
-export const Logout = () => {
+export const onLogout = (): void => {
   auth.signOut().then(() => {
-    window.location.reload()
+    client.resetStore()
   })
 }
 
@@ -77,10 +58,4 @@ export const uiConfig = {
       return false
     },
   },
-}
-
-export const onLogout = (): void => {
-  auth.signOut().then(() => {
-    client.resetStore()
-  })
 }
