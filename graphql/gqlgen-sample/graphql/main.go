@@ -41,6 +41,7 @@ func main() {
 	r := gin.Default()
 
 	r.Use(middleware.GinContextToContext())
+	r.Use(middleware.Authentication())
 
 	r.POST("/query", graphqlHandler())
 	r.GET("/", playgroundHandler())
