@@ -13,7 +13,7 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core'
-import {auth, firebaseUser, onLogout} from '../src/lib/firebase'
+import { firebaseUser, onLogout } from '../src/lib/firebase'
 import Link from 'next/link'
 
 export const getStaticProps: GetStaticProps = async () => {
