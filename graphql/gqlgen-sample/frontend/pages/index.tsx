@@ -13,7 +13,7 @@ import {
   TableHead,
   TableRow,
 } from '@material-ui/core'
-import { auth } from '../src/lib/firebase'
+import { auth, onLogout } from '../src/lib/firebase'
 import Link from 'next/link'
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -52,7 +52,7 @@ export const Home: React.VFC<Props> = (props) => {
   return (
     <Box m={10}>
       {auth.currentUser ? (
-        <Button variant="contained" onClick={() => auth.signOut()}>
+        <Button variant="contained" onClick={() => onLogout()}>
           ログアウト
         </Button>
       ) : (

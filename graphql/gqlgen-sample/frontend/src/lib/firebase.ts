@@ -1,5 +1,6 @@
 import firebase from 'firebase/app'
-import 'firebase/auth' // If you need it
+import 'firebase/auth'
+import client from '../apollo-client' // If you need it
 
 export const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -71,6 +72,15 @@ export const uiConfig = {
   signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
   callbacks: {
     // Avoid redirects after sign-in.
-    signInSuccessWithAuthResult: () => false,
+    signInSuccessWithAuthResult: (): boolean => {
+      client.resetStore()
+      return false
+    },
   },
+}
+
+export const onLogout = (): void => {
+  auth.signOut().then(() => {
+    client.resetStore()
+  })
 }
