@@ -40,6 +40,7 @@ func main() {
 	// Setting up Gin
 	r := gin.Default()
 
+	r.Use(middleware.Cors())
 	r.Use(middleware.GinContextToContext())
 	r.Use(middleware.Authentication())
 
