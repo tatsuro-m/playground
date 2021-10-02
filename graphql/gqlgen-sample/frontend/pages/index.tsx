@@ -1,6 +1,4 @@
-import client from '../src/apollo-client'
-import { gql } from '@apollo/client'
-import { GetStaticProps } from 'next'
+import { useQuery } from '@apollo/client'
 import React from 'react'
 import {
   Box,
@@ -15,27 +13,7 @@ import {
 } from '@material-ui/core'
 import { firebaseUser, onLogout } from '../src/lib/firebase'
 import Link from 'next/link'
-
-export const getStaticProps: GetStaticProps = async () => {
-  const { data } = await client.query({
-    query: gql`
-      query {
-        posts {
-          id
-          title
-          createdAt
-          updatedAt
-        }
-      }
-    `,
-  })
-
-  return {
-    props: {
-      posts: data.posts,
-    },
-  }
-}
+import { POSTS_QUERY } from '../graphql/queries/posts'
 
 interface Post {
   id: number
@@ -44,11 +22,18 @@ interface Post {
   updatedAt: string
 }
 
-interface Props {
+interface Posts {
   posts: Post[]
 }
 
-export const Home: React.VFC<Props> = (props) => {
+export const Home: React.VFC = () => {
+  const { loading, error, data } = useQuery<Posts>(POSTS_QUERY)
+
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error: {JSON.stringify(error)}</p>
+
+  const { posts } = data
+
   return (
     <Box m={10}>
       {firebaseUser() ? (
@@ -77,7 +62,7 @@ export const Home: React.VFC<Props> = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.posts.map((post) => (
+            {posts.map((post) => (
               <TableRow key={post.id}>
                 <TableCell component="th" scope="row">
                   {post.title}

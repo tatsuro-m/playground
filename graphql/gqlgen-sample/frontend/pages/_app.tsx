@@ -7,6 +7,8 @@ import theme from '../src/theme'
 import AuthContext from '../src/lib/AuthContext'
 import authReducer from '../src/lib/authReducer'
 import { listenAuthState } from '../src/lib/firebase'
+import { ApolloProvider } from '@apollo/client'
+import client from '../src/apollo-client'
 
 export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   useEffect(() => {
@@ -35,7 +37,9 @@ export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
       <ThemeProvider theme={theme}>
         <AuthContext.Provider value={state}>
           <CssBaseline />
-          <Component {...pageProps} />
+          <ApolloProvider client={client}>
+            <Component {...pageProps} />
+          </ApolloProvider>
         </AuthContext.Provider>
       </ThemeProvider>
     </>
