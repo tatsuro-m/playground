@@ -9,7 +9,8 @@ const client = new ApolloClient({
   uri: process.env.NEXT_PUBLIC_GRAPHQL_SERVER_URI,
   cache: new InMemoryCache(),
   headers: {
-    authorization: firebaseUser() ? `Bearer: ${getJWT()}` : '',
+    // authorization: firebaseUser() ? `Bearer: ${getJWT()}` : '',
+    hoge: 'hoge',
   },
 })
 
