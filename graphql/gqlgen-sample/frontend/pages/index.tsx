@@ -48,7 +48,7 @@ export const Home: React.VFC = () => {
         </Link>
       )}
       <p>
-        {firebaseUser
+        {firebaseUser()
           ? firebaseUser().displayName + 'でログインしています'
           : 'ログインしていません'}
       </p>
