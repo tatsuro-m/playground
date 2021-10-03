@@ -27,6 +27,7 @@ services:
       DB_NAME: dev
       DB_USER: root
       DB_PASSWORD: password
+      GOOGLE_APPLICATION_CREDENTIALS: /go/src/app/credentials/stg-firebase-service-account.json
     depends_on:
       - graph_db
     ports:
