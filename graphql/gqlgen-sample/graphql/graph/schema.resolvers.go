@@ -6,6 +6,7 @@ package graph
 import (
 	"context"
 	"fmt"
+	"graphql/ginctx"
 	"graphql/graph/generated"
 	"graphql/graph/model"
 	"graphql/middleware"
@@ -18,8 +19,8 @@ import (
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost) (*model.Post, error) {
+	ctx, _ = ginctx.GinContextFromContext(ctx)
 	user := middleware.ForContext(ctx)
-	fmt.Println(user)
 
 	if user == nil {
 		fmt.Println("user が設定されていないようです")
