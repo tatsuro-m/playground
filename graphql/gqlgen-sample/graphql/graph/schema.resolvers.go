@@ -5,19 +5,18 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"graphql/ginctx"
 	"graphql/graph/generated"
-	"graphql/graph/model"
+	"graphql/graph/gqlmodel"
 	"graphql/models"
 	"graphql/service/post"
 	"net/http"
 	"strconv"
-
-	"github.com/friendsofgo/errors"
 )
 
-func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost) (*model.Post, error) {
+func (r *mutationResolver) CreatePost(ctx context.Context, input *gqlmodel.NewPost) (*gqlmodel.Post, error) {
 	if _, err := ginctx.GetUserFromGinCtx(ctx); err != nil {
 		return nil, errors.New(strconv.Itoa(http.StatusNotFound))
 	}
@@ -25,10 +24,10 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost)
 	dbPost := models.Post{Title: input.Title}
 	p, err := post.Service{}.CreatePost(dbPost)
 
-	return &model.Post{ID: strconv.Itoa(p.ID), Title: p.Title, CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt}, err
+	return &gqlmodel.Post{ID: strconv.Itoa(p.ID), Title: p.Title, CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt}, err
 }
 
-func (r *mutationResolver) DeletePost(ctx context.Context, input *model.DeletePost) (string, error) {
+func (r *mutationResolver) DeletePost(ctx context.Context, input *gqlmodel.DeletePost) (string, error) {
 	id, _ := strconv.Atoi(input.ID)
 	p, err := post.Service{}.DeleteByID(id)
 	if err != nil {
@@ -38,16 +37,16 @@ func (r *mutationResolver) DeletePost(ctx context.Context, input *model.DeletePo
 	return strconv.Itoa(p.ID), nil
 }
 
-func (r *queryResolver) Posts(ctx context.Context) ([]*model.Post, error) {
+func (r *queryResolver) Posts(ctx context.Context) ([]*gqlmodel.Post, error) {
 	dbPosts, err := post.Service{}.GetAll()
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
 
-	res := make([]*model.Post, 0)
+	res := make([]*gqlmodel.Post, 0)
 	for _, dp := range dbPosts {
-		graphPost := &model.Post{
+		graphPost := &gqlmodel.Post{
 			ID:        strconv.Itoa(dp.ID),
 			Title:     dp.Title,
 			CreatedAt: dp.CreatedAt,
