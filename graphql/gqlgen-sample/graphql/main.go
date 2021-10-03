@@ -41,12 +41,14 @@ func main() {
 	r := gin.Default()
 
 	r.Use(middleware.Cors())
-	r.Use(middleware.GinContextToContext())
 	r.Use(middleware.Authentication())
+	r.Use(middleware.GinContextToContext())
 
 	r.GET("/ping", func(c *gin.Context) {
+		u := middleware.ForContext(c)
+
 		c.JSON(200, gin.H{
-			"message": "pong",
+			"data": u,
 		})
 	})
 

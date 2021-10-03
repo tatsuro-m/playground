@@ -16,6 +16,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const userCtxKey = "user"
+
 func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := getBearerToken(c.Request.Header.Get("Authorization"))
@@ -32,7 +34,7 @@ func Authentication() gin.HandlerFunc {
 		}
 
 		u := getUser(verifiedToken)
-		c.Set("user", u)
+		c.Set(userCtxKey, u)
 
 		c.Next()
 	}
@@ -86,4 +88,12 @@ func verifyIdToken(token string) (*auth.Token, error) {
 	}
 
 	return client.VerifyIDToken(ctx, token)
+}
+
+// ForContext finds the user from the context. REQUIRES Middleware to have run.
+func ForContext(ctx context.Context) *models.User {
+	// panic になるかもしれないけど、gin が Recover して 500 を返してくれるのでOK。
+	raw := ctx.Value(userCtxKey).(*models.User)
+
+	return raw
 }
