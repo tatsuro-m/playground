@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"graphql/graph/model"
+	"graphql/graph/gqlmodel"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -45,8 +45,8 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreatePost func(childComplexity int, input *model.NewPost) int
-		DeletePost func(childComplexity int, input *model.DeletePost) int
+		CreatePost func(childComplexity int, input *gqlmodel.NewPost) int
+		DeletePost func(childComplexity int, input *gqlmodel.DeletePost) int
 	}
 
 	Post struct {
@@ -62,11 +62,11 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreatePost(ctx context.Context, input *model.NewPost) (*model.Post, error)
-	DeletePost(ctx context.Context, input *model.DeletePost) (string, error)
+	CreatePost(ctx context.Context, input *gqlmodel.NewPost) (*gqlmodel.Post, error)
+	DeletePost(ctx context.Context, input *gqlmodel.DeletePost) (string, error)
 }
 type QueryResolver interface {
-	Posts(ctx context.Context) ([]*model.Post, error)
+	Posts(ctx context.Context) ([]*gqlmodel.Post, error)
 }
 
 type executableSchema struct {
@@ -94,7 +94,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(*model.NewPost)), true
+		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(*gqlmodel.NewPost)), true
 
 	case "Mutation.deletePost":
 		if e.complexity.Mutation.DeletePost == nil {
@@ -106,7 +106,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeletePost(childComplexity, args["input"].(*model.DeletePost)), true
+		return e.complexity.Mutation.DeletePost(childComplexity, args["input"].(*gqlmodel.DeletePost)), true
 
 	case "Post.createdAt":
 		if e.complexity.Post.CreatedAt == nil {
@@ -247,10 +247,10 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_createPost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.NewPost
+	var arg0 *gqlmodel.NewPost
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalONewPost2ᚖgraphqlᚋgraphᚋmodelᚐNewPost(ctx, tmp)
+		arg0, err = ec.unmarshalONewPost2ᚖgraphqlᚋgraphᚋgqlmodelᚐNewPost(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -262,10 +262,10 @@ func (ec *executionContext) field_Mutation_createPost_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_deletePost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.DeletePost
+	var arg0 *gqlmodel.DeletePost
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalODeletePost2ᚖgraphqlᚋgraphᚋmodelᚐDeletePost(ctx, tmp)
+		arg0, err = ec.unmarshalODeletePost2ᚖgraphqlᚋgraphᚋgqlmodelᚐDeletePost(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -352,7 +352,7 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(*model.NewPost))
+		return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(*gqlmodel.NewPost))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -364,9 +364,9 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Post)
+	res := resTmp.(*gqlmodel.Post)
 	fc.Result = res
-	return ec.marshalNPost2ᚖgraphqlᚋgraphᚋmodelᚐPost(ctx, field.Selections, res)
+	return ec.marshalNPost2ᚖgraphqlᚋgraphᚋgqlmodelᚐPost(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_deletePost(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -394,7 +394,7 @@ func (ec *executionContext) _Mutation_deletePost(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeletePost(rctx, args["input"].(*model.DeletePost))
+		return ec.resolvers.Mutation().DeletePost(rctx, args["input"].(*gqlmodel.DeletePost))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -411,7 +411,7 @@ func (ec *executionContext) _Mutation_deletePost(ctx context.Context, field grap
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Post_id(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+func (ec *executionContext) _Post_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Post) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -446,7 +446,7 @@ func (ec *executionContext) _Post_id(ctx context.Context, field graphql.Collecte
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Post_title(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+func (ec *executionContext) _Post_title(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Post) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -481,7 +481,7 @@ func (ec *executionContext) _Post_title(ctx context.Context, field graphql.Colle
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Post_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+func (ec *executionContext) _Post_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Post) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -516,7 +516,7 @@ func (ec *executionContext) _Post_createdAt(ctx context.Context, field graphql.C
 	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Post_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Post) (ret graphql.Marshaler) {
+func (ec *executionContext) _Post_updatedAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Post) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -581,9 +581,9 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Post)
+	res := resTmp.([]*gqlmodel.Post)
 	fc.Result = res
-	return ec.marshalNPost2ᚕᚖgraphqlᚋgraphᚋmodelᚐPostᚄ(ctx, field.Selections, res)
+	return ec.marshalNPost2ᚕᚖgraphqlᚋgraphᚋgqlmodelᚐPostᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1779,8 +1779,8 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputDeletePost(ctx context.Context, obj interface{}) (model.DeletePost, error) {
-	var it model.DeletePost
+func (ec *executionContext) unmarshalInputDeletePost(ctx context.Context, obj interface{}) (gqlmodel.DeletePost, error) {
+	var it gqlmodel.DeletePost
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -1802,8 +1802,8 @@ func (ec *executionContext) unmarshalInputDeletePost(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputNewPost(ctx context.Context, obj interface{}) (model.NewPost, error) {
-	var it model.NewPost
+func (ec *executionContext) unmarshalInputNewPost(ctx context.Context, obj interface{}) (gqlmodel.NewPost, error) {
+	var it gqlmodel.NewPost
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -1871,7 +1871,7 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 var postImplementors = []string{"Post"}
 
-func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj *model.Post) graphql.Marshaler {
+func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Post) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, postImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -2235,11 +2235,11 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNPost2graphqlᚋgraphᚋmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v model.Post) graphql.Marshaler {
+func (ec *executionContext) marshalNPost2graphqlᚋgraphᚋgqlmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Post) graphql.Marshaler {
 	return ec._Post(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPost2ᚕᚖgraphqlᚋgraphᚋmodelᚐPostᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Post) graphql.Marshaler {
+func (ec *executionContext) marshalNPost2ᚕᚖgraphqlᚋgraphᚋgqlmodelᚐPostᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Post) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -2263,7 +2263,7 @@ func (ec *executionContext) marshalNPost2ᚕᚖgraphqlᚋgraphᚋmodelᚐPostᚄ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNPost2ᚖgraphqlᚋgraphᚋmodelᚐPost(ctx, sel, v[i])
+			ret[i] = ec.marshalNPost2ᚖgraphqlᚋgraphᚋgqlmodelᚐPost(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -2283,7 +2283,7 @@ func (ec *executionContext) marshalNPost2ᚕᚖgraphqlᚋgraphᚋmodelᚐPostᚄ
 	return ret
 }
 
-func (ec *executionContext) marshalNPost2ᚖgraphqlᚋgraphᚋmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v *model.Post) graphql.Marshaler {
+func (ec *executionContext) marshalNPost2ᚖgraphqlᚋgraphᚋgqlmodelᚐPost(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Post) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -2604,7 +2604,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
-func (ec *executionContext) unmarshalODeletePost2ᚖgraphqlᚋgraphᚋmodelᚐDeletePost(ctx context.Context, v interface{}) (*model.DeletePost, error) {
+func (ec *executionContext) unmarshalODeletePost2ᚖgraphqlᚋgraphᚋgqlmodelᚐDeletePost(ctx context.Context, v interface{}) (*gqlmodel.DeletePost, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -2612,7 +2612,7 @@ func (ec *executionContext) unmarshalODeletePost2ᚖgraphqlᚋgraphᚋmodelᚐDe
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalONewPost2ᚖgraphqlᚋgraphᚋmodelᚐNewPost(ctx context.Context, v interface{}) (*model.NewPost, error) {
+func (ec *executionContext) unmarshalONewPost2ᚖgraphqlᚋgraphᚋgqlmodelᚐNewPost(ctx context.Context, v interface{}) (*gqlmodel.NewPost, error) {
 	if v == nil {
 		return nil, nil
 	}
