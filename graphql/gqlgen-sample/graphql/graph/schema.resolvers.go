@@ -9,7 +9,6 @@ import (
 	"graphql/ginctx"
 	"graphql/graph/generated"
 	"graphql/graph/model"
-	"graphql/middleware"
 	"graphql/models"
 	"graphql/service/post"
 	"net/http"
@@ -19,9 +18,7 @@ import (
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost) (*model.Post, error) {
-	ctx, _ = ginctx.GinContextFromContext(ctx)
-	user := middleware.ForContext(ctx)
-	if user.ID == 0 {
+	if _, err := ginctx.GetUserFromGinCtx(ctx); err != nil {
 		return nil, errors.New(strconv.Itoa(http.StatusNotFound))
 	}
 
