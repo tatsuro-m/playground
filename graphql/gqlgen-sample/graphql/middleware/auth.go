@@ -23,8 +23,7 @@ func Authentication() gin.HandlerFunc {
 		token := getBearerToken(c.Request.Header.Get("Authorization"))
 
 		if token == "" {
-			fmt.Println("トークンが正しく設定されていません")
-			c.Set(userCtxKey, &models.User{})
+			fmt.Println("Authorization ヘッダーがセットされていません")
 			c.Next()
 			return
 		}
@@ -89,4 +88,16 @@ func verifyIdToken(token string) (*auth.Token, error) {
 	}
 
 	return client.VerifyIDToken(ctx, token)
+}
+
+// ForContext finds the user from the context. REQUIRES Middleware to have run.
+func ForContext(ctx context.Context) *models.User {
+	raw, ok := ctx.Value(userCtxKey).(*models.User)
+
+	// キャストできないような値が入っていたのなら空の構造体の pointer を返してしまう
+	if ok == false {
+		return &models.User{}
+	}
+
+	return raw
 }

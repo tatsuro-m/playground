@@ -8,12 +8,27 @@ import (
 	"fmt"
 	"graphql/graph/generated"
 	"graphql/graph/model"
+	"graphql/middleware"
 	"graphql/models"
 	"graphql/service/post"
+	"net/http"
 	"strconv"
+
+	"github.com/friendsofgo/errors"
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost) (*model.Post, error) {
+	user := middleware.ForContext(ctx)
+	fmt.Println(user)
+
+	if user == nil {
+		fmt.Println("user が設定されていないようです")
+		return nil, errors.New(strconv.Itoa(http.StatusNotFound))
+	} else {
+		fmt.Println("user がセットされていたので表示してみる")
+		fmt.Println(user)
+	}
+
 	dbPost := models.Post{Title: input.Title}
 	p, err := post.Service{}.CreatePost(dbPost)
 
