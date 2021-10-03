@@ -18,7 +18,7 @@ import (
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input *gqlmodel.NewPost) (*gqlmodel.Post, error) {
 	if _, err := ginctx.GetUserFromGinCtx(ctx); err != nil {
-		return nil, errors.New(strconv.Itoa(http.StatusNotFound))
+		return nil, errors.New(strconv.Itoa(http.StatusUnauthorized))
 	}
 
 	dbPost := models.Post{Title: input.Title}
