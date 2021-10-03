@@ -21,13 +21,8 @@ import (
 func (r *mutationResolver) CreatePost(ctx context.Context, input *model.NewPost) (*model.Post, error) {
 	ctx, _ = ginctx.GinContextFromContext(ctx)
 	user := middleware.ForContext(ctx)
-
-	if user == nil {
-		fmt.Println("user が設定されていないようです")
+	if user.ID == 0 {
 		return nil, errors.New(strconv.Itoa(http.StatusNotFound))
-	} else {
-		fmt.Println("user がセットされていたので表示してみる")
-		fmt.Println(user)
 	}
 
 	dbPost := models.Post{Title: input.Title}
