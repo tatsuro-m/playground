@@ -28,7 +28,8 @@ func Authentication() gin.HandlerFunc {
 		}
 
 		verifiedToken, err := verifyIdToken(token)
-		getUser(verifiedToken)
+		u := getUser(verifiedToken)
+		fmt.Println(u)
 
 		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
@@ -44,8 +45,12 @@ func getUser(verifiedToken *auth.Token) models.User {
 
 	var resUser models.User
 	if b {
-		fmt.Println("user が存在しました！")
+		data, err := s.GetUserByUID(verifiedToken.UID)
+		if err != nil {
+			return models.User{}
+		}
 
+		resUser = *data
 	} else {
 		u := models.User{UserID: verifiedToken.UID, Email: verifiedToken.Claims["email"].(string), Name: verifiedToken.Claims["name"].(string), Picture: verifiedToken.Claims["picture"].(string)}
 
