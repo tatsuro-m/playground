@@ -3,6 +3,8 @@ package middleware
 import (
 	"context"
 	"fmt"
+	"graphql/models"
+	"graphql/service/user"
 	"log"
 	"net/http"
 	"strings"
@@ -26,7 +28,7 @@ func Authentication() gin.HandlerFunc {
 		}
 
 		verifiedToken, err := verifyIdToken(token)
-		fmt.Println(verifiedToken)
+		getUser(verifiedToken)
 
 		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
@@ -34,6 +36,28 @@ func Authentication() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+func getUser(verifiedToken *auth.Token) models.User {
+	s := user.Service{}
+	b := s.ExistsByUID(verifiedToken.UID)
+
+	var resUser models.User
+	if b {
+		fmt.Println("user が存在しました！")
+
+	} else {
+		u := models.User{UserID: verifiedToken.UID, Email: verifiedToken.Claims["email"].(string), Name: verifiedToken.Claims["name"].(string), Picture: verifiedToken.Claims["picture"].(string)}
+
+		data, err := s.CreateUser(u)
+		if err != nil {
+			return models.User{}
+		}
+
+		resUser = data
+	}
+
+	return resUser
 }
 
 func getBearerToken(header string) string {
