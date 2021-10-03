@@ -18,6 +18,10 @@ func (s Service) ExistsByUID(uid string) bool {
 	return exists
 }
 
+func (s Service) GetUserByUID(uid string) (*models.User, error) {
+	return models.Users(models.UserWhere.UserID.EQ(uid)).One(context.Background(), db.GetDB())
+}
+
 func (s Service) CreateUser(user models.User) (models.User, error) {
 	ctx := context.Background()
 	d := db.GetDB()
@@ -27,7 +31,7 @@ func (s Service) CreateUser(user models.User) (models.User, error) {
 		return models.User{}, err
 	}
 
-	u, err := models.Users(models.UserWhere.UserID.EQ(user.UserID)).One(ctx, d)
+	u, err := s.GetUserByUID(user.UserID)
 	if err != nil {
 		return models.User{}, err
 	}
