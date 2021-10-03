@@ -24,6 +24,7 @@ func Authentication() gin.HandlerFunc {
 
 		if token == "" {
 			fmt.Println("トークンが正しく設定されていません")
+			c.Set(userCtxKey, &models.User{})
 			c.Next()
 			return
 		}
@@ -88,12 +89,4 @@ func verifyIdToken(token string) (*auth.Token, error) {
 	}
 
 	return client.VerifyIDToken(ctx, token)
-}
-
-// ForContext finds the user from the context. REQUIRES Middleware to have run.
-func ForContext(ctx context.Context) *models.User {
-	// panic になるかもしれないけど、gin が Recover して 500 を返してくれるのでOK。
-	raw := ctx.Value(userCtxKey).(*models.User)
-
-	return raw
 }
