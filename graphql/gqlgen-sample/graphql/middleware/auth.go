@@ -20,7 +20,6 @@ func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := getBearerToken(c.Request.Header.Get("Authorization"))
 
-		// トークンが正しく設定されていないならそのまま Next する。
 		if token == "" {
 			fmt.Println("トークンが正しく設定されていません")
 			c.Next()
@@ -28,12 +27,12 @@ func Authentication() gin.HandlerFunc {
 		}
 
 		verifiedToken, err := verifyIdToken(token)
-		u := getUser(verifiedToken)
-		fmt.Println(u)
-
 		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
+
+		u := getUser(verifiedToken)
+		c.Set("user", u)
 
 		c.Next()
 	}
