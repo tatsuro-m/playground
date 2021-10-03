@@ -34,7 +34,7 @@ func Authentication() gin.HandlerFunc {
 		}
 
 		u := getUser(verifiedToken)
-		c.Set(userCtxKey, u)
+		c.Set(userCtxKey, &u)
 
 		c.Next()
 	}
