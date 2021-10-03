@@ -11,7 +11,7 @@ import (
 )
 
 func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
-	ginContext := ctx.Value("GinContextKey")
+	ginContext := ctx.Value(middleware.GinCtxKey)
 	if ginContext == nil {
 		err := fmt.Errorf("could not retrieve gin.Context")
 		return nil, err
