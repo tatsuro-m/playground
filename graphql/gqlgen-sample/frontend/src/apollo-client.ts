@@ -1,8 +1,12 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { firebaseUser } from './lib/firebase'
 
-const getJWT = async () => {
-  return await firebaseUser().getIdToken(true)
+export const getJWT = async () => {
+  if (firebaseUser()) {
+    const jwt = await firebaseUser().getIdToken(true)
+    console.log(jwt)
+    return jwt
+  }
 }
 
 const client = new ApolloClient({
