@@ -207,11 +207,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "graph/post.graphqls", Input: `# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
-
-type Post {
+	{Name: "graph/post.graphql", Input: `type Post {
     id: ID!
     title: String!
     createdAt: Time!
@@ -236,6 +232,19 @@ type Mutation {
 }
 
 scalar Time
+`, BuiltIn: false},
+	{Name: "graph/user.graphql", Input: `#type User {
+#    id: ID!
+#    email: String!
+#    name: String!
+#    picture: String!
+#    createdAt: Time!
+#    updatedAt: Time!
+#}
+#
+#type Query {
+#    users: [User]!
+#}
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
