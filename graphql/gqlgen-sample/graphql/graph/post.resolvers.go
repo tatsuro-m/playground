@@ -7,20 +7,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"graphql/code"
 	"graphql/ginctx"
 	"graphql/graph/gqlmodel"
 	"graphql/modelconv"
 	"graphql/models"
 	"graphql/service/post"
 	"graphql/service/user"
-	"net/http"
 	"strconv"
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input *gqlmodel.NewPost) (*gqlmodel.Post, error) {
 	u, err := ginctx.GetUserFromGinCtx(ctx)
 	if err != nil {
-		return nil, errors.New(strconv.Itoa(http.StatusUnauthorized))
+		return nil, errors.New(code.NotAuthorize)
 	}
 
 	dbPost := models.Post{Title: input.Title, UserID: u.ID}
@@ -31,7 +31,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input *gqlmodel.NewPo
 
 func (r *mutationResolver) DeletePost(ctx context.Context, input *gqlmodel.DeletePost) (string, error) {
 	if _, err := ginctx.GetUserFromGinCtx(ctx); err != nil {
-		return "", errors.New(strconv.Itoa(http.StatusUnauthorized))
+		return "", errors.New(code.NotAuthorize)
 	}
 
 	id, _ := strconv.Atoi(input.ID)
@@ -64,12 +64,12 @@ func (r *queryResolver) Posts(ctx context.Context) ([]*gqlmodel.Post, error) {
 func (r *queryResolver) Post(ctx context.Context, id string) (*gqlmodel.Post, error) {
 	i, err := strconv.Atoi(id)
 	if err != nil {
-		return nil, errors.New("invalid id")
+		return nil, errors.New(code.InvalidID)
 	}
 
 	p, err := post.Service{}.GetByID(i)
 	if err != nil {
-		return nil, errors.New("model error")
+		return nil, errors.New(code.ModelError)
 	}
 
 	res := modelconv.ModelToGqlPost(p)

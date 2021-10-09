@@ -6,6 +6,7 @@ package graph
 import (
 	"context"
 	"errors"
+	"graphql/code"
 	"graphql/graph/gqlmodel"
 	"graphql/modelconv"
 	"graphql/service/user"
@@ -14,7 +15,7 @@ import (
 func (r *queryResolver) Users(ctx context.Context) ([]*gqlmodel.User, error) {
 	modelUsers, err := user.Service{}.GetAll()
 	if err != nil {
-		return nil, errors.New("model error")
+		return nil, errors.New(code.ModelError)
 	}
 
 	gqlUsers := make([]*gqlmodel.User, 0)
