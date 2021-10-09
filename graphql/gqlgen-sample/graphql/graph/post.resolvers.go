@@ -17,11 +17,12 @@ import (
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input *gqlmodel.NewPost) (*gqlmodel.Post, error) {
-	if _, err := ginctx.GetUserFromGinCtx(ctx); err != nil {
+	u, err := ginctx.GetUserFromGinCtx(ctx)
+	if err != nil {
 		return nil, errors.New(strconv.Itoa(http.StatusUnauthorized))
 	}
 
-	dbPost := models.Post{Title: input.Title}
+	dbPost := models.Post{Title: input.Title, UserID: u.ID}
 	p, err := post.Service{}.CreatePost(dbPost)
 
 	return &gqlmodel.Post{ID: strconv.Itoa(p.ID), Title: p.Title, CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt}, err
