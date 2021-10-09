@@ -14,6 +14,10 @@ func (s Service) GetAll() (models.PostSlice, error) {
 	return models.Posts().All(context.Background(), db.GetDB())
 }
 
+func (s Service) GetByID(id int) (*models.Post, error) {
+	return models.FindPost(context.Background(), db.GetDB(), id)
+}
+
 func (s Service) CreatePost(post models.Post) (models.Post, error) {
 	ctx := context.Background()
 	d := db.GetDB()

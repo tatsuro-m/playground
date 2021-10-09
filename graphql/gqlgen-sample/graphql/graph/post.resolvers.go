@@ -62,5 +62,19 @@ func (r *queryResolver) Posts(ctx context.Context) ([]*gqlmodel.Post, error) {
 }
 
 func (r *queryResolver) Post(ctx context.Context, id string) (*gqlmodel.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	i, err := strconv.Atoi(id)
+	if err != nil {
+		return nil, errors.New("invalid id")
+	}
+
+	p, err := post.Service{}.GetByID(i)
+	if err != nil {
+		return nil, errors.New("model error")
+	}
+
+	res := modelconv.ModelToGqlPost(p)
+	u, err := user.Service{}.GetUserByID(p.UserID)
+	res.User = modelconv.ModelToGqlUser(u)
+
+	return res, nil
 }
