@@ -13,8 +13,7 @@ import (
 var d *sql.DB
 
 func Init() error {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?parseTime=true",
-		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))
+	dsn := getDSN()
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return err
@@ -23,6 +22,11 @@ func Init() error {
 	boil.DebugMode = true
 	d = db
 	return nil
+}
+
+func getDSN() string {
+	return fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?parseTime=true",
+		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_HOST"), os.Getenv("DB_NAME"))
 }
 
 func GetDB() *sql.DB {
