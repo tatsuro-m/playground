@@ -16,6 +16,7 @@ input DeletePost {
 
 extend type Query {
     posts: [Post!]!
+    post(id: ID!): Post!
 }
 
 extend type Mutation {
