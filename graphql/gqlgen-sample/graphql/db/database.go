@@ -3,9 +3,8 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"os"
-
 	"github.com/volatiletech/sqlboiler/v4/boil"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -19,9 +18,18 @@ func Init() error {
 		return err
 	}
 
-	boil.DebugMode = true
+	boilDebug()
 	d = db
 	return nil
+}
+
+func boilDebug() {
+	if os.Getenv("BOIL_DEBUG") != "" {
+		fmt.Println("enable boil debug mode")
+		boil.DebugMode = true
+	} else {
+		fmt.Println("disable boil debug mode")
+	}
 }
 
 func getDSN() string {
