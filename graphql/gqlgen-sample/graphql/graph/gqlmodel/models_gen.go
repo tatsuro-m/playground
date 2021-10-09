@@ -19,6 +19,7 @@ type Post struct {
 	Title     string    `json:"title"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
+	User      *User     `json:"user"`
 }
 
 type User struct {

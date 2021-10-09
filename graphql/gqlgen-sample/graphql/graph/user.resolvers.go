@@ -5,7 +5,7 @@ package graph
 
 import (
 	"context"
-	"github.com/friendsofgo/errors"
+	"errors"
 	"graphql/graph/gqlmodel"
 	"graphql/modelconv"
 	"graphql/service/user"
