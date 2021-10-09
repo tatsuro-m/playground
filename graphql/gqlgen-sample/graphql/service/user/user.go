@@ -11,6 +11,10 @@ import (
 
 type Service struct{}
 
+func (s Service) GetAll() (models.UserSlice, error) {
+	return models.Users().All(context.Background(), db.GetDB())
+}
+
 func (s Service) ExistsByUID(uid string) bool {
 	fmt.Println(uid)
 
