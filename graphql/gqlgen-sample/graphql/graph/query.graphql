@@ -1,4 +1,0 @@
-type Query {
-    posts: [Post!]!
-    users: [User!]!
-}
