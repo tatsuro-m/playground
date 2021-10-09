@@ -7,8 +7,8 @@ import (
 	"context"
 	"github.com/friendsofgo/errors"
 	"graphql/graph/gqlmodel"
+	"graphql/modelconv"
 	"graphql/service/user"
-	"strconv"
 )
 
 func (r *queryResolver) Users(ctx context.Context) ([]*gqlmodel.User, error) {
@@ -19,7 +19,7 @@ func (r *queryResolver) Users(ctx context.Context) ([]*gqlmodel.User, error) {
 
 	gqlUsers := make([]*gqlmodel.User, 0)
 	for _, du := range dbUsers {
-		gu := &gqlmodel.User{ID: strconv.Itoa(du.ID), Email: du.Email, Name: du.Name, Picture: du.Picture, CreatedAt: du.CreatedAt, UpdatedAt: du.UpdatedAt}
+		gu := modelconv.ModelToGqlUser(du)
 		gqlUsers = append(gqlUsers, gu)
 	}
 
