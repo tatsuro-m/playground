@@ -22,6 +22,10 @@ func (s Service) ExistsByUID(uid string) bool {
 	return exists
 }
 
+func (s Service) GetUserByID(id int) (*models.User, error) {
+	return models.Users(models.UserWhere.ID.EQ(id)).One(context.Background(), db.GetDB())
+}
+
 func (s Service) GetUserByUID(uid string) (*models.User, error) {
 	return models.Users(models.UserWhere.UserID.EQ(uid)).One(context.Background(), db.GetDB())
 }

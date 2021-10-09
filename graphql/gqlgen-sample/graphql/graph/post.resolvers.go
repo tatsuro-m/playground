@@ -12,6 +12,7 @@ import (
 	"graphql/modelconv"
 	"graphql/models"
 	"graphql/service/post"
+	"graphql/service/user"
 	"net/http"
 	"strconv"
 )
@@ -52,6 +53,8 @@ func (r *queryResolver) Posts(ctx context.Context) ([]*gqlmodel.Post, error) {
 	res := make([]*gqlmodel.Post, 0)
 	for _, dp := range dbPosts {
 		graphPost := modelconv.ModelToGqlPost(dp)
+		owner, _ := user.Service{}.GetUserByID(dp.UserID)
+		graphPost.User = modelconv.ModelToGqlUser(owner)
 		res = append(res, graphPost)
 	}
 
