@@ -12,14 +12,14 @@ import (
 )
 
 func (r *queryResolver) Users(ctx context.Context) ([]*gqlmodel.User, error) {
-	dbUsers, err := user.Service{}.GetAll()
+	modelUsers, err := user.Service{}.GetAll()
 	if err != nil {
 		return nil, errors.New("model error")
 	}
 
 	gqlUsers := make([]*gqlmodel.User, 0)
-	for _, du := range dbUsers {
-		gu := modelconv.ModelToGqlUser(du)
+	for _, mu := range modelUsers {
+		gu := modelconv.ModelToGqlUser(mu)
 		gqlUsers = append(gqlUsers, gu)
 	}
 
