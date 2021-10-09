@@ -13,11 +13,11 @@ input DeletePost {
     id: ID!
 }
 
-type Query {
+extend type Query {
     posts: [Post!]!
 }
 
-type Mutation {
+extend type Mutation {
     createPost(input: NewPost): Post!
     deletePost(input: DeletePost): ID!
 }

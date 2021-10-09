@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"graphql/ginctx"
-	"graphql/graph/generated"
 	"graphql/graph/gqlmodel"
 	"graphql/models"
 	"graphql/service/post"
@@ -63,12 +62,3 @@ func (r *queryResolver) Posts(ctx context.Context) ([]*gqlmodel.Post, error) {
 
 	return res, nil
 }
-
-// Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
-
-// Query returns generated.QueryResolver implementation.
-func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
-
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
