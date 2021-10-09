@@ -60,3 +60,7 @@ func (r *queryResolver) Posts(ctx context.Context) ([]*gqlmodel.Post, error) {
 
 	return res, nil
 }
+
+func (r *queryResolver) Post(ctx context.Context, id string) (*gqlmodel.Post, error) {
+	panic(fmt.Errorf("not implemented"))
+}
