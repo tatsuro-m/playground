@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"graphql/ginctx"
 	"graphql/graph/gqlmodel"
+	"graphql/modelconv"
 	"graphql/models"
 	"graphql/service/post"
 	"net/http"
@@ -24,7 +25,7 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input *gqlmodel.NewPo
 	dbPost := models.Post{Title: input.Title, UserID: u.ID}
 	p, err := post.Service{}.CreatePost(dbPost)
 
-	return &gqlmodel.Post{ID: strconv.Itoa(p.ID), Title: p.Title, CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt}, err
+	return modelconv.ModelToGqlPost(&p), err
 }
 
 func (r *mutationResolver) DeletePost(ctx context.Context, input *gqlmodel.DeletePost) (string, error) {
@@ -50,13 +51,7 @@ func (r *queryResolver) Posts(ctx context.Context) ([]*gqlmodel.Post, error) {
 
 	res := make([]*gqlmodel.Post, 0)
 	for _, dp := range dbPosts {
-		graphPost := &gqlmodel.Post{
-			ID:        strconv.Itoa(dp.ID),
-			Title:     dp.Title,
-			CreatedAt: dp.CreatedAt,
-			UpdatedAt: dp.UpdatedAt,
-		}
-
+		graphPost := modelconv.ModelToGqlPost(dp)
 		res = append(res, graphPost)
 	}
 
