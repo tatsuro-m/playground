@@ -1,0 +1,2 @@
+ALTER TABLE posts
+    ADD COLUMN user_id int NOT NULL DEFAULT 0;
