@@ -4,11 +4,13 @@
 package models
 
 var TableNames = struct {
-	Posts string
-	Tags  string
-	Users string
+	PostTags string
+	Posts    string
+	Tags     string
+	Users    string
 }{
-	Posts: "posts",
-	Tags:  "tags",
-	Users: "users",
+	PostTags: "post_tags",
+	Posts:    "posts",
+	Tags:     "tags",
+	Users:    "users",
 }

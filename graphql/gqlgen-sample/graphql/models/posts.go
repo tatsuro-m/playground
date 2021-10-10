@@ -147,13 +147,16 @@ var PostWhere = struct {
 // PostRels is where relationship names are stored.
 var PostRels = struct {
 	User string
+	Tags string
 }{
 	User: "User",
+	Tags: "Tags",
 }
 
 // postR is where relationships are stored.
 type postR struct {
-	User *User `boil:"User" json:"User" toml:"User" yaml:"User"`
+	User *User    `boil:"User" json:"User" toml:"User" yaml:"User"`
+	Tags TagSlice `boil:"Tags" json:"Tags" toml:"Tags" yaml:"Tags"`
 }
 
 // NewStruct creates a new relationship struct
@@ -460,6 +463,28 @@ func (o *Post) User(mods ...qm.QueryMod) userQuery {
 	return query
 }
 
+// Tags retrieves all the tag's Tags with an executor.
+func (o *Post) Tags(mods ...qm.QueryMod) tagQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.InnerJoin("`post_tags` on `tags`.`id` = `post_tags`.`tag_id`"),
+		qm.Where("`post_tags`.`post_id`=?", o.ID),
+	)
+
+	query := Tags(queryMods...)
+	queries.SetFrom(query.Query, "`tags`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`tags`.*"})
+	}
+
+	return query
+}
+
 // LoadUser allows an eager lookup of values, cached into the
 // loaded structs of the objects. This is for an N-1 relationship.
 func (postL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool, maybePost interface{}, mods queries.Applicator) error {
@@ -564,6 +589,121 @@ func (postL) LoadUser(ctx context.Context, e boil.ContextExecutor, singular bool
 	return nil
 }
 
+// LoadTags allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (postL) LoadTags(ctx context.Context, e boil.ContextExecutor, singular bool, maybePost interface{}, mods queries.Applicator) error {
+	var slice []*Post
+	var object *Post
+
+	if singular {
+		object = maybePost.(*Post)
+	} else {
+		slice = *maybePost.(*[]*Post)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &postR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &postR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.Select("`tags`.id, `tags`.name, `tags`.created_at, `tags`.updated_at, `a`.`post_id`"),
+		qm.From("`tags`"),
+		qm.InnerJoin("`post_tags` as `a` on `tags`.`id` = `a`.`tag_id`"),
+		qm.WhereIn("`a`.`post_id` in ?", args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load tags")
+	}
+
+	var resultSlice []*Tag
+
+	var localJoinCols []int
+	for results.Next() {
+		one := new(Tag)
+		var localJoinCol int
+
+		err = results.Scan(&one.ID, &one.Name, &one.CreatedAt, &one.UpdatedAt, &localJoinCol)
+		if err != nil {
+			return errors.Wrap(err, "failed to scan eager loaded results for tags")
+		}
+		if err = results.Err(); err != nil {
+			return errors.Wrap(err, "failed to plebian-bind eager loaded slice tags")
+		}
+
+		resultSlice = append(resultSlice, one)
+		localJoinCols = append(localJoinCols, localJoinCol)
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on tags")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for tags")
+	}
+
+	if len(tagAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.Tags = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &tagR{}
+			}
+			foreign.R.Posts = append(foreign.R.Posts, object)
+		}
+		return nil
+	}
+
+	for i, foreign := range resultSlice {
+		localJoinCol := localJoinCols[i]
+		for _, local := range slice {
+			if local.ID == localJoinCol {
+				local.R.Tags = append(local.R.Tags, foreign)
+				if foreign.R == nil {
+					foreign.R = &tagR{}
+				}
+				foreign.R.Posts = append(foreign.R.Posts, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
 // SetUser of the post to the related item.
 // Sets o.R.User to related.
 // Adds o to related.R.Posts.
@@ -609,6 +749,150 @@ func (o *Post) SetUser(ctx context.Context, exec boil.ContextExecutor, insert bo
 	}
 
 	return nil
+}
+
+// AddTags adds the given related objects to the existing relationships
+// of the post, optionally inserting them as new records.
+// Appends related to o.R.Tags.
+// Sets related.R.Posts appropriately.
+func (o *Post) AddTags(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Tag) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		}
+	}
+
+	for _, rel := range related {
+		query := "insert into `post_tags` (`post_id`, `tag_id`) values (?, ?)"
+		values := []interface{}{o.ID, rel.ID}
+
+		if boil.IsDebug(ctx) {
+			writer := boil.DebugWriterFrom(ctx)
+			fmt.Fprintln(writer, query)
+			fmt.Fprintln(writer, values)
+		}
+		_, err = exec.ExecContext(ctx, query, values...)
+		if err != nil {
+			return errors.Wrap(err, "failed to insert into join table")
+		}
+	}
+	if o.R == nil {
+		o.R = &postR{
+			Tags: related,
+		}
+	} else {
+		o.R.Tags = append(o.R.Tags, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &tagR{
+				Posts: PostSlice{o},
+			}
+		} else {
+			rel.R.Posts = append(rel.R.Posts, o)
+		}
+	}
+	return nil
+}
+
+// SetTags removes all previously related items of the
+// post replacing them completely with the passed
+// in related items, optionally inserting them as new records.
+// Sets o.R.Posts's Tags accordingly.
+// Replaces o.R.Tags with related.
+// Sets related.R.Posts's Tags accordingly.
+func (o *Post) SetTags(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*Tag) error {
+	query := "delete from `post_tags` where `post_id` = ?"
+	values := []interface{}{o.ID}
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, query)
+		fmt.Fprintln(writer, values)
+	}
+	_, err := exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+
+	removeTagsFromPostsSlice(o, related)
+	if o.R != nil {
+		o.R.Tags = nil
+	}
+	return o.AddTags(ctx, exec, insert, related...)
+}
+
+// RemoveTags relationships from objects passed in.
+// Removes related items from R.Tags (uses pointer comparison, removal does not keep order)
+// Sets related.R.Posts.
+func (o *Post) RemoveTags(ctx context.Context, exec boil.ContextExecutor, related ...*Tag) error {
+	if len(related) == 0 {
+		return nil
+	}
+
+	var err error
+	query := fmt.Sprintf(
+		"delete from `post_tags` where `post_id` = ? and `tag_id` in (%s)",
+		strmangle.Placeholders(dialect.UseIndexPlaceholders, len(related), 2, 1),
+	)
+	values := []interface{}{o.ID}
+	for _, rel := range related {
+		values = append(values, rel.ID)
+	}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, query)
+		fmt.Fprintln(writer, values)
+	}
+	_, err = exec.ExecContext(ctx, query, values...)
+	if err != nil {
+		return errors.Wrap(err, "failed to remove relationships before set")
+	}
+	removeTagsFromPostsSlice(o, related)
+	if o.R == nil {
+		return nil
+	}
+
+	for _, rel := range related {
+		for i, ri := range o.R.Tags {
+			if rel != ri {
+				continue
+			}
+
+			ln := len(o.R.Tags)
+			if ln > 1 && i < ln-1 {
+				o.R.Tags[i] = o.R.Tags[ln-1]
+			}
+			o.R.Tags = o.R.Tags[:ln-1]
+			break
+		}
+	}
+
+	return nil
+}
+
+func removeTagsFromPostsSlice(o *Post, related []*Tag) {
+	for _, rel := range related {
+		if rel.R == nil {
+			continue
+		}
+		for i, ri := range rel.R.Posts {
+			if o.ID != ri.ID {
+				continue
+			}
+
+			ln := len(rel.R.Posts)
+			if ln > 1 && i < ln-1 {
+				rel.R.Posts[i] = rel.R.Posts[ln-1]
+			}
+			rel.R.Posts = rel.R.Posts[:ln-1]
+			break
+		}
+	}
 }
 
 // Posts retrieves all the records using an executor.
