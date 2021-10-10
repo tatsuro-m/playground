@@ -49,3 +49,12 @@ func (s Service) DeleteByID(id int) (*models.Post, error) {
 
 	return post, nil
 }
+
+func (s Service) CheckMyPost(postID, userID int) bool {
+	p, err := s.GetByID(postID)
+	if err != nil {
+		return false
+	}
+
+	return p.UserID == userID
+}

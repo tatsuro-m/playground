@@ -30,12 +30,19 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input *gqlmodel.NewPo
 }
 
 func (r *mutationResolver) DeletePost(ctx context.Context, input *gqlmodel.DeletePost) (string, error) {
-	if _, err := ginctx.GetUserFromGinCtx(ctx); err != nil {
+	u, err := ginctx.GetUserFromGinCtx(ctx)
+	if err != nil {
 		return "", errors.New(code.NotAuthorize)
 	}
 
+	var s post.Service
 	id, _ := strconv.Atoi(input.ID)
-	p, err := post.Service{}.DeleteByID(id)
+
+	if !s.CheckMyPost(id, u.ID) {
+		return "", errors.New(code.Forbid)
+	}
+
+	p, err := s.DeleteByID(id)
 	if err != nil {
 		return "", err
 	}
