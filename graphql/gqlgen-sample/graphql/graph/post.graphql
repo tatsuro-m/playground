@@ -13,6 +13,10 @@ input NewPost {
 input DeletePost {
     id: ID!
 }
+input AddTag {
+    post_id: ID!
+    tag_id: ID!
+}
 
 extend type Query {
     posts: [Post!]!
@@ -22,6 +26,7 @@ extend type Query {
 extend type Mutation {
     createPost(input: NewPost): Post!
     deletePost(input: DeletePost): ID!
+    addTag(input: AddTag): Post!
 }
 
 scalar Time

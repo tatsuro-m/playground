@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+type AddTag struct {
+	PostID string `json:"post_id"`
+	TagID  string `json:"tag_id"`
+}
+
 type DeletePost struct {
 	ID string `json:"id"`
 }

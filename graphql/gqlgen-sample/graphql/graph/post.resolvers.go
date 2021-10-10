@@ -50,6 +50,10 @@ func (r *mutationResolver) DeletePost(ctx context.Context, input *gqlmodel.Delet
 	return strconv.Itoa(p.ID), nil
 }
 
+func (r *mutationResolver) AddTag(ctx context.Context, input *gqlmodel.AddTag) (*gqlmodel.Post, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) Posts(ctx context.Context) ([]*gqlmodel.Post, error) {
 	dbPosts, err := post.Service{}.GetAll()
 	if err != nil {

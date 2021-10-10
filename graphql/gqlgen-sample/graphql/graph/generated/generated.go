@@ -45,6 +45,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
+		AddTag     func(childComplexity int, input *gqlmodel.AddTag) int
 		CreatePost func(childComplexity int, input *gqlmodel.NewPost) int
 		DeletePost func(childComplexity int, input *gqlmodel.DeletePost) int
 	}
@@ -76,6 +77,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	CreatePost(ctx context.Context, input *gqlmodel.NewPost) (*gqlmodel.Post, error)
 	DeletePost(ctx context.Context, input *gqlmodel.DeletePost) (string, error)
+	AddTag(ctx context.Context, input *gqlmodel.AddTag) (*gqlmodel.Post, error)
 }
 type QueryResolver interface {
 	Posts(ctx context.Context) ([]*gqlmodel.Post, error)
@@ -97,6 +99,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Mutation.addTag":
+		if e.complexity.Mutation.AddTag == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addTag_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddTag(childComplexity, args["input"].(*gqlmodel.AddTag)), true
 
 	case "Mutation.createPost":
 		if e.complexity.Mutation.CreatePost == nil {
@@ -308,6 +322,10 @@ input NewPost {
 input DeletePost {
     id: ID!
 }
+input AddTag {
+    post_id: ID!
+    tag_id: ID!
+}
 
 extend type Query {
     posts: [Post!]!
@@ -317,6 +335,7 @@ extend type Query {
 extend type Mutation {
     createPost(input: NewPost): Post!
     deletePost(input: DeletePost): ID!
+    addTag(input: AddTag): Post!
 }
 
 scalar Time
@@ -340,6 +359,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_addTag_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *gqlmodel.AddTag
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOAddTag2ᚖgraphqlᚋgraphᚋgqlmodelᚐAddTag(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createPost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -521,6 +555,48 @@ func (ec *executionContext) _Mutation_deletePost(ctx context.Context, field grap
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addTag(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addTag_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddTag(rctx, args["input"].(*gqlmodel.AddTag))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Post)
+	fc.Result = res
+	return ec.marshalNPost2ᚖgraphqlᚋgraphᚋgqlmodelᚐPost(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Post_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Post) (ret graphql.Marshaler) {
@@ -2213,6 +2289,37 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputAddTag(ctx context.Context, obj interface{}) (gqlmodel.AddTag, error) {
+	var it gqlmodel.AddTag
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "post_id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("post_id"))
+			it.PostID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "tag_id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tag_id"))
+			it.TagID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputDeletePost(ctx context.Context, obj interface{}) (gqlmodel.DeletePost, error) {
 	var it gqlmodel.DeletePost
 	asMap := map[string]interface{}{}
@@ -2289,6 +2396,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "deletePost":
 			out.Values[i] = ec._Mutation_deletePost(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addTag":
+			out.Values[i] = ec._Mutation_addTag(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -3145,6 +3257,14 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalOAddTag2ᚖgraphqlᚋgraphᚋgqlmodelᚐAddTag(ctx context.Context, v interface{}) (*gqlmodel.AddTag, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAddTag(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
