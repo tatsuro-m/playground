@@ -48,7 +48,7 @@ func main() {
 		u := middleware.ForContext(c)
 
 		c.JSON(200, gin.H{
-			"data": u,
+			"user": u,
 		})
 	})
 
