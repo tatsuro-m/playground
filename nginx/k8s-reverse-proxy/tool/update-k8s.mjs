@@ -22,3 +22,6 @@ await $`kubectl apply -k ../infrastructure/kubernets/${appName}/overlays/stg`
 appName = 'frontend'
 registryURI = 'asia-northeast1-docker.pkg.dev/playground-318023/stg-rproxy-frontend'
 await $`cd ../${appName} && docker build --platform amd64 -t ${registryURI}/${appName}:${imageTag} . && docker push ${registryURI}/${appName}:${imageTag}`
+await $`echo イメージタグを更新します`
+await $`cd ../infrastructure/kubernets/${appName}/overlays/stg && kustomize edit set image ${registryURI}/${appName}:${imageTag}`
+await $`kubectl apply -k ../infrastructure/kubernets/${appName}/overlays/stg`

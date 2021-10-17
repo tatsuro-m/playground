@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: rproxy
+  name: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      namespace: rproxy
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: asia-northeast1-docker.pkg.dev/playground-318023/stg-rproxy-frontend/frontend
+          ports:
+            - containerPort: 80
