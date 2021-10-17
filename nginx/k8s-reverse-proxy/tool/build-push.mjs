@@ -8,4 +8,5 @@ const imageTag = Math.floor(new Date().getTime() / 1000)
 let appName = 'nginx'
 let registryURI = 'asia-northeast1-docker.pkg.dev/playground-318023/stg-rproxy-nginx-proxy'
 await $`cd ../${appName} && docker build -t ${registryURI}/${appName}:${imageTag} . && docker push ${registryURI}/${appName}:${imageTag}`
-
+await $`echo イメージタグを更新します`
+await $`cd ../infrastructure/kubernets/nginx/overlays/stg && kustomize edit set image ${registryURI}/${appName}:${imageTag}`
