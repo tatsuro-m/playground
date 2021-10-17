@@ -1,5 +1,8 @@
 #!/usr/bin/env zx
 
+// イメージの build、push、イメージタグの更新から apply まで全てできるスクリプト
+// 完全な作業効率化用かつテスト用なので本番のような環境では絶対に利用しないで下さい
+
 await $`echo Dockerイメージをビルドして対応するレジストリに push します！`
 
 const imageTag = Math.floor(new Date().getTime() / 1000)
