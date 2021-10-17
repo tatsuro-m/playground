@@ -8,4 +8,4 @@ patches:
     kind: Deployment
 images:
 - name: asia-northeast1-docker.pkg.dev/playground-318023/stg-rproxy-frontend/frontend
-  newTag: "1634446274"
+  newTag: "1634446583"
