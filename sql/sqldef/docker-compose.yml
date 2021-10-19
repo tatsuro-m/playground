@@ -10,3 +10,15 @@ services:
       - ./mysql/data:/var/lib/mysql
     ports:
       - "3306:3306"
+
+  mysqldef:
+    build:
+      context: mysqldef
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: tcp(db)
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_PORT: 3306
+    volumes:
+      - ./mysqldef/:/usr/local/bin
