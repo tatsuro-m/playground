@@ -6,3 +6,4 @@ RUN apk add mysql-client && \
   tar -xzvf schemalex.tar.gz
 
 COPY ./schema.sql ./migration.sh ./
+RUN chmod 755 ./migration.sh

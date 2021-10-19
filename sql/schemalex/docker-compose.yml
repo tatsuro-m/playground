@@ -23,3 +23,7 @@ services:
       DB_PORT: 3306
     volumes:
       - ./schemalex/schema.sql:/usr/local/bin/schema.sql
+    command:
+      - ./migration.sh
+    depends_on:
+      - db
