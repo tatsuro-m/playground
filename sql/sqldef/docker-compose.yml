@@ -22,4 +22,4 @@ services:
       DB_PASSWORD: password
       DB_PORT: 3306
     volumes:
-      - ./mysqldef/:/usr/local/bin
+      - ./mysqldef/schema.sql:/usr/local/bin/schema.sql
