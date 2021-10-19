@@ -1,0 +1,5 @@
+CREATE TABLE hoge
+(
+    id INTEGER NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (id)
+);
