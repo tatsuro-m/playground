@@ -8,6 +8,7 @@ services:
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - ./mysql/data:/var/lib/mysql
+      - ./mysql/mysql-confd:/etc/mysql/conf.d
     ports:
       - "3306:3306"
 
@@ -16,7 +17,7 @@ services:
       context: mysqldef
       dockerfile: Dockerfile
     environment:
-      DB_HOST: tcp(db)
+      DB_HOST: db
       DB_USER: root
       DB_PASSWORD: password
       DB_PORT: 3306
