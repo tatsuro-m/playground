@@ -10,7 +10,7 @@
     "format": "prettier --write $PWD/'src/**/*.{js,ts}'",
     "lint": "eslint 'src/**/*.{js,ts}'",
     "clean": "rm -rf dist",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen --config codegen.yaml"
   },
   "dependencies": {
     "@graphql-tools/graphql-file-loader": "^7.3.1",
