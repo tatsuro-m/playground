@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  db:
+    platform: linux/x86_64
+    image: mysql:8.0.26
+    environment:
+      MYSQL_DATABASE: dev
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/mysql-confd:/etc/mysql/conf.d
+    ports:
+      - "3306:3306"
+
+  schemalex:
+    build:
+      context: schemalex
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_PORT: 3306
+    volumes:
+      - ./schemalex/schema.sql:/usr/local/bin/schema.sql
+    command:
+      - ./migration.sh
+    depends_on:
+      - db
