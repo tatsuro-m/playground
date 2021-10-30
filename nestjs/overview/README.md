@@ -1,4 +1,5 @@
 https://docs.nestjs.com/first-steps から実際にやってみる。
+GraphQL のところは別に。
 
 ---
 <p align="center">
