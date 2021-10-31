@@ -13,7 +13,7 @@ import { Request } from 'express';
 export class CatsController {
   @Get()
   findAll(@Req() request: Request): string {
-    return 'hoge';
+    return 'return all cats!';
   }
 
   @Post()
