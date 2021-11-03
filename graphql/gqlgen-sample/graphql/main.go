@@ -2,8 +2,8 @@ package main
 
 import (
 	"graphql/db"
-	"graphql/graph"
 	"graphql/graph/generated"
+	"graphql/graph/resolver"
 	"graphql/middleware"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -17,7 +17,7 @@ const defaultPort = "8080"
 func graphqlHandler() gin.HandlerFunc {
 	// NewExecutableSchema and Config are in the generated.go file
 	// Resolver is in the resolver.go file
-	h := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	h := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &resolver.Resolver{}}))
 
 	return func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
