@@ -71,3 +71,21 @@ services:
       - ./graphql/:/go/src/app
     depends_on:
       - db
+
+  test:
+    build:
+      context: ./graphql
+      dockerfile: docker/test.dockerfile
+    environment:
+      DB_HOST: db
+      DB_NAME: test
+      DB_USER: root
+      DB_PASSWORD: password
+      TEST_ENV: 1
+    tty: true
+    stdin_open: true
+    command: go test -v ./...
+    volumes:
+      - ./graphql/:/go/src/app
+    depends_on:
+      - db
