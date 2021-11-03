@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"fmt"
-	"graphql/graph/gqlmodel"
 	"graphql/thelper"
 	"testing"
 )
@@ -15,14 +14,14 @@ func TestQueryResolver_Users(t *testing.T) {
 		defer thelper.FinalizeTest(t)
 
 		thelper.InsertUser(t, 5)
-		var resp []*gqlmodel.User
+		var resp interface{}
 		q := `
-query {
+query users {
   users {
     name
     picture
   }
-}}`
+}`
 
 		c.MustPost(q, &resp)
 		fmt.Println(resp)
