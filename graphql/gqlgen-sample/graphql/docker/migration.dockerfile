@@ -1,9 +1,8 @@
-FROM alpine:3.14
+FROM golang:1.17.0-alpine3.14
 
-WORKDIR /usr/local/bin
-RUN apk add mysql-client && \
-  wget https://github.com/k0kubun/sqldef/releases/download/v0.11.10/mysqldef_linux_amd64.tar.gz -O mysqldef.tar.gz && \
-  tar -xzvf mysqldef.tar.gz
+ENV ROOT=/go/src/app
+WORKDIR ${ROOT}
 
-COPY ./migrations ./migrations
-RUN chmod 777 ./migrations/migration.sh
+RUN apk update && apk add git
+RUN go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+COPY migrations ${ROOT}/migrations
