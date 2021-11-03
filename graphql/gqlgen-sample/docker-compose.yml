@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  graph_db:
+  db:
     platform: linux/x86_64
     image: mysql:8.0.26
     environment:
@@ -13,7 +13,7 @@ services:
     ports:
       - "3306:3306"
 
-  graph_server:
+  server:
     build:
       context: ./graphql
       dockerfile: docker/Dockerfile
@@ -23,14 +23,14 @@ services:
     tty: true
     stdin_open: true
     environment:
-      DB_HOST: graph_db
+      DB_HOST: db
       DB_NAME: dev
       DB_USER: root
       DB_PASSWORD: password
       BOIL_DEBUG: true
       GOOGLE_APPLICATION_CREDENTIALS: /go/src/app/credentials/stg-firebase-service-account.json
     depends_on:
-      - graph_db
+      - db
     ports:
       - "8080:8080"
 
@@ -47,7 +47,7 @@ services:
     stdin_open: true
     command: sh -c "go get github.com/99designs/gqlgen/cmd@v0.14.0 && go run github.com/99designs/gqlgen && go mod tidy"
 
-  graph_migration:
+  migration:
     build:
       context: ./graphql
       dockerfile: docker/migration.dockerfile
@@ -56,12 +56,12 @@ services:
     volumes:
       - ./graphql/migrations/:/go/src/app/migrations
     # マイグレーションファイル作成コマンド: migrate create -ext sql -dir migrations/ -seq file_name
-    # down バージョン sh -c "migrate -database mysql://root:password@tcp\(graph_db:3306\)/dev -path migrations/ down && migrate -database mysql://root:password@tcp\(graph_db:3306\)/test -path migrations/ down"
-    command: sh -c "migrate -database mysql://root:password@tcp\(graph_db:3306\)/dev -path migrations/ up && migrate -database mysql://root:password@tcp\(graph_db:3306\)/test -path migrations/ up"
+    # down バージョン sh -c "migrate -database mysql://root:password@tcp\(db:3306\)/dev -path migrations/ down && migrate -database mysql://root:password@tcp\(db:3306\)/test -path migrations/ down"
+    command: sh -c "migrate -database mysql://root:password@tcp\(db:3306\)/dev -path migrations/ up && migrate -database mysql://root:password@tcp\(db:3306\)/test -path migrations/ up"
     depends_on:
-      - graph_db
+      - db
 
-  graph_boiler:
+  boiler:
     build:
       context: ./graphql
       dockerfile: docker/boiler.dockerfile
@@ -70,4 +70,4 @@ services:
     volumes:
       - ./graphql/:/go/src/app
     depends_on:
-      - graph_db
+      - db
