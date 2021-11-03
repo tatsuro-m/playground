@@ -20,8 +20,10 @@ func InsertUser(t *testing.T, num int) []models.User {
 
 	for i := 0; i < num; i++ {
 		u := models.User{
-			Name:  "test" + strconv.Itoa(i),
-			Email: fmt.Sprintf("test%d@example.com", i),
+			UserID:  fmt.Sprintf("test%d", i),
+			Email:   fmt.Sprintf("test%d@example.com", i),
+			Name:    "test" + strconv.Itoa(i),
+			Picture: "https://images.ctfassets.net/xsbsj4s4spn6/63gTAXfljeNEDb65PW4uOc/3691198754392411b00a9f7a20df78a1/2021_lal_mr_yearbook_cover_v1_jd-1328.jpg?q=80",
 		}
 
 		err := u.Insert(ctx, d, boil.Infer())
