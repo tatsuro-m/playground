@@ -24,9 +24,9 @@ func main() {
 
 	secretFileName := "secret.yaml"
 	if val, ok := m["resources"]; ok {
-		s, ok := val.([]string)
+		s, ok := val.([]interface{})
 		if !ok {
-			fmt.Println("[]string にキャストできなかった")
+			fmt.Println("cast できなかった")
 		}
 
 		s = append(s, secretFileName)
