@@ -3,4 +3,3 @@ kind: Kustomization
 namespace: stg
 resources:
   - secret.yaml
-  - sample.yaml
