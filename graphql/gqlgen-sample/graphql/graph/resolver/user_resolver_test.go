@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"graphql/thelper"
 	"testing"
+
+	"github.com/sebdah/goldie/v2"
 )
 
 func TestQueryResolver_Users(t *testing.T) {
@@ -24,6 +26,9 @@ query users {
 }`
 
 		c.MustPost(q, &resp)
+
+		g := goldie.New(t)
+		g.AssertJson(t, "example", resp)
 		fmt.Println(resp)
 	})
 }
