@@ -19,6 +19,10 @@ func TestQueryResolver_Users(t *testing.T) {
 			name:  "name と picture が返ってくること",
 			query: `query users {  users {  name  picture  }}`,
 		},
+		{
+			name:  "email と picture だけが返ってくること",
+			query: `query users {  users {  email  picture  }}`,
+		},
 	}
 
 	for _, td := range table {
