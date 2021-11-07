@@ -11,21 +11,26 @@ func TestQueryResolver_Users(t *testing.T) {
 	c := createGqlClient(t)
 	g := goldie.New(t)
 
-	t.Run("全ての user が返ってくること", func(t *testing.T) {
-		thelper.SetupTest(t)
-		defer thelper.FinalizeTest(t)
+	table := []struct {
+		name  string
+		query string
+	}{
+		{
+			name:  "name と picture が返ってくること",
+			query: `query users {  users {  name  picture  }}`,
+		},
+	}
 
-		thelper.InsertUser(t, 5)
-		var resp interface{}
-		q := `
-query users {
-  users {
-    name
-    picture
-  }
-}`
+	for _, td := range table {
+		t.Run(td.name, func(t *testing.T) {
+			thelper.SetupTest(t)
+			defer thelper.FinalizeTest(t)
 
-		c.MustPost(q, &resp)
-		g.AssertJson(t, t.Name(), resp)
-	})
+			thelper.InsertUser(t, 5)
+			var resp interface{}
+
+			c.MustPost(td.query, &resp)
+			g.AssertJson(t, t.Name(), resp)
+		})
+	}
 }
