@@ -52,6 +52,10 @@ func TestQueryResolver_Post(t *testing.T) {
 			name:  "指定した id の post １つだけが返ってくること",
 			query: "query post {\n  post(id: 1) {\n    id\n    title\n}\n}",
 		},
+		{
+			name:  "id 5 の post 情報が返ってくること",
+			query: "query post {\n  post(id: 1) {\n    id\n    title\n    user {\n      name\n      email\n    }\n  }\n}",
+		},
 	}
 
 	for _, td := range table {
