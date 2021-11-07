@@ -1,7 +1,6 @@
 package resolver
 
 import (
-	"fmt"
 	"graphql/thelper"
 	"testing"
 
@@ -10,6 +9,7 @@ import (
 
 func TestQueryResolver_Users(t *testing.T) {
 	c := createGqlClient(t)
+	g := goldie.New(t)
 
 	t.Run("全ての user が返ってくること", func(t *testing.T) {
 		thelper.SetupTest(t)
@@ -26,9 +26,6 @@ query users {
 }`
 
 		c.MustPost(q, &resp)
-
-		g := goldie.New(t)
-		g.AssertJson(t, "example", resp)
-		fmt.Println(resp)
+		g.AssertJson(t, t.Name(), resp)
 	})
 }
