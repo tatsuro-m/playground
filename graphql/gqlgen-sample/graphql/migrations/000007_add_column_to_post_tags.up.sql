@@ -1,0 +1,3 @@
+ALTER TABLE post_tags
+    ADD COLUMN created_at DATETIME NOT NULL DEFAULT now(),
+    ADD COLUMN updated_at DATETIME NOT NULL DEFAULT now();
