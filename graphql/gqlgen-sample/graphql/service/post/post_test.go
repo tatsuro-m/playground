@@ -1,9 +1,10 @@
 package post
 
 import (
-	"github.com/stretchr/testify/assert"
 	"graphql/thelper"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestService_GetAll(t *testing.T) {
@@ -57,4 +58,37 @@ func TestService_GetAll(t *testing.T) {
 			assert.Equal(t, id, actual[i])
 		}
 	})
+}
+
+func TestService_GetMyAllPosts(t *testing.T) {
+	table := []struct {
+		name      string
+		insertNum int
+	}{
+		{
+			name:      "２件入れたら２件返ってくること",
+			insertNum: 2,
+		},
+		{
+			name:      "30件入れても全て返ってくること",
+			insertNum: 30,
+		},
+	}
+
+	for _, td := range table {
+		t.Run(td.name, func(t *testing.T) {
+			thelper.SetupTest(t)
+			defer thelper.FinalizeTest(t)
+
+			users := thelper.InsertUser(t, 2)
+			owner := users[0]
+			anotherU := users[1]
+
+			thelper.InsertPost(t, td.insertNum, owner.ID)
+			thelper.InsertPost(t, 3, anotherU.ID)
+
+			posts, _ := Service{}.GetMyAllPosts(owner.ID)
+			assert.Equal(t, td.insertNum, len(posts))
+		})
+	}
 }
