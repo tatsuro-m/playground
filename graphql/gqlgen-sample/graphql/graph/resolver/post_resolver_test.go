@@ -72,3 +72,31 @@ func TestQueryResolver_Post(t *testing.T) {
 		})
 	}
 }
+
+func TestMutationResolver_CreatePost(t *testing.T) {
+	c := createGqlClient(t)
+	t.Run("認証されているかのテスト", func(t *testing.T) {
+		thelper.SetupTest(t)
+		defer thelper.FinalizeTest(t)
+
+		u := thelper.InsertUser(t, 1)[0]
+		thelper.InsertPost(t, 5, u.ID)
+
+		m := `
+mutation createPost{
+  createPost(input: {title: "create post mutation test"}){
+    id
+    title
+    
+    user {
+      name
+      email
+    }
+  }
+}
+`
+
+		var resp interface{}
+		c.MustPost(m, &resp, thelper.AddContext(t))
+	})
+}

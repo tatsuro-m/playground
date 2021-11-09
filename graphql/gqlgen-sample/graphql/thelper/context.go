@@ -33,7 +33,7 @@ func AddContext(t *testing.T) client.Option {
 
 func setGinCtx(u *models.User) *gin.Context {
 	ginContext, _ := gin.CreateTestContext(httptest.NewRecorder())
-	ginContext.Set(middleware.GinCtxKey, u)
+	ginContext.Set(middleware.UserCtxKey, u)
 
 	return ginContext
 }

@@ -28,7 +28,10 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input *gqlmodel.NewPo
 	dbPost := models.Post{Title: input.Title, UserID: u.ID}
 	p, err := post.Service{}.CreatePost(dbPost)
 
-	return modelconv.ModelToGqlPost(&p), err
+	gqlPost := modelconv.ModelToGqlPost(&p)
+	gqlPost.User = modelconv.ModelToGqlUser(u)
+
+	return gqlPost, err
 }
 
 func (r *mutationResolver) DeletePost(ctx context.Context, input *gqlmodel.DeletePost) (string, error) {
