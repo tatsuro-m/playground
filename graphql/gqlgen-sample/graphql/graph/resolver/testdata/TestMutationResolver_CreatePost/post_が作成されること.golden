@@ -1,0 +1,10 @@
+{
+  "createPost": {
+    "id": "1",
+    "title": "create post mutation test",
+    "user": {
+      "email": "authenticatedUser%d@example.com",
+      "name": "authenticated user for test"
+    }
+  }
+}

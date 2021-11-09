@@ -4,6 +4,8 @@ import (
 	"graphql/thelper"
 	"testing"
 
+	"github.com/99designs/gqlgen/client"
+
 	"github.com/sebdah/goldie/v2"
 )
 
@@ -75,28 +77,28 @@ func TestQueryResolver_Post(t *testing.T) {
 
 func TestMutationResolver_CreatePost(t *testing.T) {
 	c := createGqlClient(t)
-	t.Run("認証されているかのテスト", func(t *testing.T) {
-		thelper.SetupTest(t)
-		defer thelper.FinalizeTest(t)
+	g := goldie.New(t)
 
-		u := thelper.InsertUser(t, 1)[0]
-		thelper.InsertPost(t, 5, u.ID)
+	table := []struct {
+		name  string
+		query string
+		input map[string]string
+	}{
+		{
+			name:  "post が作成されること",
+			query: "mutation createPost($title: String!){\n  createPost(input: {title: $title}){\n    id\n    title\n    \n    user {\n      name\n      email\n    }\n  }\n}",
+			input: map[string]string{"title": "create post mutation test"},
+		},
+	}
 
-		m := `
-mutation createPost{
-  createPost(input: {title: "create post mutation test"}){
-    id
-    title
-    
-    user {
-      name
-      email
-    }
-  }
-}
-`
+	for _, td := range table {
+		t.Run(td.name, func(t *testing.T) {
+			thelper.SetupTest(t)
+			defer thelper.FinalizeTest(t)
 
-		var resp interface{}
-		c.MustPost(m, &resp, thelper.AddContext(t))
-	})
+			var resp interface{}
+			c.MustPost(td.query, &resp, client.Var("title", td.input["title"]), thelper.AddContext(t))
+			g.AssertJson(t, t.Name(), resp)
+		})
+	}
 }
