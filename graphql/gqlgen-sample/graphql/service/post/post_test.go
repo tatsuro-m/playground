@@ -87,7 +87,7 @@ func TestService_GetMyAllPosts(t *testing.T) {
 			thelper.InsertPost(t, td.insertNum, owner.ID)
 			thelper.InsertPost(t, 3, anotherU.ID)
 
-			posts, _ := Service{}.GetMyAllPosts(owner.ID)
+			posts, _ := Service{}.GetMyAllPosts(owner)
 			assert.Equal(t, td.insertNum, len(posts))
 		})
 	}

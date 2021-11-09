@@ -14,8 +14,8 @@ func (s Service) GetAll() (models.PostSlice, error) {
 	return models.Posts().All(context.Background(), db.GetDB())
 }
 
-func (s Service) GetMyAllPosts(uid int) (models.PostSlice, error) {
-	return models.Posts(models.PostWhere.UserID.EQ(uid)).All(context.Background(), db.GetDB())
+func (s Service) GetMyAllPosts(u models.User) (models.PostSlice, error) {
+	return u.Posts().All(context.Background(), db.GetDB())
 }
 
 func (s Service) GetByID(id int) (*models.Post, error) {
