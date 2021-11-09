@@ -18,6 +18,10 @@ func (s Service) GetByID(id int) (*models.Post, error) {
 	return models.FindPost(context.Background(), db.GetDB(), id)
 }
 
+func (s Service) GetByTitle(title string) (*models.Post, error) {
+	return models.Posts(models.PostWhere.Title.EQ(title)).One(context.Background(), db.GetDB())
+}
+
 func (s Service) CreatePost(post models.Post) (models.Post, error) {
 	ctx := context.Background()
 	d := db.GetDB()

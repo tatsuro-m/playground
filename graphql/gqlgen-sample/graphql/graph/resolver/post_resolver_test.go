@@ -1,8 +1,11 @@
 package resolver
 
 import (
+	"graphql/service/post"
 	"graphql/thelper"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/99designs/gqlgen/client"
 
@@ -97,8 +100,12 @@ func TestMutationResolver_CreatePost(t *testing.T) {
 			defer thelper.FinalizeTest(t)
 
 			var resp interface{}
-			c.MustPost(td.query, &resp, client.Var("title", td.input["title"]), thelper.AddContext(t))
+			title := td.input["title"]
+			c.MustPost(td.query, &resp, client.Var("title", title), thelper.AddContext(t))
 			g.AssertJson(t, t.Name(), resp)
+
+			p, _ := post.Service{}.GetByTitle(title)
+			assert.Equal(t, p.Title, title)
 		})
 	}
 }
