@@ -92,8 +92,6 @@ func verifyIdToken(token string) (*auth.Token, error) {
 
 // ForContext finds the user from the context. REQUIRES Middleware to have run.
 func ForContext(ctx context.Context) *models.User {
-	// ここでキャストできなくて落ちている。
-	// key名が違うのと、ひょっとすると構造も違う？
 	raw, ok := ctx.Value(UserCtxKey).(*models.User)
 
 	// キャストできないような値が入っていたのなら空の構造体の pointer を返してしまう
