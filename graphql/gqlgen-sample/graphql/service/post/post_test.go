@@ -33,4 +33,28 @@ func TestService_GetAll(t *testing.T) {
 			assert.Equal(t, td.insertNum, len(posts))
 		})
 	}
+
+	t.Run("id 順にソートされていること", func(t *testing.T) {
+		thelper.SetupTest(t)
+		defer thelper.FinalizeTest(t)
+
+		u := thelper.InsertUser(t, 1)[0]
+		num := 10
+		thelper.InsertPost(t, num, u.ID)
+
+		var expected []int
+		for i := 0; i < 10; i++ {
+			expected = append(expected, i+1)
+		}
+
+		posts, _ := Service{}.GetAll()
+		var actual []int
+		for _, p := range posts {
+			actual = append(actual, p.ID)
+		}
+
+		for i, id := range expected {
+			assert.Equal(t, id, actual[i])
+		}
+	})
 }
