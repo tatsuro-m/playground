@@ -105,7 +105,7 @@ func TestMutationResolver_CreatePost(t *testing.T) {
 			g.AssertJson(t, t.Name(), resp)
 
 			p, _ := post.Service{}.GetByTitle(title)
-			assert.Equal(t, p.Title, title)
+			assert.Equal(t, title, p.Title)
 		})
 	}
 }
