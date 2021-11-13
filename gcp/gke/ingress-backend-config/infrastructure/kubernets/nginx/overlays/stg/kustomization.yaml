@@ -7,5 +7,5 @@ patches:
   target:
     kind: Deployment
 images:
-- name: asia-northeast1-docker.pkg.dev/playground-318023/stg-ingress-test-nginx-proxy/nginx
-  newTag: "1634603402"
+- name: asia-northeast1-docker.pkg.dev/playground-318023/stg-ingress-nginx/nginx
+  newTag: "1636783997"
