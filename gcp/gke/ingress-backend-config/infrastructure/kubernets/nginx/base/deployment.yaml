@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: rproxy
+  namespace: ingress-test
   name: nginx
 spec:
   replicas: 3
@@ -10,12 +10,12 @@ spec:
       app: nginx
   template:
     metadata:
-      namespace: rproxy
+      namespace: ingress-test
       labels:
         app: nginx
     spec:
       containers:
         - name: nginx
-          image: asia-northeast1-docker.pkg.dev/playground-318023/stg-rproxy-nginx-proxy/nginx
+          image: asia-northeast1-docker.pkg.dev/playground-318023/stg-ingress-test-nginx-proxy/nginx
           ports:
             - containerPort: 80
