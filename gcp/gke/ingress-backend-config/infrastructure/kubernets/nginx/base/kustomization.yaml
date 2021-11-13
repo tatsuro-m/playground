@@ -3,4 +3,3 @@ kind: Kustomization
 namespace: ingress-test
 resources:
   - deployment.yaml
-  - service.yaml
