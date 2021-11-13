@@ -4,10 +4,10 @@ metadata:
   name: frontend1
   namespace: ingress-test
 spec:
-  type: ClusterIP
+  ports:
+  - port: 3000
+    protocol: TCP
+    targetPort: 3000
   selector:
     app: frontend1
-  ports:
-    - protocol: TCP
-      port: 3000
-      targetPort: 3000
+  type: ClusterIP

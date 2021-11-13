@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: ingress-test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+      namespace: ingress-test
+    spec:
+      containers:
+      - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-ingress-nginx/nginx:latest
+        name: nginx
+        ports:
+        - containerPort: 80
