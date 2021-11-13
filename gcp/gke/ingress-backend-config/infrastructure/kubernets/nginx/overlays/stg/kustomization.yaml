@@ -8,4 +8,4 @@ patches:
     kind: Deployment
 images:
 - name: asia-northeast1-docker.pkg.dev/playground-318023/stg-ingress-nginx/nginx
-  newTag: "1636787162"
+  newTag: "latest"
