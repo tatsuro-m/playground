@@ -13,6 +13,7 @@ func main() {
 	getCredential()
 
 	tag := time.Now().Unix()
+	fmt.Println(tag)
 	for _, service := range lib.Services {
 		dockerBuildAndPush(service, tag)
 	}
