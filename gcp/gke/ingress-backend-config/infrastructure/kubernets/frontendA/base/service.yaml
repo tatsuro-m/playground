@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: frontend1
   namespace: ingress-test
 spec:
   type: ClusterIP
   selector:
-    app: frontend
+    app: frontend1
   ports:
     - protocol: TCP
       port: 3000

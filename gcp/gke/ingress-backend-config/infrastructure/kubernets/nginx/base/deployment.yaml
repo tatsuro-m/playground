@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: asia-northeast1-docker.pkg.dev/playground-318023/stg-ingress-test-nginx-proxy/nginx
+          image: asia-northeast1-docker.pkg.dev/playground-318023/stg-ingress-nginx/nginx
           ports:
             - containerPort: 80

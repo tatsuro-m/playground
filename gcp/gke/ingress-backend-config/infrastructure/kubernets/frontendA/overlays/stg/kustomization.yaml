@@ -7,5 +7,5 @@ patches:
   target:
     kind: Deployment
 images:
-- name: asia-northeast1-docker.pkg.dev/playground-318023/stg-ingress-test-frontend/frontend
+- name: asia-northeast1-docker.pkg.dev/playground-318023/stg-ingress-front1/frontend1
   newTag: "1634603402"

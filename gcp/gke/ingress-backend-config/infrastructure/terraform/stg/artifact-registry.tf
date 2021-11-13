@@ -1,3 +1,13 @@
+resource "google_artifact_registry_repository" "nginx" {
+  provider = google-beta
+  project  = "playground-318023"
+
+  location      = var.default_region
+  repository_id = "${local.app_prefix}-nginx"
+  description   = "nginx proxy"
+  format        = "DOCKER"
+}
+
 resource "google_artifact_registry_repository" "front1" {
   provider = google-beta
   project  = "playground-318023"
