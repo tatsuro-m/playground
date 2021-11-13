@@ -8,7 +8,7 @@ metadata:
   annotations:
     cloud.google.com/backend-config: '{"ports": {"80":"cloud-cdn-backendconfig"}}'
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: nginx
   ports:
