@@ -8,4 +8,4 @@ patches:
     kind: Deployment
 images:
 - name: asia-northeast1-docker.pkg.dev/playground-318023/stg-ingress-frontend1/frontend1
-  newTag: "1636783997"
+  newTag: "1636787909"
