@@ -16,3 +16,10 @@ spec:
                 name: main-service
                 port:
                   number: 80
+          - path: /frontend2
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: main-service
+                port:
+                  number: 80
