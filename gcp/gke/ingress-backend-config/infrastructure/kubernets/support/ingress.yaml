@@ -2,17 +2,17 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: ingress-test
-  name: my-ingress
+  name: main-ingress
   annotations:
     kubernetes.io/ingress.global-static-ip-name: "ingress-test" # terraform から作成した固定IPを割り当てる
 spec:
   rules:
     - http:
         paths:
-          - path: /*
+          - path: /frontend1
             pathType: ImplementationSpecific
             backend:
               service:
-                name: my-service
+                name: main-service
                 port:
                   number: 80
