@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend2
+  namespace: ingress-test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend2
+  template:
+    metadata:
+      labels:
+        app: frontend2
+      namespace: ingress-test
+    spec:
+      containers:
+        - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-ingress-frontend2/frontend2:latest
+          name: frontend
+          ports:
+            - containerPort: 80
