@@ -9,4 +9,4 @@ const (
 	AppName       = "ingress"
 )
 
-var Services = []string{"nginx", "frontend1"}
+var Services = []string{"nginx", "frontend1", "frontend2"}
