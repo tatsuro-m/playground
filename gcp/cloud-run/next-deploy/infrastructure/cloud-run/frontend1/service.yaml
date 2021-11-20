@@ -2,6 +2,9 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: stg-frontend1
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
   labels:
     cloud.googleapis.com/location: asia-northeast1
 spec:
@@ -9,3 +12,6 @@ spec:
     spec:
       containers:
         - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-frontend1/frontend1:latest
+          env:
+            - name: TEST
+              value: "true"
