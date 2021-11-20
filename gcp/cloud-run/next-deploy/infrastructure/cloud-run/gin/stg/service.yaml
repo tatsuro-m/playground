@@ -7,6 +7,7 @@ metadata:
   labels:
     cloud.googleapis.com/location: asia-northeast1
   name: stg-gin
+  namespace: '121819399873'
 spec:
   template:
     metadata:
