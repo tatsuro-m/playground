@@ -1,19 +1,35 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: stg-frontend1
   annotations:
     run.googleapis.com/ingress: all
-    autoscaling.knative.dev/maxScale: '10'
-    autoscaling.knative.dev/minScale: '0'
+    run.googleapis.com/ingress-status: all
   labels:
     cloud.googleapis.com/location: asia-northeast1
+  name: stg-frontend1
+  namespace: '121819399873'
 spec:
   template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '10'
+        autoscaling.knative.dev/minScale: '0'
     spec:
+      containerConcurrency: 80
       containers:
-        - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-frontend1/frontend1:1637375503
-          env:
-            - name: TEST
-              value: "true"
+      - env:
+        - name: TEST
+          value: 'true'
+        image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-frontend1/frontend1:1637375503
+        ports:
+        - containerPort: 8080
+          name: http1
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 512Mi
       serviceAccountName: stg-next-deploy-frontend1@playground-318023.iam.gserviceaccount.com
+      timeoutSeconds: 300
+  traffic:
+  - latestRevision: true
+    percent: 100
