@@ -27,4 +27,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: list
-        run: ls ${{ env.WORK_DIR }}/${{ matrix.service }}
+        run: ls ${{ matrix.service }}
