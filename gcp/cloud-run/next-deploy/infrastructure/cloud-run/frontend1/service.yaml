@@ -10,7 +10,8 @@ spec:
   template:
     spec:
       containers:
-        - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-frontend1/frontend1:latest
+        - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-frontend1/frontend1:1637374745
           env:
             - name: TEST
               value: "true"
+      serviceAccountName: stg-next-deploy-frontend1@playground-318023.iam.gserviceaccount.com
