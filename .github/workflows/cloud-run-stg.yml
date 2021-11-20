@@ -9,6 +9,8 @@ on:
     paths:
       - "gcp/cloud-run/next-deploy/**"
       - ".github/workflows/cloud-run-stg.yml"
+    branches-ignore:
+      - main
 
 env:
   ENV: stg
