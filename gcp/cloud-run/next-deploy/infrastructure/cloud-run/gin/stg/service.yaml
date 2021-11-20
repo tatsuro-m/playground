@@ -1,0 +1,30 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    run.googleapis.com/ingress: internal
+    run.googleapis.com/ingress-status: internal
+  labels:
+    cloud.googleapis.com/location: asia-northeast1
+  name: stg-gin
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '10'
+    spec:
+      containerConcurrency: 80
+      containers:
+        - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-gin/gin:1637378940
+          ports:
+            - containerPort: 8080
+              name: http1
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+      serviceAccountName: stg-next-deploy-gin@playground-318023.iam.gserviceaccount.com
+      timeoutSeconds: 300
+  traffic:
+    - latestRevision: true
+      percent: 100
