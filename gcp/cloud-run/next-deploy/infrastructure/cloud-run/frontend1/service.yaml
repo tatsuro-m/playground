@@ -4,7 +4,6 @@ metadata:
   name: stg-frontend1
   annotations:
     run.googleapis.com/ingress: all
-    run.googleapis.com/ingress-status: all
   labels:
     cloud.googleapis.com/location: asia-northeast1
 spec:
