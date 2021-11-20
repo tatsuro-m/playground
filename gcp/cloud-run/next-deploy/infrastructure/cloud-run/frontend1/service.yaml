@@ -17,10 +17,10 @@ spec:
     spec:
       containerConcurrency: 80
       containers:
-        - env:
+        - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-frontend1/frontend1:latest
+          env:
             - name: TEST
               value: 'true'
-          image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-frontend1/frontend1:1637375503
           ports:
             - containerPort: 8080
               name: http1
