@@ -9,4 +9,5 @@ const (
 
 var Services = []string{
 	"frontend1",
+	"gin",
 }

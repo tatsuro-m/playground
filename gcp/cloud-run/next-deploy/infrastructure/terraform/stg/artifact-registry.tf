@@ -7,3 +7,13 @@ resource "google_artifact_registry_repository" "frontend1" {
   description   = "web frontend 1"
   format        = "DOCKER"
 }
+
+resource "google_artifact_registry_repository" "gin" {
+  provider = google-beta
+  project  = "playground-318023"
+
+  location      = var.default_region
+  repository_id = "${local.app_prefix}-gin"
+  description   = "gin api server"
+  format        = "DOCKER"
+}
