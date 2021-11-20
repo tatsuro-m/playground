@@ -4,6 +4,8 @@ metadata:
   name: stg-frontend1
   annotations:
     run.googleapis.com/ingress: all
+    autoscaling.knative.dev/maxScale: '10'
+    autoscaling.knative.dev/minScale: '0'
   labels:
     cloud.googleapis.com/location: asia-northeast1
 spec:
