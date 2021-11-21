@@ -8,7 +8,7 @@ on:
   push:
     paths:
 #      - "gcp/cloud-run/next-deploy/**"
-      - ".github/workflows/cloud-run-stg.yml"
+#      - ".github/workflows/cloud-run-stg.yml"
     branches-ignore:
       - main
       - "releases/**"
