@@ -86,6 +86,7 @@ jobs:
       run: |
          git config --local user.email "tatsuro-m@example.com"
          git config --local user.name "tatsuro-m"
+         git config pull.rebase false
     - name: git commit
       run: |
          git add .
