@@ -16,14 +16,14 @@ spec:
     spec:
       containerConcurrency: 80
       containers:
-      - image: asia-northeast1-docker.pkg.dev/playground-318023/prod-next-deploy-gin/gin:35fcb96c8a4093f4b2e261edefb7d41ec48e7ff0
-        ports:
-        - containerPort: 8080
-          name: http1
-        resources:
-          limits:
-            cpu: 1000m
-            memory: 512Mi
+        - image: asia-northeast1-docker.pkg.dev/playground-318023/prod-next-deploy-gin/gin:35fcb96c8a4093f4b2e261edefb7d41ec48e7ff0
+          ports:
+            - containerPort: 8080
+              name: http1
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
       serviceAccountName: prod-next-deploy-gin@playground-318023.iam.gserviceaccount.com
       timeoutSeconds: 300
   traffic:
