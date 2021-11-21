@@ -16,7 +16,7 @@ spec:
     spec:
       containerConcurrency: 80
       containers:
-        - image: asia-northeast1-docker.pkg.dev/playground-318023/prod-next-deploy-gin/gin:de3048c00d51b7f72fa030aa48f1f78b25a8bcd5
+        - image: asia-northeast1-docker.pkg.dev/playground-318023/prod-next-deploy-gin/gin:8f1083de243a8933da502e02d625660e045f269d
           ports:
             - containerPort: 8080
               name: http1
