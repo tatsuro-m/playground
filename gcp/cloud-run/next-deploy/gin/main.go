@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"os"
 )
@@ -12,5 +13,8 @@ func main() {
 			"message": "pong",
 		})
 	})
+
+	// テスト用なので CORS は全許可
+	r.Use(cors.Default())
 	r.Run(":" + os.Getenv("PORT"))
 }
