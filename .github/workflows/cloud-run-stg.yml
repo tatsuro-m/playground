@@ -66,15 +66,17 @@ jobs:
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
   release:
-    name: docker build and push
+    name: release
     strategy:
       matrix:
         service:
 #          - frontend1
           - gin
-
+    needs:
+      - build
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     - name: update docker image
       uses: mikefarah/yq@v4.14.2
       with:
