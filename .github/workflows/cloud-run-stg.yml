@@ -65,8 +65,8 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-  release:
-    name: release
+  updateImage:
+    name: update docker image
     strategy:
       matrix:
         service:
@@ -113,3 +113,23 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: gh pr merge ${{ steps.cpr.outputs.pull-request-url }} --merge
+
+  release:
+    name: release
+    strategy:
+      matrix:
+        service:
+          # - frontend1
+          - gin
+    needs:
+      - updateImage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      - name: release
+        run: gcloud run services replace ./infrastructure/cloud-run/${{ matrix.service }}/${{ env.ENV }}/service.yaml
