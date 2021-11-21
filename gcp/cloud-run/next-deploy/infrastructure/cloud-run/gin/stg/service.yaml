@@ -2,8 +2,8 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   annotations:
-    run.googleapis.com/ingress: internal
-    run.googleapis.com/ingress-status: internal
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
   labels:
     cloud.googleapis.com/location: asia-northeast1
   name: stg-gin
@@ -16,7 +16,7 @@ spec:
     spec:
       containerConcurrency: 80
       containers:
-        - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-gin/gin:c4173216746a42b2768470e97e828c0fb8e53c6c
+        - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-gin/gin:latest
           ports:
             - containerPort: 8080
               name: http1

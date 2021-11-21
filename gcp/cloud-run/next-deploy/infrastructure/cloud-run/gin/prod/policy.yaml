@@ -1,0 +1,5 @@
+# gcloud run services set-iam-policy prod-gin policy.yaml --region  asia-northeast1 で外部アクセスを許可する
+bindings:
+  - members:
+      - allUsers
+    role: roles/run.invoker
