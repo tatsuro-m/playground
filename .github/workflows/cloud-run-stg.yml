@@ -37,6 +37,7 @@ jobs:
         with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
+          project_id: ${{ env.GCP_PROJECT_ID }}
       - name: authenticate registry
         run: gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
       - name: Set up Docker Buildx
@@ -131,5 +132,6 @@ jobs:
         with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
+          project_id: ${{ env.GCP_PROJECT_ID }}
       - name: release
         run: gcloud run services replace ./infrastructure/cloud-run/${{ matrix.service }}/${{ env.ENV }}/service.yaml
