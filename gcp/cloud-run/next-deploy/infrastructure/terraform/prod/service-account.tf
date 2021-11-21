@@ -7,8 +7,3 @@ resource "google_service_account" "gin" {
   account_id   = "${local.app_prefix}-gin"
   display_name = "next deploy gin service account"
 }
-
-resource "google_service_account" "nginx" {
-  account_id   = "${local.app_prefix}-nginx"
-  display_name = "next deploy nginx service account"
-}
