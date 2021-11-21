@@ -1,4 +1,4 @@
-# gcloud run services set-iam-policy stg-frontend1 policy.yaml --region  asia-northeast1 で外部アクセスを許可する
+# gcloud run services set-iam-policy prod-frontend1 policy.yaml --region  asia-northeast1 で外部アクセスを許可する
 bindings:
   - members:
       - allUsers

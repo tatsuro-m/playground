@@ -27,7 +27,6 @@ jobs:
         service:
           - frontend1
           - gin
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -76,56 +75,22 @@ jobs:
       - build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: update docker image
-      uses: mikefarah/yq@v4.14.2
-      with:
-        cmd: DOCKER_IMAGE_URL=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ github.sha }} yq eval '.spec.template.spec.containers[0].image = env(DOCKER_IMAGE_URL)' -i ${{ env.WORK_DIR }}/infrastructure/cloud-run/${{ matrix.service }}/${{ env.ENV }}/service.yaml
-
-    - name: Extract branch name
-      run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
-      id: extract_branch
-
-    - name: Create Pull Request
-      id: cpr
-      uses: peter-evans/create-pull-request@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: |
-          [${{ env.ENV }}][${{ matrix.service }}] update container image
-        committer: GitHub <noreply@github.com>
-        author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-        signoff: false
-        branch: release/${{ env.ENV }}-${{ matrix.service }}-update-image-tag
-        base: ${{ steps.extract_branch.outputs.branch }}
-        delete-branch: true
-        title: |
-          :tada: [${{ env.ENV }}][${{ matrix.service }}] Update Docker Image Tag
-        body: |
-          [${{ env.ENV }}][${{ matrix.service }}] Update Docker Image Tag
-        labels: |
-          update docker image
-          ${{ env.ENV }} release
-        assignees: tatsuro-m
-        draft: false
-
-    - name: merge PR
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh pr merge ${{ steps.cpr.outputs.pull-request-url }} --merge
-
-  release:
-    name: release
-    strategy:
-      matrix:
-        service:
-          - frontend1
-          - gin
-    needs:
-      - updateImage
-    runs-on: ubuntu-latest
-    steps:
       - uses: actions/checkout@v2
+      - name: update docker image
+        uses: mikefarah/yq@v4.14.2
+        with:
+          cmd: DOCKER_IMAGE_URL=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ github.sha }} yq eval '.spec.template.spec.containers[0].image = env(DOCKER_IMAGE_URL)' -i ${{ env.WORK_DIR }}/infrastructure/cloud-run/${{ matrix.service }}/${{ env.ENV }}/service.yaml
+      - name: git config
+        run: |
+          git config --local user.email "tatsuro-m@example.com"
+          git config --local user.name "tatsuro-m"
+          git config pull.rebase false
+      - name: git commit
+        run: |
+          git add .
+          git commit -m "${{ env.ENV }} ${{ matrix.service }} update docker image(${{ github.sha }})"
+          git pull origin
+          git push origin
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
