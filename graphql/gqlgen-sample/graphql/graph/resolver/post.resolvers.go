@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"graphql/code"
 	"graphql/ginctx"
+	"graphql/graph"
 	"graphql/graph/gqlmodel"
 	"graphql/modelconv"
 	"graphql/models"
@@ -65,13 +66,7 @@ func (r *mutationResolver) AddTag(ctx context.Context, input *gqlmodel.AddTag) (
 	}
 
 	p, err := service.GetByID(pID)
-	gqlPost := modelconv.ModelToGqlPost(p)
-	if err != nil {
-		return nil, err
-	}
-
-	u, err := user.Service{}.GetUserByID(p.UserID)
-	gqlPost.User = modelconv.ModelToGqlUser(u)
+	gqlPost := graph.SetUser(p)
 
 	return gqlPost, nil
 }
