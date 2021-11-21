@@ -71,9 +71,9 @@ jobs:
       - build
     strategy:
       matrix:
-      service:
-        - frontend1
-        - gin
+        service:
+          - frontend1
+          - gin
 
     runs-on: ubuntu-latest
     steps:
