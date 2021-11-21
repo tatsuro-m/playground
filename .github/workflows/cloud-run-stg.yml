@@ -21,7 +21,7 @@ env:
   WORK_DIR: ./gcp/cloud-run/next-deploy
 
 jobs:
-  setSHA:
+  setShortSHA:
     name: set git sha
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +36,8 @@ jobs:
         service:
           - frontend1
           - gin
-
+    needs:
+      - setShortSHA
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
