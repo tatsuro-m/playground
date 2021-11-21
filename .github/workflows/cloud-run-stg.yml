@@ -109,7 +109,7 @@ jobs:
         assignees: tatsuro-m
         draft: false
 
-    - nmae: merge PR
+    - name: merge PR
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: gh pr merge ${{ steps.cpr.outputs.pull-request-url }} --merge
