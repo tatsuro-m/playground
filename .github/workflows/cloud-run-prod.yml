@@ -9,9 +9,8 @@ on:
     paths:
       - "gcp/cloud-run/next-deploy/**"
       - ".github/workflows/cloud-run-prod.yml"
-    branches-ignore:
+    branches:
       - main
-      - "releases/**"
 
 env:
   ENV: prod
