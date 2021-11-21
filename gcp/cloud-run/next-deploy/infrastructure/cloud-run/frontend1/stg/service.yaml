@@ -16,7 +16,7 @@ spec:
     spec:
       containerConcurrency: 80
       containers:
-        - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-frontend1/frontend1:6d5c82550593a7cb9250b98ec5797316330ea76b
+        - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-frontend1/frontend1:251220436d1d9d4cb7998f502bd3b17643562572
           env:
             - name: TEST
               value: 'true'
