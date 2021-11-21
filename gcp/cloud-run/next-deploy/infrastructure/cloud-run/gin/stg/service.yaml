@@ -2,8 +2,8 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   annotations:
-    run.googleapis.com/ingress: internal
-    run.googleapis.com/ingress-status: internal
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
   labels:
     cloud.googleapis.com/location: asia-northeast1
   name: stg-gin
