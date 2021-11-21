@@ -28,7 +28,6 @@ jobs:
         service:
           - frontend1
           - gin
-          - nginx
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -73,7 +72,6 @@ jobs:
         service:
           - frontend1
           - gin
-          - nginx
     needs:
       - build
     runs-on: ubuntu-latest
