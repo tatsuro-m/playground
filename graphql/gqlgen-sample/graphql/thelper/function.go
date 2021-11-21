@@ -60,3 +60,23 @@ func InsertPost(t *testing.T, num int, userID int) []models.Post {
 
 	return posts
 }
+
+func InsertTag(t *testing.T, num int) []models.Tag {
+	t.Helper()
+
+	d := db.GetDB()
+	ctx := context.Background()
+	tags := make([]models.Tag, 0)
+
+	for i := 0; i < num; i++ {
+		tag := models.Tag{Name: "test tag" + strconv.Itoa(i)}
+		err := tag.Insert(ctx, d, boil.Infer())
+		if err != nil {
+			return nil
+		}
+
+		tags = append(tags, tag)
+	}
+
+	return tags
+}
