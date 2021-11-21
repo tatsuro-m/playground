@@ -12,6 +12,7 @@ WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 
+# TODO 環境ごとに、この部分だけが違う Dockerfile を用意し、CI/CD もそれに対応させる。
 # stg 環境の url をビルド時に読めるようにしておく
 ENV NEXT_PUBLIC_API_HOST https://stg-gin-r76js4erwq-an.a.run.app
 RUN yarn build
