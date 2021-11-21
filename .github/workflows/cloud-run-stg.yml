@@ -90,7 +90,7 @@ jobs:
       run: |
         git pull origin
         git add .
-        git commit -m "${{ env.ENV }} ${{ matrix.service }} update docker image(${{ github.sha }})"
+        git commit -m "[${{ env.ENV }}][${{ matrix.service }}] update docker image(${{ github.sha }})"
         git push origin
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@master
