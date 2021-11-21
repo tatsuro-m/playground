@@ -7,8 +7,8 @@ defaults:
 on:
   push:
     paths:
-#      - "gcp/cloud-run/next-deploy/**"
-#      - ".github/workflows/cloud-run-stg.yml"
+      - "gcp/cloud-run/next-deploy/**"
+      - ".github/workflows/cloud-run-stg.yml"
     branches-ignore:
       - main
       - "releases/**"
@@ -27,8 +27,6 @@ jobs:
         service:
           - frontend1
           - gin
-    env:
-      DOCKER_IMAGE_URL: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ github.sha }}
 
     name: docker build and push
     runs-on: ubuntu-latest
@@ -56,7 +54,7 @@ jobs:
           context: ${{ env.WORK_DIR }}/${{ matrix.service }}
           push: true
           tags: |
-            ${{ env.DOCKER_IMAGE_URL }}
+            DOCKER_IMAGE_URL: ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ github.sha }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
       - # Temp fix
