@@ -1,5 +1,4 @@
-stg.dockerfile
-prod.dockerfile
+Dockerfile
 .dockerignore
 node_modules
 npm-debug.log
