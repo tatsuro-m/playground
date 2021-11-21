@@ -70,6 +70,10 @@ jobs:
         with:
           cmd: DOCKER_IMAGE_URL=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ github.sha }} yq eval '.spec.template.spec.containers[0].image = env(DOCKER_IMAGE_URL)' -i ${{ env.WORK_DIR }}/infrastructure/cloud-run/${{ matrix.service }}/${{ env.ENV }}/service.yaml
 
+      - name: Extract branch name
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+        id: extract_branch
+
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
@@ -81,7 +85,7 @@ jobs:
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
           branch: release/${{ env.ENV }}-update-image-tag
-          base: ${GITHUB_REF#refs/heads/}
+          base: ${{ steps.extract_branch.outputs.branch }}
           delete-branch: true
           title: |
             [${{ env.ENV }}] Update Docker Image Tag
