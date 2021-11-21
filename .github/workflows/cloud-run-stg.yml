@@ -65,6 +65,16 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
+  release:
+    name: docker build and push
+      strategy:
+        matrix:
+          service:
+#            - frontend1
+            - gin
+
+      runs-on: ubuntu-latest
+      steps:
       - name: update docker image
         uses: mikefarah/yq@v4.14.2
         with:
@@ -80,11 +90,11 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: |
-            [${{ env.ENV }}] update container image
+            [${{ env.ENV }}][${{ matrix.service }}] update container image
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
-          branch: release/${{ env.ENV }}-update-image-tag
+          branch: release/${{ env.ENV }}-${{ matrix.service }}-update-image-tag
           base: ${{ steps.extract_branch.outputs.branch }}
           delete-branch: true
           title: |
