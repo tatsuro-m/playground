@@ -2,15 +2,6 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
-  const options = {
-    method: 'GET',
-    mode: 'no-cors'
-  };
-
-  fetch(`${process.env.NEXT_PUBLIC_API_HOST}/ping`, options)
-    .then(response => response.json())
-    .then(data => console.log(data));
-
   return (
     <div className={styles.container}>
       <Head>
