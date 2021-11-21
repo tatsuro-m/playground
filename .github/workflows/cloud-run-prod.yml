@@ -1,4 +1,4 @@
-name: docker build and staging deploy
+name: docker build and prod deploy
 
 defaults:
   run:
