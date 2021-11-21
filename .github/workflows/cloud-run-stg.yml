@@ -100,7 +100,7 @@ jobs:
         base: ${{ steps.extract_branch.outputs.branch }}
         delete-branch: true
         title: |
-          [:tada][${{ env.ENV }}][${{ matrix.service }}] Update Docker Image Tag
+          :tada: [${{ env.ENV }}][${{ matrix.service }}] Update Docker Image Tag
         body: |
           [${{ env.ENV }}][${{ matrix.service }}] Update Docker Image Tag
         labels: |
