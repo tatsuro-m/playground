@@ -1,0 +1,33 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/ingress-status: all
+  labels:
+    cloud.googleapis.com/location: asia-northeast1
+  name: stg-nginx
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: '10'
+    spec:
+      containerConcurrency: 80
+      containers:
+        - image: asia-northeast1-docker.pkg.dev/playground-318023/stg-next-deploy-nginx/nginx:8ce42e3dbe57afa6e2152f5f1a9a3eea4d9f3561
+          env:
+            - name: TEST
+              value: 'true'
+          ports:
+            - containerPort: 3000
+              name: http1
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+      serviceAccountName: stg-next-deploy-nginx@playground-318023.iam.gserviceaccount.com
+      timeoutSeconds: 300
+  traffic:
+    - latestRevision: true
+      percent: 100
