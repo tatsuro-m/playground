@@ -1,0 +1,137 @@
+name: docker build and staging deploy
+
+defaults:
+  run:
+    shell: bash
+    working-directory: ./gcp/cloud-run/next-deploy
+on:
+  push:
+    paths:
+      - "gcp/cloud-run/next-deploy/**"
+      - ".github/workflows/cloud-run-prod.yml"
+    branches-ignore:
+      - main
+      - "releases/**"
+
+env:
+  ENV: prod
+  GCP_REGION: asia-northeast1
+  GCP_PROJECT_ID: playground-318023
+  APP_NAME: next-deploy
+  WORK_DIR: ./gcp/cloud-run/next-deploy
+
+jobs:
+  build:
+    name: docker build and push
+    strategy:
+      matrix:
+        service:
+          - frontend1
+          - gin
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+          project_id: ${{ env.GCP_PROJECT_ID }}
+      - name: authenticate registry
+        run: gcloud auth configure-docker $GCP_REGION-docker.pkg.dev
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ env.WORK_DIR }}/${{ matrix.service }}
+          push: true
+          tags: |
+            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ github.sha }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+      - # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+  updateImage:
+    name: update docker image
+    strategy:
+      matrix:
+        service:
+          - frontend1
+          - gin
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: update docker image
+      uses: mikefarah/yq@v4.14.2
+      with:
+        cmd: DOCKER_IMAGE_URL=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ github.sha }} yq eval '.spec.template.spec.containers[0].image = env(DOCKER_IMAGE_URL)' -i ${{ env.WORK_DIR }}/infrastructure/cloud-run/${{ matrix.service }}/${{ env.ENV }}/service.yaml
+
+    - name: Extract branch name
+      run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+      id: extract_branch
+
+    - name: Create Pull Request
+      id: cpr
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: |
+          [${{ env.ENV }}][${{ matrix.service }}] update container image
+        committer: GitHub <noreply@github.com>
+        author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+        signoff: false
+        branch: release/${{ env.ENV }}-${{ matrix.service }}-update-image-tag
+        base: ${{ steps.extract_branch.outputs.branch }}
+        delete-branch: true
+        title: |
+          :tada: [${{ env.ENV }}][${{ matrix.service }}] Update Docker Image Tag
+        body: |
+          [${{ env.ENV }}][${{ matrix.service }}] Update Docker Image Tag
+        labels: |
+          update docker image
+          ${{ env.ENV }} release
+        assignees: tatsuro-m
+        draft: false
+
+    - name: merge PR
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: gh pr merge ${{ steps.cpr.outputs.pull-request-url }} --merge
+
+  release:
+    name: release
+    strategy:
+      matrix:
+        service:
+          - frontend1
+          - gin
+    needs:
+      - updateImage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+          project_id: ${{ env.GCP_PROJECT_ID }}
+      - name: release
+        run: gcloud run services replace ./infrastructure/cloud-run/${{ matrix.service }}/${{ env.ENV }}/service.yaml
