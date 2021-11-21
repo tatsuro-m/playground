@@ -11,6 +11,7 @@ on:
       - ".github/workflows/cloud-run-stg.yml"
     branches-ignore:
       - main
+      - "releases/**"
 
 env:
   ENV: stg
