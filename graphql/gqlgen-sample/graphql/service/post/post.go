@@ -66,3 +66,9 @@ func (s Service) CheckMyPost(postID, userID int) bool {
 
 	return p.UserID == userID
 }
+
+func (s Service) AddTag(j *models.PostTag) error {
+	ctx := context.Background()
+	d := db.GetDB()
+	return j.Insert(ctx, d, boil.Infer())
+}

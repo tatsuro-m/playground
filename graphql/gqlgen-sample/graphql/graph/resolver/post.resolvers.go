@@ -54,34 +54,26 @@ func (r *mutationResolver) DeletePost(ctx context.Context, input *gqlmodel.Delet
 }
 
 func (r *mutationResolver) AddTag(ctx context.Context, input *gqlmodel.AddTag) (*gqlmodel.Post, error) {
-	//pID, err := strconv.Atoi(input.PostID)
-	//if err != nil {
-	//	return nil, errors.New(code.InvalidID)
-	//}
-	//
-	//p, err := post.Service{}.GetByID(pID)
-	//if err != nil {
-	//	return nil, errors.New(code.RecordNotFound)
-	//}
-	//
-	//tID, err := strconv.Atoi(input.TagID)
-	//if err != nil {
-	//	return nil, errors.New(code.InvalidID)
-	//}
-	//t, err := tag.Service{}.GetByID(tID)
-	//
-	//// TODO 中間テーブルに insert したいが、その挙動になっていない。tag を追加するだけになっているので fix する。
-	//err = p.AddTags(context.Background(), db.GetDB(), true, t)
-	//if err != nil {
-	//	return nil, errors.New(code.ModelError)
-	//}
-	//
-	//owner, _ := user.Service{}.GetUserByID(p.UserID)
-	//graphPost := modelconv.ModelToGqlPost(p)
-	//graphPost.User = modelconv.ModelToGqlUser(owner)
-	//return graphPost, nil
+	pID, _ := strconv.Atoi(input.PostID)
+	tID, _ := strconv.Atoi(input.TagID)
+	j := models.PostTag{PostID: pID, TagID: tID}
 
-	return nil, nil
+	service := post.Service{}
+	err := service.AddTag(&j)
+	if err != nil {
+		return nil, err
+	}
+
+	p, err := service.GetByID(pID)
+	gqlPost := modelconv.ModelToGqlPost(p)
+	if err != nil {
+		return nil, err
+	}
+
+	u, err := user.Service{}.GetUserByID(p.UserID)
+	gqlPost.User = modelconv.ModelToGqlUser(u)
+
+	return gqlPost, nil
 }
 
 func (r *queryResolver) Posts(ctx context.Context) ([]*gqlmodel.Post, error) {
