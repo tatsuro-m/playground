@@ -11,7 +11,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Hello GCP Cloud Run!!
+          Hello Cloud Run!!
         </h1>
 
         <p className={styles.description}>
