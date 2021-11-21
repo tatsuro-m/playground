@@ -21,6 +21,14 @@ env:
   WORK_DIR: ./gcp/cloud-run/next-deploy
 
 jobs:
+  setSHA:
+    name: set git sha
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set github sha
+        run: echo "SHORT_SHA=`git rev-parse --short HEAD`" >> $GITHUB_ENV
+
   build:
     name: docker build and push
     strategy:
@@ -46,7 +54,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ env.SHORT_SHA }}
           restore-keys: |
             ${{ runner.os }}-buildx-
       - name: Build and push
@@ -55,7 +63,7 @@ jobs:
           context: ${{ env.WORK_DIR }}/${{ matrix.service }}
           push: true
           tags: |
-            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ github.sha }}
+            ${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ env.SHORT_SHA }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
       - # Temp fix
@@ -81,7 +89,7 @@ jobs:
     - name: update docker image
       uses: mikefarah/yq@v4.14.2
       with:
-        cmd: DOCKER_IMAGE_URL=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ github.sha }} yq eval '.spec.template.spec.containers[0].image = env(DOCKER_IMAGE_URL)' -i ${{ env.WORK_DIR }}/infrastructure/cloud-run/${{ matrix.service }}/${{ env.ENV }}/service.yaml
+        cmd: DOCKER_IMAGE_URL=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ env.SHORT_SHA }} yq eval '.spec.template.spec.containers[0].image = env(DOCKER_IMAGE_URL)' -i ${{ env.WORK_DIR }}/infrastructure/cloud-run/${{ matrix.service }}/${{ env.ENV }}/service.yaml
     - name: git config
       run: |
          git config --local user.email "tatsuro-m@example.com"
@@ -90,7 +98,7 @@ jobs:
     - name: git commit
       run: |
          git add .
-         git commit -m "${{ env.ENV }} ${{ matrix.service }} update docker image(${{ github.sha }})"
+         git commit -m "${{ env.ENV }} ${{ matrix.service }} update docker image(${{ env.SHORT_SHA }})"
          git pull origin
          git push origin
     - name: Set up Cloud SDK
