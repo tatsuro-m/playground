@@ -71,7 +71,7 @@ jobs:
     strategy:
       matrix:
         service:
-#          - frontend1
+          - frontend1
           - gin
     needs:
       - build
