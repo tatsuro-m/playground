@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         service:
-          - frontend1
+#          - frontend1
           - gin
 
     runs-on: ubuntu-latest
@@ -65,23 +65,11 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-  createPR:
-    name: create release pr and merge
-    needs:
-      - build
-    strategy:
-      matrix:
-        service:
-          - frontend1
-          - gin
-
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
       - name: update docker image
         uses: mikefarah/yq@v4.14.2
         with:
           cmd: DOCKER_IMAGE_URL=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ github.sha }} yq eval '.spec.template.spec.containers[0].image = env(DOCKER_IMAGE_URL)' -i ${{ env.WORK_DIR }}/infrastructure/cloud-run/${{ matrix.service }}/${{ env.ENV }}/service.yaml
+
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
