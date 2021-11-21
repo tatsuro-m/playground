@@ -80,18 +80,6 @@ jobs:
         uses: mikefarah/yq@v4.14.2
         with:
           cmd: DOCKER_IMAGE_URL=${{ env.GCP_REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ENV }}-${{ env.APP_NAME }}-${{ matrix.service }}/${{ matrix.service }}:${{ github.sha }} yq eval '.spec.template.spec.containers[0].image = env(DOCKER_IMAGE_URL)' -i ${{ env.WORK_DIR }}/infrastructure/cloud-run/${{ matrix.service }}/${{ env.ENV }}/service.yaml
-      - name: git config
-        run: |
-          git config --local user.email "tatsuro-m@example.com"
-          git config --local user.name "tatsuro-m"
-          git config pull.rebase false
-      - name: git commit
-        run: |
-          git pull origin
-          git add .
-          git commit -m "[${{ env.ENV }}][${{ matrix.service }}] update docker image(${{ github.sha }})"
-          git pull origin
-          git push origin
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
