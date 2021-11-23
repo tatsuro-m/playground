@@ -23,7 +23,12 @@ func SetUserToContext(t *testing.T) client.Option {
 	}
 
 	ginCtx := setGinCtx(u)
+	return getGqlClientOption(ginCtx)
+}
 
+func SetEmptyUserToContext(t *testing.T) client.Option {
+	t.Helper()
+	ginCtx := setGinCtx(&models.User{})
 	return getGqlClientOption(ginCtx)
 }
 
