@@ -15,14 +15,10 @@ import (
 	"github.com/99designs/gqlgen/client"
 )
 
-func SetUserToContext(t *testing.T) client.Option {
+func SetUserToContext(t *testing.T, authenticatedUser *models.User) client.Option {
 	t.Helper()
-	u, err := insertAuthenticatedUser()
-	if err != nil {
-		return nil
-	}
 
-	ginCtx := setGinCtx(u)
+	ginCtx := setGinCtx(authenticatedUser)
 	return getGqlClientOption(ginCtx)
 }
 

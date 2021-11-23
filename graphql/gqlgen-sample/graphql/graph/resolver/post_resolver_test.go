@@ -107,9 +107,10 @@ func TestMutationResolver_CreatePost(t *testing.T) {
 			thelper.SetupTest(t)
 			defer thelper.FinalizeTest(t)
 
+			u := thelper.InsertUser(t, 1)[0]
 			var op client.Option
 			if td.setValidUser {
-				op = thelper.SetUserToContext(t)
+				op = thelper.SetUserToContext(t, &u)
 			} else {
 				op = thelper.SetEmptyUserToContext(t)
 			}
