@@ -143,9 +143,16 @@ func TestMutationResolver_DeletePost(t *testing.T) {
 	}{
 		{
 			name:          "指定した id の post が削除できること",
-			query:         "mutation deletePost($post_id ID!){\n  deletePost(input: {id: $post_id})\n}",
+			query:         "mutation deletePost($post_id: ID!){\n  deletePost(input: {id: $post_id})\n}",
 			input:         map[string]int{"post_id": 1},
 			authenticated: true,
+			myPost:        true,
+		},
+		{
+			name:          "未認証だと post が削除できないこと",
+			query:         "mutation deletePost($post_id: ID!){\n  deletePost(input: {id: $post_id})\n}",
+			input:         map[string]int{"post_id": 1},
+			authenticated: false,
 			myPost:        true,
 		},
 	}
@@ -164,6 +171,8 @@ func TestMutationResolver_DeletePost(t *testing.T) {
 			var op client.Option
 			if td.authenticated && td.myPost {
 				op = thelper.SetUserToContext(t, &owner)
+			} else if td.authenticated {
+				op = thelper.SetUserToContext(t, &anotherUser)
 			} else {
 				op = thelper.SetEmptyUserToContext(t)
 			}

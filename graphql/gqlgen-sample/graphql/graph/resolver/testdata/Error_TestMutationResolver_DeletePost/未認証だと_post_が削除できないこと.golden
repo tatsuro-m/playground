@@ -1,0 +1,8 @@
+[
+  {
+    "message": "not authorized",
+    "path": [
+      "deletePost"
+    ]
+  }
+]
