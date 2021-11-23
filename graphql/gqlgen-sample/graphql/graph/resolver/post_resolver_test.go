@@ -101,7 +101,7 @@ func TestMutationResolver_CreatePost(t *testing.T) {
 
 			var resp interface{}
 			title := td.input["title"]
-			c.MustPost(td.query, &resp, client.Var("title", title), thelper.AddContext(t))
+			c.MustPost(td.query, &resp, client.Var("title", title), thelper.SetUserToContext(t))
 			g.AssertJson(t, t.Name(), resp)
 
 			p, _ := post.Service{}.GetByTitle(title)

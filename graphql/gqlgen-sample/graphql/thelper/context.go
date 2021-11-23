@@ -15,7 +15,7 @@ import (
 	"github.com/99designs/gqlgen/client"
 )
 
-func AddContext(t *testing.T) client.Option {
+func SetUserToContext(t *testing.T) client.Option {
 	t.Helper()
 	u, err := insertAuthenticatedUser()
 	if err != nil {
@@ -24,6 +24,10 @@ func AddContext(t *testing.T) client.Option {
 
 	ginCtx := setGinCtx(u)
 
+	return getGqlClientOption(ginCtx)
+}
+
+func getGqlClientOption(ginCtx *gin.Context) client.Option {
 	return func(bd *client.Request) {
 		ginCtx.Request = bd.HTTP
 		rawCtx := context.WithValue(ginCtx.Request.Context(), middleware.GinCtxKey, ginCtx)
