@@ -25,7 +25,7 @@ extend type Query {
 
 extend type Mutation {
     createPost(input: NewPost): Post! @authenticated
-    deletePost(input: DeletePost): ID!
+    deletePost(input: DeletePost): ID! @authenticated
     addTag(input: AddTag): Post!
 }
 
