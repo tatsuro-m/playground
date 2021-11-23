@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"graphql/graph/gqlmodel"
 	"strconv"
 	"sync"
@@ -41,6 +42,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	Authenticated func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -304,8 +306,9 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "graph/common.graphql", Input: `type Query
-
 type Mutation
+
+directive @authenticated on FIELD_DEFINITION
 `, BuiltIn: false},
 	{Name: "graph/post.graphql", Input: `type Post {
     id: ID!
@@ -333,7 +336,7 @@ extend type Query {
 }
 
 extend type Mutation {
-    createPost(input: NewPost): Post!
+    createPost(input: NewPost): Post! @authenticated
     deletePost(input: DeletePost): ID!
     addTag(input: AddTag): Post!
 }
@@ -497,8 +500,28 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 	}
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(*gqlmodel.NewPost))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreatePost(rctx, args["input"].(*gqlmodel.NewPost))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.Authenticated == nil {
+				return nil, errors.New("directive authenticated is not implemented")
+			}
+			return ec.directives.Authenticated(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*gqlmodel.Post); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *graphql/graph/gqlmodel.Post`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
