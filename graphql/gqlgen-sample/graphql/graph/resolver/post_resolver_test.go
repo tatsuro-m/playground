@@ -130,7 +130,6 @@ func TestMutationResolver_AddTag(t *testing.T) {
 			input: map[string]int{"post_id": 1, "tag_id": 2},
 		},
 		{
-			// TODO goldie のデバッグを先にする
 			name:  "存在しない tag_id を指定するとエラーになること",
 			query: "mutation addTag($post_id: ID!, $tag_id: ID!){\n  addTag(input: {post_id: $post_id, tag_id: $tag_id}){\n    id\n    title\n   user{\n      name\n      email\n    }  }\n}",
 			input: map[string]int{"post_id": 1, "tag_id": 9999},
@@ -147,10 +146,15 @@ func TestMutationResolver_AddTag(t *testing.T) {
 			thelper.InsertTag(t, 3)
 
 			var resp interface{}
-			c.MustPost(td.query, &resp,
+			err := c.Post(td.query, &resp,
 				client.Var("post_id", td.input["post_id"]),
 				client.Var("tag_id", td.input["tag_id"]),
-				thelper.AddContext(t))
+			)
+
+			if err != nil {
+				// err が存在するなら res body に合わせてエラーの中身もテストしたいので。
+				g.AssertJson(t, "Error_"+t.Name(), err)
+			}
 
 			g.AssertJson(t, t.Name(), resp)
 		})
