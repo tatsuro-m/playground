@@ -94,6 +94,12 @@ func TestMutationResolver_CreatePost(t *testing.T) {
 			input:        map[string]string{"title": "create post mutation test"},
 			setValidUser: true,
 		},
+		{
+			name:         "認証が必須であること",
+			query:        "mutation createPost($title: String!){\n  createPost(input: {title: $title}){\n    id\n    title\n    \n    user {\n      name\n      email\n    }\n  }\n}",
+			input:        map[string]string{"title": "create post mutation test"},
+			setValidUser: false,
+		},
 	}
 
 	for _, td := range table {
@@ -110,7 +116,11 @@ func TestMutationResolver_CreatePost(t *testing.T) {
 
 			var resp interface{}
 			title := td.input["title"]
-			c.MustPost(td.query, &resp, client.Var("title", title), op)
+			err := c.Post(td.query, &resp, client.Var("title", title), op)
+			if err != nil {
+				g.AssertJson(t, "Error"+t.Name(), err)
+			}
+
 			g.AssertJson(t, t.Name(), resp)
 
 			p, _ := post.Service{}.GetByTitle(title)
