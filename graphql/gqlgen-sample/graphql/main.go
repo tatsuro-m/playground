@@ -1,10 +1,16 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"graphql/code"
 	"graphql/db"
+	"graphql/ginctx"
 	"graphql/graph/generated"
 	"graphql/graph/resolver"
 	"graphql/middleware"
+
+	"github.com/99designs/gqlgen/graphql"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -13,14 +19,24 @@ import (
 
 const defaultPort = "8080"
 
-// Defining the Graphql handler
 func graphqlHandler() gin.HandlerFunc {
-	// NewExecutableSchema and Config are in the generated.go file
-	// Resolver is in the resolver.go file
-	h := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &resolver.Resolver{}}))
+	c := generated.Config{Resolvers: &resolver.Resolver{}}
+	configDirectives(&c)
+	h := handler.NewDefaultServer(generated.NewExecutableSchema(c))
 
 	return func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
+	}
+}
+
+func configDirectives(c *generated.Config) {
+	c.Directives.Authenticated = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
+		_, err := ginctx.GetUserFromGinCtx(ctx)
+		if err != nil {
+			return nil, errors.New(code.NotAuthorize)
+		}
+
+		return next(ctx)
 	}
 }
 

@@ -19,11 +19,7 @@ import (
 )
 
 func (r *mutationResolver) CreatePost(ctx context.Context, input *gqlmodel.NewPost) (*gqlmodel.Post, error) {
-	u, err := ginctx.GetUserFromGinCtx(ctx)
-	if err != nil {
-		return nil, errors.New(code.NotAuthorize)
-	}
-
+	u, _ := ginctx.GetUserFromGinCtx(ctx)
 	dbPost := models.Post{Title: input.Title, UserID: u.ID}
 	p, err := post.Service{}.CreatePost(dbPost)
 
