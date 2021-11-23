@@ -17,6 +17,9 @@ spec:
       containerConcurrency: 80
       containers:
         - image: asia-northeast1-docker.pkg.dev/playground-318023/prod-next-deploy-gin/gin:latest
+          env:
+            - name: GIN_MODE
+              value: release
           ports:
             - containerPort: 8080
               name: http1
