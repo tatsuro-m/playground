@@ -155,6 +155,13 @@ func TestMutationResolver_DeletePost(t *testing.T) {
 			authenticated: false,
 			myPost:        true,
 		},
+		{
+			name:          "自分の投稿でないと post が削除できないこと",
+			query:         "mutation deletePost($post_id: ID!){\n  deletePost(input: {id: $post_id})\n}",
+			input:         map[string]int{"post_id": 1},
+			authenticated: true,
+			myPost:        false,
+		},
 	}
 
 	for _, td := range table {
