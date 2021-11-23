@@ -2,6 +2,7 @@ package main
 
 import (
 	"gin/logging"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -18,8 +19,14 @@ func main() {
 			"message": "cloud run!!",
 		})
 
-		logging.S().Infow("success!!",
-			"path", "/ping",
+		logging.S().Infow("success!!")
+	})
+
+	r.GET("/error", func(c *gin.Context) {
+		c.AbortWithStatus(http.StatusNotFound)
+
+		logging.S().Error("test not found error",
+			"status", http.StatusNotFound,
 		)
 	})
 
