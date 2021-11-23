@@ -83,14 +83,16 @@ func TestMutationResolver_CreatePost(t *testing.T) {
 	g := goldie.New(t)
 
 	table := []struct {
-		name  string
-		query string
-		input map[string]string
+		name         string
+		query        string
+		input        map[string]string
+		setValidUser bool
 	}{
 		{
-			name:  "post が作成されること",
-			query: "mutation createPost($title: String!){\n  createPost(input: {title: $title}){\n    id\n    title\n    \n    user {\n      name\n      email\n    }\n  }\n}",
-			input: map[string]string{"title": "create post mutation test"},
+			name:         "post が作成されること",
+			query:        "mutation createPost($title: String!){\n  createPost(input: {title: $title}){\n    id\n    title\n    \n    user {\n      name\n      email\n    }\n  }\n}",
+			input:        map[string]string{"title": "create post mutation test"},
+			setValidUser: true,
 		},
 	}
 
@@ -99,9 +101,16 @@ func TestMutationResolver_CreatePost(t *testing.T) {
 			thelper.SetupTest(t)
 			defer thelper.FinalizeTest(t)
 
+			var op client.Option
+			if td.setValidUser {
+				op = thelper.SetUserToContext(t)
+			} else {
+				op = thelper.SetEmptyUserToContext(t)
+			}
+
 			var resp interface{}
 			title := td.input["title"]
-			c.MustPost(td.query, &resp, client.Var("title", title), thelper.SetUserToContext(t))
+			c.MustPost(td.query, &resp, client.Var("title", title), op)
 			g.AssertJson(t, t.Name(), resp)
 
 			p, _ := post.Service{}.GetByTitle(title)
