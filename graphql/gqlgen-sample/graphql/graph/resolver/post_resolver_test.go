@@ -130,6 +130,11 @@ func TestMutationResolver_AddTag(t *testing.T) {
 			input: map[string]int{"post_id": 1, "tag_id": 2},
 		},
 		{
+			name:  "存在しない post_id を指定するとエラーになること",
+			query: "mutation addTag($post_id: ID!, $tag_id: ID!){\n  addTag(input: {post_id: $post_id, tag_id: $tag_id}){\n    id\n    title\n   user{\n      name\n      email\n    }  }\n}",
+			input: map[string]int{"post_id": 9999, "tag_id": 2},
+		},
+		{
 			name:  "存在しない tag_id を指定するとエラーになること",
 			query: "mutation addTag($post_id: ID!, $tag_id: ID!){\n  addTag(input: {post_id: $post_id, tag_id: $tag_id}){\n    id\n    title\n   user{\n      name\n      email\n    }  }\n}",
 			input: map[string]int{"post_id": 1, "tag_id": 9999},
