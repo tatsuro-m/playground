@@ -109,3 +109,39 @@ func TestMutationResolver_CreatePost(t *testing.T) {
 		})
 	}
 }
+
+func TestMutationResolver_AddTag(t *testing.T) {
+	c := createGqlClient(t)
+	g := goldie.New(t)
+
+	table := []struct {
+		name  string
+		query string
+		input map[string]int
+	}{
+		{
+			name:  "post が返ってくること",
+			query: "mutation addTag($post_id: ID!, $tag_id: ID!){\n  addTag(input: {post_id: $post_id, tag_id: $tag_id}){\n    id\n    title\n  }\n}",
+			input: map[string]int{"post_id": 1, "tag_id": 2},
+		},
+	}
+
+	for _, td := range table {
+		t.Run(td.name, func(t *testing.T) {
+			thelper.SetupTest(t)
+			defer thelper.FinalizeTest(t)
+
+			u := thelper.InsertUser(t, 1)[0]
+			p := thelper.InsertPost(t, 3, u.ID)[0]
+			tag := thelper.InsertTag(t, 3)[0]
+
+			var resp interface{}
+			c.MustPost(td.query, &resp,
+				client.Var("post_id", p.ID),
+				client.Var("tag_id", tag.ID),
+				thelper.AddContext(t))
+
+			g.AssertJson(t, t.Name(), resp)
+		})
+	}
+}
