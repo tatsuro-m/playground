@@ -2,15 +2,12 @@ package thelper
 
 import (
 	"context"
-	"graphql/db"
 	"graphql/middleware"
 	"graphql/models"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/gin-gonic/gin"
-
-	"github.com/volatiletech/sqlboiler/v4/boil"
 
 	"github.com/99designs/gqlgen/client"
 )
@@ -41,21 +38,4 @@ func setGinCtx(u *models.User) *gin.Context {
 	ginContext.Set(middleware.UserCtxKey, u)
 
 	return ginContext
-}
-
-func insertAuthenticatedUser() (*models.User, error) {
-	// 認証に使う user を DB に入れる
-	u := models.User{
-		UserID:  "authenticatedUser99999999",
-		Email:   "authenticatedUser%d@example.com",
-		Name:    "authenticated user for test",
-		Picture: "https://images.unsplash.com/photo-1485546246426-74dc88dec4d9?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1769&q=80",
-	}
-
-	err := u.Insert(context.Background(), db.GetDB(), boil.Infer())
-	if err != nil {
-		return nil, err
-	}
-
-	return &u, nil
 }
