@@ -187,6 +187,8 @@ func TestMutationResolver_DeletePost(t *testing.T) {
 			if err != nil {
 				g.AssertJson(t, "Error_"+t.Name(), err)
 				assert.Equal(t, true, post.Service{}.ExistsByID(pID))
+			} else {
+				assert.Equal(t, false, post.Service{}.ExistsByID(pID))
 			}
 
 			g.AssertJson(t, t.Name(), resp)
