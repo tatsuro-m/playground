@@ -9,7 +9,7 @@ func InitLogger() *zap.Logger {
 	return logger
 }
 
-func GetS() *zap.SugaredLogger {
+func S() *zap.SugaredLogger {
 	defer logger.Sync() // flushes buffer, if any
 	return logger.Sugar()
 }
