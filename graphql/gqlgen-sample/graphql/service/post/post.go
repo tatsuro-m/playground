@@ -67,6 +67,11 @@ func (s Service) CheckMyPost(postID, userID int) bool {
 	return p.UserID == userID
 }
 
+func (s Service) ExistsByID(id int) bool {
+	exists, _ := models.Posts(models.PostWhere.ID.EQ(id)).Exists(context.Background(), db.GetDB())
+	return exists
+}
+
 func (s Service) AddTag(j *models.PostTag) error {
 	ctx := context.Background()
 	d := db.GetDB()

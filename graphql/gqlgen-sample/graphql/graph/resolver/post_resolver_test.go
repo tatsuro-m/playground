@@ -130,6 +130,61 @@ func TestMutationResolver_CreatePost(t *testing.T) {
 	}
 }
 
+func TestMutationResolver_DeletePost(t *testing.T) {
+	c := createGqlClient(t)
+	g := goldie.New(t)
+
+	table := []struct {
+		name          string
+		query         string
+		input         map[string]int
+		authenticated bool
+		myPost        bool
+	}{
+		{
+			name:          "指定した id の post が削除できること",
+			query:         "mutation deletePost($post_id ID!){\n  deletePost(input: {id: $post_id})\n}",
+			input:         map[string]int{"post_id": 1},
+			authenticated: true,
+			myPost:        true,
+		},
+	}
+
+	for _, td := range table {
+		t.Run(td.name, func(t *testing.T) {
+			thelper.SetupTest(t)
+			defer thelper.FinalizeTest(t)
+
+			users := thelper.InsertUser(t, 2)
+			owner := users[0]
+			anotherUser := users[1]
+			thelper.InsertPost(t, 1, owner.ID)
+			thelper.InsertPost(t, 1, anotherUser.ID)
+
+			var op client.Option
+			if td.authenticated && td.myPost {
+				op = thelper.SetUserToContext(t, &owner)
+			} else {
+				op = thelper.SetEmptyUserToContext(t)
+			}
+
+			var resp interface{}
+			pID := td.input["post_id"]
+			err := c.Post(td.query, &resp,
+				client.Var("post_id", pID),
+				op,
+			)
+
+			if err != nil {
+				g.AssertJson(t, "Error_"+t.Name(), err)
+				assert.Equal(t, true, post.Service{}.ExistsByID(pID))
+			}
+
+			g.AssertJson(t, t.Name(), resp)
+		})
+	}
+}
+
 func TestMutationResolver_AddTag(t *testing.T) {
 	c := createGqlClient(t)
 	g := goldie.New(t)
