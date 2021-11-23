@@ -119,12 +119,12 @@ func TestMutationResolver_CreatePost(t *testing.T) {
 			err := c.Post(td.query, &resp, client.Var("title", title), op)
 			if err != nil {
 				g.AssertJson(t, "Error"+t.Name(), err)
+			} else {
+				p, _ := post.Service{}.GetByTitle(title)
+				assert.Equal(t, title, p.Title)
 			}
 
 			g.AssertJson(t, t.Name(), resp)
-
-			p, _ := post.Service{}.GetByTitle(title)
-			assert.Equal(t, title, p.Title)
 		})
 	}
 }
