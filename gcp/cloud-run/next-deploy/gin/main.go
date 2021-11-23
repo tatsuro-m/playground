@@ -1,11 +1,17 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"gin/logging"
 	"os"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	l := logging.InitLogger()
+	defer l.Sync()
+
 	r := gin.Default()
 
 	r.GET("/ping", func(c *gin.Context) {
@@ -13,6 +19,14 @@ func main() {
 			"message": "cloud run!!",
 		})
 	})
+
+	sugar := logging.GetS()
+	sugar.Infow("failed to fetch URL",
+		// Structured context as loosely typed key-value pairs.
+		"attempt", 3,
+		"backoff", time.Second,
+	)
+	sugar.Error("エラー")
 
 	r.Run(":" + os.Getenv("PORT"))
 }
