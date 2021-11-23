@@ -124,6 +124,11 @@ func TestMutationResolver_AddTag(t *testing.T) {
 			query: "mutation addTag($post_id: ID!, $tag_id: ID!){\n  addTag(input: {post_id: $post_id, tag_id: $tag_id}){\n    id\n    title\n  }\n}",
 			input: map[string]int{"post_id": 1, "tag_id": 2},
 		},
+		{
+			name:  "user も含めて返ってくること",
+			query: "mutation addTag($post_id: ID!, $tag_id: ID!){\n  addTag(input: {post_id: $post_id, tag_id: $tag_id}){\n    id\n    title\n   user{\n      name\n      email\n    }  }\n}",
+			input: map[string]int{"post_id": 1, "tag_id": 2},
+		},
 	}
 
 	for _, td := range table {

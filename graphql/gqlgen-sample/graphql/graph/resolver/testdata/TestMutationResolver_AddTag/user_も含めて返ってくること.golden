@@ -1,0 +1,10 @@
+{
+  "addTag": {
+    "id": "1",
+    "title": "test0",
+    "user": {
+      "email": "test0@example.com",
+      "name": "test0"
+    }
+  }
+}
