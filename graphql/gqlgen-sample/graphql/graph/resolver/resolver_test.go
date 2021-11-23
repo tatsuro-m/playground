@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"graphql/graph"
 	"graphql/graph/generated"
 	"testing"
 
@@ -10,5 +11,8 @@ import (
 
 func createGqlClient(t *testing.T) *client.Client {
 	t.Helper()
-	return client.New(handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &Resolver{}})))
+
+	c := generated.Config{Resolvers: &Resolver{}}
+	graph.ConfigDirectives(&c)
+	return client.New(handler.NewDefaultServer(generated.NewExecutableSchema(c)))
 }
