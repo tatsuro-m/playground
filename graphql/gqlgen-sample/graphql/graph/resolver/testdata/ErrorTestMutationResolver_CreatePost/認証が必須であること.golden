@@ -1,8 +1,11 @@
 [
   {
-    "message": "not authorized",
+    "message": "not authenticated",
     "path": [
       "createPost"
-    ]
+    ],
+    "extensions": {
+      "code": "AUTHENTICATION_ERROR"
+    }
   }
 ]
