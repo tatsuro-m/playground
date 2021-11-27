@@ -21,6 +21,8 @@ input AddTag {
 extend type Query {
     posts: [Post!]!
     post(id: ID!): Post!
+    # post に紐付けられた tag を全て返す
+    tags(id: ID!): [Tag!]!
 }
 
 extend type Mutation {
