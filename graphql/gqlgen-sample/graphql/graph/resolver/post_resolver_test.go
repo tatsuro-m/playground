@@ -292,13 +292,19 @@ func TestQueryResolver_Tags(t *testing.T) {
 			defer thelper.FinalizeTest(t)
 
 			u := thelper.InsertUser(t, 1)[0]
-			p := thelper.InsertPost(t, 1, u.ID)[0]
+			posts := thelper.InsertPost(t, 2, u.ID)
+			p := posts[0]
+			anotherP := posts[len(posts)-1]
 			n := td.input["tagNum"]
 			tags := thelper.InsertTag(t, n)
 			// 中間テーブルに登録して関連付ける
 			for _, tag := range tags {
+				s := post.Service{}
+
 				pt := models.PostTag{PostID: p.ID, TagID: tag.ID}
-				post.Service{}.AddTag(&pt)
+				s.AddTag(&pt)
+				pt = models.PostTag{PostID: anotherP.ID, TagID: tag.ID}
+				s.AddTag(&pt)
 			}
 
 			var resp interface{}
