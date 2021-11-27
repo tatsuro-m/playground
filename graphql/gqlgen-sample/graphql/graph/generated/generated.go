@@ -61,10 +61,11 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Post  func(childComplexity int, id string) int
-		Posts func(childComplexity int) int
-		Tags  func(childComplexity int, input *gqlmodel.Tags) int
-		Users func(childComplexity int) int
+		Post     func(childComplexity int, id string) int
+		Posts    func(childComplexity int) int
+		TagPosts func(childComplexity int, tagID string) int
+		Tags     func(childComplexity int, input *gqlmodel.Tags) int
+		Users    func(childComplexity int) int
 	}
 
 	Tag struct {
@@ -93,6 +94,7 @@ type QueryResolver interface {
 	Posts(ctx context.Context) ([]*gqlmodel.Post, error)
 	Post(ctx context.Context, id string) (*gqlmodel.Post, error)
 	Tags(ctx context.Context, input *gqlmodel.Tags) ([]*gqlmodel.Tag, error)
+	TagPosts(ctx context.Context, tagID string) ([]*gqlmodel.Post, error)
 	Users(ctx context.Context) ([]*gqlmodel.User, error)
 }
 
@@ -200,6 +202,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Posts(childComplexity), true
+
+	case "Query.tagPosts":
+		if e.complexity.Query.TagPosts == nil {
+			break
+		}
+
+		args, err := ec.field_Query_tagPosts_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.TagPosts(childComplexity, args["tag_id"].(string)), true
 
 	case "Query.tags":
 		if e.complexity.Query.Tags == nil {
@@ -374,6 +388,7 @@ input NewPost {
 input DeletePost {
     id: ID!
 }
+
 input AddTag {
     post_id: ID!
     tag_id: ID!
@@ -403,6 +418,10 @@ scalar Time
     name: String!
     createdAt: Time!
     updatedAt: Time!
+}
+
+extend type Query {
+    tagPosts(tag_id: ID!): [Post!]!
 }
 `, BuiltIn: false},
 	{Name: "graph/user.graphql", Input: `type User {
@@ -497,6 +516,21 @@ func (ec *executionContext) field_Query_post_args(ctx context.Context, rawArgs m
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_tagPosts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["tag_id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tag_id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["tag_id"] = arg0
 	return args, nil
 }
 
@@ -1011,6 +1045,48 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 	res := resTmp.([]*gqlmodel.Tag)
 	fc.Result = res
 	return ec.marshalNTag2ᚕᚖgraphqlᚋgraphᚋgqlmodelᚐTagᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_tagPosts(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_tagPosts_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().TagPosts(rctx, args["tag_id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.Post)
+	fc.Result = res
+	return ec.marshalNPost2ᚕᚖgraphqlᚋgraphᚋgqlmodelᚐPostᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2839,6 +2915,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_tags(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "tagPosts":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_tagPosts(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

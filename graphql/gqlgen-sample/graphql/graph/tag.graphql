@@ -4,3 +4,7 @@ type Tag {
     createdAt: Time!
     updatedAt: Time!
 }
+
+extend type Query {
+    tagPosts(tag_id: ID!): [Post!]!
+}
