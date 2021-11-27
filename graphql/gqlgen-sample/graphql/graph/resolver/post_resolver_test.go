@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"graphql/models"
 	"graphql/service/post"
 	"graphql/thelper"
 	"testing"
@@ -251,6 +252,49 @@ func TestMutationResolver_AddTag(t *testing.T) {
 
 			if err != nil {
 				// err が存在するなら res body に合わせてエラーの中身もテストしたいので。
+				g.AssertJson(t, "Error_"+t.Name(), err)
+			}
+
+			g.AssertJson(t, t.Name(), resp)
+		})
+	}
+}
+
+func TestQueryResolver_Tags(t *testing.T) {
+	c := createGqlClient(t)
+	g := goldie.New(t)
+
+	table := []struct {
+		name  string
+		query string
+		input map[string]int
+	}{
+		{
+			name:  "post に紐づく tag が全て帰ってくること",
+			query: "query tags($post_id: ID!){\n  tags(input: {post_id: $post_id}) {\n    id\n    name\n  }\n}",
+			input: map[string]int{"post_id": 1, "tagNum": 3},
+		},
+	}
+
+	for _, td := range table {
+		t.Run(td.name, func(t *testing.T) {
+			thelper.SetupTest(t)
+			defer thelper.FinalizeTest(t)
+
+			u := thelper.InsertUser(t, 1)[0]
+			p := thelper.InsertPost(t, 1, u.ID)[0]
+			n := td.input["tagNum"]
+			tags := thelper.InsertTag(t, n)
+			// 中間テーブルに登録して関連付ける
+			for _, t := range tags {
+				pt := models.PostTag{PostID: p.ID, TagID: t.ID}
+				post.Service{}.AddTag(&pt)
+			}
+
+			var resp interface{}
+			err := c.Post(td.query, &resp, client.Var("post_id", td.input["post_id"]))
+
+			if err != nil {
 				g.AssertJson(t, "Error_"+t.Name(), err)
 			}
 
