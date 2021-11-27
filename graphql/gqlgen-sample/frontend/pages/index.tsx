@@ -28,12 +28,12 @@ interface Posts {
 }
 
 export const Home: React.VFC = () => {
-  // const { loading, error, data } = useQuery<Posts>(POSTS_QUERY)
-  //
-  // if (loading) return <p>Loading...</p>
-  // if (error) return <p>Error: {JSON.stringify(error)}</p>
-  //
-  // const { posts } = data
+  const { loading, error, data } = useQuery<Posts>(POSTS_QUERY)
+
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error: {JSON.stringify(error)}</p>
+
+  const { posts } = data
 
   getJWT()
 
@@ -55,28 +55,28 @@ export const Home: React.VFC = () => {
           ? firebaseUser().displayName + 'でログインしています'
           : 'ログインしていません'}
       </p>
-      {/*<TableContainer component={Paper}>*/}
-      {/*  <Table aria-label="simple table">*/}
-      {/*    <TableHead>*/}
-      {/*      <TableRow>*/}
-      {/*        <TableCell>タイトル</TableCell>*/}
-      {/*        <TableCell align="right">作成日時</TableCell>*/}
-      {/*        <TableCell align="right">更新日時</TableCell>*/}
-      {/*      </TableRow>*/}
-      {/*    </TableHead>*/}
-      {/*    <TableBody>*/}
-      {/*      {posts.map((post) => (*/}
-      {/*        <TableRow key={post.id}>*/}
-      {/*          <TableCell component="th" scope="row">*/}
-      {/*            {post.title}*/}
-      {/*          </TableCell>*/}
-      {/*          <TableCell align="right">{post.createdAt}</TableCell>*/}
-      {/*          <TableCell align="right">{post.updatedAt}</TableCell>*/}
-      {/*        </TableRow>*/}
-      {/*      ))}*/}
-      {/*    </TableBody>*/}
-      {/*  </Table>*/}
-      {/*</TableContainer>*/}
+      <TableContainer component={Paper}>
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>タイトル</TableCell>
+              <TableCell align="right">作成日時</TableCell>
+              <TableCell align="right">更新日時</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {posts.map((post) => (
+              <TableRow key={post.id}>
+                <TableCell component="th" scope="row">
+                  {post.title}
+                </TableCell>
+                <TableCell align="right">{post.createdAt}</TableCell>
+                <TableCell align="right">{post.updatedAt}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Box>
   )
 }
