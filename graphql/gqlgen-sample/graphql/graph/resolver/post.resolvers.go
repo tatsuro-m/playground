@@ -96,3 +96,7 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*gqlmodel.Post, er
 
 	return res, nil
 }
+
+func (r *queryResolver) Tags(ctx context.Context, id string) ([]*gqlmodel.Tag, error) {
+	panic(fmt.Errorf("not implemented"))
+}
