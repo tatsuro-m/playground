@@ -35,7 +35,7 @@ func (r *mutationResolver) DeletePost(ctx context.Context, input *gqlmodel.Delet
 	id, _ := strconv.Atoi(input.ID)
 
 	if !s.CheckMyPost(id, u.ID) {
-		return "", graph.NewGqlError("not my post", code.Forbid)
+		return "", graph.NewGqlError("not my post", code.AuthorizationErr)
 	}
 
 	p, err := s.DeleteByID(id)

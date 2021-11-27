@@ -5,7 +5,7 @@
       "deletePost"
     ],
     "extensions": {
-      "code": "forbid"
+      "code": "AUTHORIZATION_ERROR"
     }
   }
 ]
