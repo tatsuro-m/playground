@@ -98,5 +98,20 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*gqlmodel.Post, er
 }
 
 func (r *queryResolver) Tags(ctx context.Context, input *gqlmodel.Tags) ([]*gqlmodel.Tag, error) {
-	panic(fmt.Errorf("not implemented"))
+	id, err := strconv.Atoi(input.PostID)
+	if err != nil {
+		return nil, err
+	}
+
+	tags, err := post.Service{}.Tags(id)
+	if err != nil {
+		return nil, err
+	}
+
+	gqlTags := make([]*gqlmodel.Tag, 0)
+	for _, tag := range tags {
+		gqlTags = append(gqlTags, modelconv.ModelToGqlTag(tag))
+	}
+
+	return gqlTags, nil
 }

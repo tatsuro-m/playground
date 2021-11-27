@@ -13,3 +13,7 @@ func ModelToGqlPost(mp *models.Post) *gqlmodel.Post {
 func ModelToGqlUser(mu *models.User) *gqlmodel.User {
 	return &gqlmodel.User{ID: strconv.Itoa(mu.ID), Email: mu.Email, Name: mu.Name, Picture: mu.Picture, CreatedAt: mu.CreatedAt, UpdatedAt: mu.UpdatedAt}
 }
+
+func ModelToGqlTag(mt *models.Tag) *gqlmodel.Tag {
+	return &gqlmodel.Tag{ID: strconv.Itoa(mt.ID), Name: mt.Name, CreatedAt: mt.CreatedAt, UpdatedAt: mt.UpdatedAt}
+}
