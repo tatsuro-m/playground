@@ -5,10 +5,27 @@ package resolver
 
 import (
 	"context"
-	"fmt"
+	"graphql/graph"
 	"graphql/graph/gqlmodel"
+	"graphql/service/tag"
+	"strconv"
 )
 
 func (r *queryResolver) TagPosts(ctx context.Context, tagID string) ([]*gqlmodel.Post, error) {
-	panic(fmt.Errorf("not implemented"))
+	tID, err := strconv.Atoi(tagID)
+	if err != nil {
+		return nil, err
+	}
+
+	mPosts, err := tag.Service{}.Posts(tID)
+	if err != nil {
+		return nil, err
+	}
+
+	gqlPosts := make([]*gqlmodel.Post, 0)
+	for _, mp := range mPosts {
+		gqlPosts = append(gqlPosts, graph.SetUser(mp))
+	}
+
+	return gqlPosts, nil
 }
