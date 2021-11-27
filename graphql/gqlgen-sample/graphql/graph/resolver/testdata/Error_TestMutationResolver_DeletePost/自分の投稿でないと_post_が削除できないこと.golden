@@ -1,8 +1,11 @@
 [
   {
-    "message": "forbid",
+    "message": "not my post",
     "path": [
       "deletePost"
-    ]
+    ],
+    "extensions": {
+      "code": "forbid"
+    }
   }
 ]
