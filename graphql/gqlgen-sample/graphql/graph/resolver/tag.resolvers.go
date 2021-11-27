@@ -5,6 +5,8 @@ package resolver
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"graphql/graph"
 	"graphql/graph/gqlmodel"
 	"graphql/service/tag"
@@ -15,6 +17,11 @@ func (r *queryResolver) TagPosts(ctx context.Context, tagID string) ([]*gqlmodel
 	tID, err := strconv.Atoi(tagID)
 	if err != nil {
 		return nil, err
+	}
+
+	s := tag.Service{}
+	if !s.ExistsByID(tID) {
+		return nil, errors.New(fmt.Sprintf("record(tag_id = %d) not exists", tID))
 	}
 
 	mPosts, err := tag.Service{}.Posts(tID)

@@ -15,6 +15,11 @@ func (s Service) GetByID(id int) (*models.Tag, error) {
 	return models.FindTag(context.Background(), db.GetDB(), id)
 }
 
+func (s Service) ExistsByID(id int) bool {
+	exists, _ := models.Tags(models.TagWhere.ID.EQ(id)).Exists(context.Background(), db.GetDB())
+	return exists
+}
+
 func (s Service) Posts(tagID int) (models.PostSlice, error) {
 	posts, err := models.Posts(
 		qm.InnerJoin("post_tags pt on id = pt.post_id"),
