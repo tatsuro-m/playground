@@ -63,7 +63,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Post  func(childComplexity int, id string) int
 		Posts func(childComplexity int) int
-		Tags  func(childComplexity int, id string) int
+		Tags  func(childComplexity int, input *gqlmodel.Tags) int
 		Users func(childComplexity int) int
 	}
 
@@ -92,7 +92,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	Posts(ctx context.Context) ([]*gqlmodel.Post, error)
 	Post(ctx context.Context, id string) (*gqlmodel.Post, error)
-	Tags(ctx context.Context, id string) ([]*gqlmodel.Tag, error)
+	Tags(ctx context.Context, input *gqlmodel.Tags) ([]*gqlmodel.Tag, error)
 	Users(ctx context.Context) ([]*gqlmodel.User, error)
 }
 
@@ -211,7 +211,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Tags(childComplexity, args["id"].(string)), true
+		return e.complexity.Query.Tags(childComplexity, args["input"].(*gqlmodel.Tags)), true
 
 	case "Query.users":
 		if e.complexity.Query.Users == nil {
@@ -379,11 +379,15 @@ input AddTag {
     tag_id: ID!
 }
 
+input Tags {
+    post_id: ID
+}
+
 extend type Query {
     posts: [Post!]!
     post(id: ID!): Post!
     # post に紐付けられた tag を全て返す
-    tags(id: ID!): [Tag!]!
+    tags(input: Tags): [Tag!]!
 }
 
 extend type Mutation {
@@ -499,15 +503,15 @@ func (ec *executionContext) field_Query_post_args(ctx context.Context, rawArgs m
 func (ec *executionContext) field_Query_tags_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+	var arg0 *gqlmodel.Tags
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOTags2ᚖgraphqlᚋgraphᚋgqlmodelᚐTags(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["id"] = arg0
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -992,7 +996,7 @@ func (ec *executionContext) _Query_tags(ctx context.Context, field graphql.Colle
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Tags(rctx, args["id"].(string))
+		return ec.resolvers.Query().Tags(rctx, args["input"].(*gqlmodel.Tags))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2664,6 +2668,29 @@ func (ec *executionContext) unmarshalInputNewPost(ctx context.Context, obj inter
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputTags(ctx context.Context, obj interface{}) (gqlmodel.Tags, error) {
+	var it gqlmodel.Tags
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "post_id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("post_id"))
+			it.PostID, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -3707,6 +3734,21 @@ func (ec *executionContext) unmarshalODeletePost2ᚖgraphqlᚋgraphᚋgqlmodel�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalID(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return graphql.MarshalID(*v)
+}
+
 func (ec *executionContext) unmarshalONewPost2ᚖgraphqlᚋgraphᚋgqlmodelᚐNewPost(ctx context.Context, v interface{}) (*gqlmodel.NewPost, error) {
 	if v == nil {
 		return nil, nil
@@ -3737,6 +3779,14 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 		return graphql.Null
 	}
 	return graphql.MarshalString(*v)
+}
+
+func (ec *executionContext) unmarshalOTags2ᚖgraphqlᚋgraphᚋgqlmodelᚐTags(ctx context.Context, v interface{}) (*gqlmodel.Tags, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputTags(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOUser2ᚖgraphqlᚋgraphᚋgqlmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.User) graphql.Marshaler {

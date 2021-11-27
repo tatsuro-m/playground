@@ -34,6 +34,10 @@ type Tag struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
+type Tags struct {
+	PostID *string `json:"post_id"`
+}
+
 type User struct {
 	ID        string    `json:"id"`
 	Email     string    `json:"email"`
