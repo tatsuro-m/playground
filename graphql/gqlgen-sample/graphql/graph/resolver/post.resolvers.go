@@ -87,7 +87,7 @@ func (r *queryResolver) Post(ctx context.Context, id string) (*gqlmodel.Post, er
 
 	p, err := post.Service{}.GetByID(i)
 	if err != nil {
-		return nil, errors.New(code.ModelError)
+		return nil, graph.NewGqlError(err.Error(), code.InternalErr)
 	}
 
 	res := modelconv.ModelToGqlPost(p)
