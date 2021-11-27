@@ -82,7 +82,7 @@ func (r *queryResolver) Posts(ctx context.Context) ([]*gqlmodel.Post, error) {
 func (r *queryResolver) Post(ctx context.Context, id string) (*gqlmodel.Post, error) {
 	i, err := strconv.Atoi(id)
 	if err != nil {
-		return nil, errors.New(code.InvalidID)
+		return nil, graph.NewGqlError(err.Error(), code.InternalErr)
 	}
 
 	p, err := post.Service{}.GetByID(i)
