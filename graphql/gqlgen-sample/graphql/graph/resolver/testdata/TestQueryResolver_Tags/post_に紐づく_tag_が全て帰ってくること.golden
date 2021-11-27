@@ -1,0 +1,16 @@
+{
+  "tags": [
+    {
+      "id": "1",
+      "name": "test tag0"
+    },
+    {
+      "id": "2",
+      "name": "test tag1"
+    },
+    {
+      "id": "3",
+      "name": "test tag2"
+    }
+  ]
+}

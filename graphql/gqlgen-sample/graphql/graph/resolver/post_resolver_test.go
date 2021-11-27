@@ -286,8 +286,8 @@ func TestQueryResolver_Tags(t *testing.T) {
 			n := td.input["tagNum"]
 			tags := thelper.InsertTag(t, n)
 			// 中間テーブルに登録して関連付ける
-			for _, t := range tags {
-				pt := models.PostTag{PostID: p.ID, TagID: t.ID}
+			for _, tag := range tags {
+				pt := models.PostTag{PostID: p.ID, TagID: tag.ID}
 				post.Service{}.AddTag(&pt)
 			}
 
