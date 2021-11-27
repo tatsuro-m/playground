@@ -103,7 +103,11 @@ func (r *queryResolver) Tags(ctx context.Context, input *gqlmodel.Tags) ([]*gqlm
 		return nil, err
 	}
 
-	tags, err := post.Service{}.Tags(id)
+	s := post.Service{}
+	if !s.ExistsByID(id) {
+		return nil, errors.New(fmt.Sprintf("record (post_id = %d) not exists", id))
+	}
+	tags, err := s.Tags(id)
 	if err != nil {
 		return nil, err
 	}

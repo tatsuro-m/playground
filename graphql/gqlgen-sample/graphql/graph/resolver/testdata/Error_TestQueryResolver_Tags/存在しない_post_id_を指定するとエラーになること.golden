@@ -1,0 +1,8 @@
+[
+  {
+    "message": "record (post_id = 9999) not exists",
+    "path": [
+      "tags"
+    ]
+  }
+]

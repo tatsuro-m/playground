@@ -279,6 +279,11 @@ func TestQueryResolver_Tags(t *testing.T) {
 			query: "query tags($post_id: ID!){\n  tags(input: {post_id: $post_id}) {\n    id\n    name\n  }\n}",
 			input: map[string]int{"post_id": 1, "tagNum": 25},
 		},
+		{
+			name:  "存在しない post id を指定するとエラーになること",
+			query: "query tags($post_id: ID!){\n  tags(input: {post_id: $post_id}) {\n    id\n    name\n  }\n}",
+			input: map[string]int{"post_id": 9999, "tagNum": 3},
+		},
 	}
 
 	for _, td := range table {
