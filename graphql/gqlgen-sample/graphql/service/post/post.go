@@ -2,8 +2,11 @@ package post
 
 import (
 	"context"
+	"fmt"
 	"graphql/db"
 	"graphql/models"
+
+	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
 	"github.com/volatiletech/sqlboiler/v4/boil"
 )
@@ -76,4 +79,19 @@ func (s Service) AddTag(j *models.PostTag) error {
 	ctx := context.Background()
 	d := db.GetDB()
 	return j.Insert(ctx, d, boil.Infer())
+}
+
+func (s Service) Tags(postID int) (models.TagSlice, error) {
+	tags, err := models.Tags(
+		qm.InnerJoin("post_tags pt on id = pt.tag_id"),
+		qm.InnerJoin("posts p on pt.post_id = p.id"),
+		qm.Where("p.id = ?", postID),
+	).All(context.Background(), db.GetDB())
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	return tags, nil
 }

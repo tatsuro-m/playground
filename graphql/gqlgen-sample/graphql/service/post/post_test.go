@@ -1,6 +1,8 @@
 package post
 
 import (
+	"fmt"
+	"graphql/models"
 	"graphql/thelper"
 	"testing"
 
@@ -89,6 +91,62 @@ func TestService_GetMyAllPosts(t *testing.T) {
 
 			posts, _ := Service{}.GetMyAllPosts(owner)
 			assert.Equal(t, td.insertNum, len(posts))
+		})
+	}
+}
+
+func TestService_Tags(t *testing.T) {
+	type args struct {
+		id int
+	}
+	tests := []struct {
+		name  string
+		args  args
+		input map[string]int
+	}{
+		{
+			name:  "post に紐づく tags が全件帰ってくること",
+			args:  struct{ id int }{id: 1},
+			input: map[string]int{"tagNum": 3},
+		},
+		{
+			name:  "25 件入れても全て返ってくること",
+			args:  struct{ id int }{id: 1},
+			input: map[string]int{"tagNum": 25},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			thelper.SetupTest(t)
+			defer thelper.FinalizeTest(t)
+
+			u := thelper.InsertUser(t, 1)[0]
+			posts := thelper.InsertPost(t, 2, u.ID)
+			p := posts[0]
+			anotherP := posts[len(posts)-1]
+
+			tagNum := tt.input["tagNum"]
+			tags := thelper.InsertTag(t, tagNum)
+			s := Service{}
+			for _, tag := range tags {
+				pt := &models.PostTag{PostID: p.ID, TagID: tag.ID}
+				s.AddTag(pt)
+
+				// tag を他の post とも関連付ける
+				pt = &models.PostTag{PostID: anotherP.ID, TagID: tag.ID}
+				s.AddTag(pt)
+			}
+
+			got, err := s.Tags(tt.args.id)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			assert.Len(t, got, tagNum)
+			for _, tag := range got {
+				assert.Contains(t, tag.Name, "test")
+				assert.IsType(t, 0, tag.ID)
+			}
 		})
 	}
 }
