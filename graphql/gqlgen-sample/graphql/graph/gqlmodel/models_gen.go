@@ -35,7 +35,7 @@ type Tag struct {
 }
 
 type Tags struct {
-	PostID *string `json:"post_id"`
+	PostID string `json:"post_id"`
 }
 
 type User struct {

@@ -13,13 +13,14 @@ input NewPost {
 input DeletePost {
     id: ID!
 }
+
 input AddTag {
     post_id: ID!
     tag_id: ID!
 }
 
 input Tags {
-    post_id: ID
+    post_id: ID!
 }
 
 extend type Query {

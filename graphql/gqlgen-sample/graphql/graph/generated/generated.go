@@ -380,7 +380,7 @@ input AddTag {
 }
 
 input Tags {
-    post_id: ID
+    post_id: ID!
 }
 
 extend type Query {
@@ -2681,7 +2681,7 @@ func (ec *executionContext) unmarshalInputTags(ctx context.Context, obj interfac
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("post_id"))
-			it.PostID, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			it.PostID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3732,21 +3732,6 @@ func (ec *executionContext) unmarshalODeletePost2ᚖgraphqlᚋgraphᚋgqlmodel�
 	}
 	res, err := ec.unmarshalInputDeletePost(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalID(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return graphql.MarshalID(*v)
 }
 
 func (ec *executionContext) unmarshalONewPost2ᚖgraphqlᚋgraphᚋgqlmodelᚐNewPost(ctx context.Context, v interface{}) (*gqlmodel.NewPost, error) {
