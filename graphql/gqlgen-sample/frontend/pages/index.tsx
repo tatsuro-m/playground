@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { gql, useQuery } from '@apollo/client'
 import React from 'react'
 import {
   Box,
@@ -13,8 +13,18 @@ import {
 } from '@material-ui/core'
 import { firebaseUser, onLogout } from '../src/lib/firebase'
 import Link from 'next/link'
-import { POSTS_QUERY } from '../graphql/queries/posts'
 import { Posts } from '../src/types/post'
+
+const POSTS_QUERY = gql`
+  query GetPosts {
+    posts {
+      id
+      title
+      createdAt
+      updatedAt
+    }
+  }
+`
 
 export const Home: React.VFC = () => {
   const { loading, error, data } = useQuery<Posts>(POSTS_QUERY)

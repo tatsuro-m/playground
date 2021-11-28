@@ -1,8 +1,18 @@
 import React, { useState } from 'react'
-import { useMutation } from '@apollo/client'
-import { CREATE_POST_M } from '../../graphql/mutations/createPosts'
+import { gql, useMutation } from '@apollo/client'
 import { Post } from '../../src/types/post'
 import { Box, Button, TextField } from '@material-ui/core'
+
+const CREATE_POST_M = gql`
+  mutation createPost($title: String!) {
+    createPost(input: { title: $title }) {
+      id
+      title
+      createdAt
+      updatedAt
+    }
+  }
+`
 
 export const New: React.VFC = () => {
   const [createPost, { data, loading, error }] =
