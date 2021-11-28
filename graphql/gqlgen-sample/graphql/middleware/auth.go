@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"graphql/models"
 	"graphql/service/user"
 	"log"
@@ -23,7 +22,6 @@ func Authentication() gin.HandlerFunc {
 		token := getBearerToken(c.Request.Header.Get("Authorization"))
 
 		if token == "" {
-			fmt.Println("Authorization ヘッダーがセットされていません")
 			c.Next()
 			return
 		}
