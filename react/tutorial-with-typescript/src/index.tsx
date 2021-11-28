@@ -1,13 +1,15 @@
-import {ReactElement, useState, VFC} from 'react';
+import { VFC, useState, ReactElement } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+// Squareの中身の型、XかOか空（null）の3通り
 type FillSquare = 'X' | 'O' | null;
 
-interface squareProps {
-  value: FillSquare
+type SquareProps = {
+  value: FillSquare;
   onClick: () => void;
-}
+};
+
 type BoardProps = {
   squares: FillSquare[];
   onClick: (i: number) => void;
@@ -34,23 +36,22 @@ const calculateWinner = (squares: FillSquare[]) => {
   return null;
 };
 
-const Square: VFC<squareProps> = (props) => {
-  const {value, onClick} = props
+const Square: VFC<SquareProps> = (props) => {
+  const { value, onClick } = props;
+
   return (
-    <button type="button" className="square">
-      <button type="button" className="square" onClick={onClick}>
-        {value}
-      </button>
+    <button type="button" className="square" onClick={onClick}>
+      {value}
     </button>
-  )
-}
+  );
+};
 
 const Board: VFC<BoardProps> = (props) => {
-  const {squares, onClick} = props;
+  const { squares, onClick } = props;
 
-  const renderSquare = (i: number): ReactElement => {
-    return <Square value={squares[i]} onClick={() => onClick(i)} />
-  }
+  const renderSquare = (i: number): ReactElement => (
+    <Square value={squares[i]} onClick={() => onClick(i)} />
+  );
 
   return (
     <div>
@@ -74,26 +75,10 @@ const Board: VFC<BoardProps> = (props) => {
 };
 
 const Game: VFC = () => {
-  const [history, setHistory] = useState([{squares: Array(9).fill(null)}]);
+  const [history, setHistory] = useState([{ squares: Array(9).fill(null) }]);
+  const [stepNumber, setStepNumber] = useState(0);
   const [xIsNext, setXIsNext] = useState(true);
 
-  const jumpTo = (step: number) => {
-    setStepNumber(step);
-    setXIsNext(step % 2 === 0);
-  };
-
-  const moves = history.map((step, move) => {
-    const desc = move ? `Go to move #${move}` : 'Go to game start';
-
-    return (
-      <li key={move.toString()}>
-        <button type="button" onClick={() => jumpTo(move)}>
-          {desc}
-        </button>
-      </li>
-    )});
-
-    const [stepNumber, setStepNumber] = useState(0);
   const handleClick = (i: number): void => {
     const historySlice = history.slice(0, stepNumber + 1);
     const current = historySlice[historySlice.length - 1];
@@ -110,8 +95,27 @@ const Game: VFC = () => {
     setXIsNext(!xIsNext);
   };
 
-  const current = history[history.length - 1];
+  const jumpTo = (step: number) => {
+    setStepNumber(step);
+    setXIsNext(step % 2 === 0);
+  };
+
+  const currentHistory = [...history];
+  const current = currentHistory[stepNumber];
   const winner = calculateWinner(current.squares);
+
+  const moves = history.map((step, move) => {
+    const desc = move ? `Go to move #${move}` : 'Go to game start';
+
+    return (
+      <li key={move.toString()}>
+        <button type="button" onClick={() => jumpTo(move)}>
+          {desc}
+        </button>
+      </li>
+    );
+  });
+
   const status = winner
     ? `Winner: ${winner}`
     : `Next player: ${xIsNext ? 'X' : 'O'}`;
@@ -123,13 +127,12 @@ const Game: VFC = () => {
       </div>
       <div className="game-info">
         <div>{status}</div>
-        <ol>{/* TODO */}</ol>
+        <ol>{moves}</ol>
       </div>
     </div>
   );
 };
 
-
 // ========================================
 
-ReactDOM.render(<Game/>, document.getElementById('root'));
+ReactDOM.render(<Game />, document.getElementById('root'));
