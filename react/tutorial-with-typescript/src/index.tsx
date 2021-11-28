@@ -9,6 +9,27 @@ interface squareProps {
   onClick: () => void;
 }
 
+const calculateWinner = (squares: FillSquare[]) => {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i += 1) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+
+  return null;
+};
+
 const Square: VFC<squareProps> = (props) => {
   const {value, onClick} = props
   return (
@@ -22,18 +43,29 @@ const Square: VFC<squareProps> = (props) => {
 
 const Board: VFC = () => {
   const [squares, setSquares] = useState<FillSquare[]>(Array(9).fill(null))
+  const [xIsNext, setXIsNext] = useState<boolean>(true);
 
   const handleClick = (i: number): void => {
     const squaresSlice = squares.slice();
-    squaresSlice[i] = 'X';
+
+    // 勝者確定かマスが埋まっていたら、クリックしてもマスが変化しないようにする
+    if (calculateWinner(squares) || squaresSlice[i]) {
+      return;
+    }
+
+    squaresSlice[i] = xIsNext ? "X" : "O";
     setSquares(squaresSlice);
+    setXIsNext((c) => !c)
   };
 
   const renderSquare = (i: number): ReactElement => {
     return <Square value={squares[i]} onClick={() => handleClick(i)} />
   }
 
-  const status = 'Next player: X';
+  const winner = calculateWinner(squares);
+  const status = winner
+    ? `Winner: ${winner}`
+    : `Next player: ${xIsNext ? 'X' : 'O'}`;
 
   return (
     <div>
@@ -68,6 +100,7 @@ const Game: VFC = () => (
     </div>
   </div>
 );
+
 
 // ========================================
 
