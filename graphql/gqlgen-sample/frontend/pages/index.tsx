@@ -1,5 +1,5 @@
-import { gql, useQuery } from '@apollo/client';
-import React from 'react';
+import { gql, useQuery } from "@apollo/client";
+import React from "react";
 import {
   Box,
   Button,
@@ -10,10 +10,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from '@material-ui/core';
-import { firebaseUser, onLogout } from '../src/lib/firebase';
-import Link from 'next/link';
-import { Posts } from '../src/types/post';
+} from "@material-ui/core";
+import { firebaseUser, onLogout } from "../src/lib/firebase";
+import Link from "next/link";
+import { Posts } from "../src/types/post";
 
 const POSTS_QUERY = gql`
   query GetPosts {
@@ -49,8 +49,8 @@ export const Home: React.VFC = () => {
       )}
       <p>
         {firebaseUser()
-          ? firebaseUser().displayName + 'でログインしています'
-          : 'ログインしていません'}
+          ? firebaseUser().displayName + "でログインしています"
+          : "ログインしていません"}
       </p>
       <Link href="/post/new">
         <a>投稿を作成する</a>

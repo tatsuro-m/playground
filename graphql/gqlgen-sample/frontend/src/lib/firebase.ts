@@ -1,6 +1,6 @@
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import client from '../apollo-client'; // If you need it
+import firebase from "firebase/app";
+import "firebase/auth";
+import client from "../apollo-client"; // If you need it
 
 export const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -21,7 +21,7 @@ export const listenAuthState = (dispatch: any) => {
     if (user) {
       // User is signed in.
       dispatch({
-        type: 'login',
+        type: "login",
         payload: {
           user,
         },
@@ -30,7 +30,7 @@ export const listenAuthState = (dispatch: any) => {
       // User is signed out.
       // ...
       dispatch({
-        type: 'logout',
+        type: "logout",
       });
     }
   });
@@ -49,7 +49,7 @@ export const onLogout = (): void => {
 // Configure FirebaseUI.
 export const uiConfig = {
   // Popup signin flow rather than redirect flow.
-  signInFlow: 'popup',
+  signInFlow: "popup",
   signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
   callbacks: {
     // Avoid redirects after sign-in.

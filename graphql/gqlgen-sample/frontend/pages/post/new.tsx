@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { gql, useMutation } from '@apollo/client';
-import { Post } from '../../src/types/post';
-import { Box, Button, TextField } from '@material-ui/core';
+import React, { useState } from "react";
+import { gql, useMutation } from "@apollo/client";
+import { Post } from "../../src/types/post";
+import { Box, Button, TextField } from "@material-ui/core";
 
 const CREATE_POST_M = gql`
   mutation createPost($title: String!) {
@@ -20,7 +20,7 @@ export const New: React.VFC = () => {
   console.log(JSON.stringify(error));
 
   const [input, setInput] = useState({
-    title: '',
+    title: "",
   });
 
   const updateInput = (event) => {
@@ -43,7 +43,7 @@ export const New: React.VFC = () => {
       <Button
         variant="contained"
         color="primary"
-        onClick={() => createPost({ variables: { title: '一旦決め打ち' } })}
+        onClick={() => createPost({ variables: { title: "一旦決め打ち" } })}
       >
         投稿を作成
       </Button>
