@@ -1,10 +1,4 @@
-import {
-  ApolloClient,
-  ApolloLink,
-  concat,
-  HttpLink,
-  InMemoryCache,
-} from "@apollo/client";
+import { ApolloClient, concat, HttpLink, InMemoryCache } from "@apollo/client";
 import { firebaseUser } from "./lib/firebase";
 import { setContext } from "@apollo/client/link/context";
 
