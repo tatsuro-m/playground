@@ -14,17 +14,7 @@ import {
 import { firebaseUser, onLogout } from '../src/lib/firebase'
 import Link from 'next/link'
 import { POSTS_QUERY } from '../graphql/queries/posts'
-
-interface Post {
-  id: number
-  title: string
-  createdAt: string
-  updatedAt: string
-}
-
-interface Posts {
-  posts: Post[]
-}
+import { Posts } from '../src/types/post'
 
 export const Home: React.VFC = () => {
   const { loading, error, data } = useQuery<Posts>(POSTS_QUERY)
@@ -52,6 +42,9 @@ export const Home: React.VFC = () => {
           ? firebaseUser().displayName + 'でログインしています'
           : 'ログインしていません'}
       </p>
+      <Link href="/post/new">
+        <a>投稿を作成する</a>
+      </Link>
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>
