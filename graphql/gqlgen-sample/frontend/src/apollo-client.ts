@@ -1,26 +1,34 @@
-import { ApolloClient, InMemoryCache } from '@apollo/client'
+import {
+  ApolloClient,
+  ApolloLink,
+  concat,
+  HttpLink,
+  InMemoryCache,
+} from '@apollo/client'
 import { firebaseUser } from './lib/firebase'
-import { cache } from 'browserslist'
+import { setContext } from '@apollo/client/link/context'
 
-export const getJWT = async () => {
-  if (firebaseUser()) {
-    const jwt = await firebaseUser().getIdToken(true)
-    console.log(jwt)
-    return jwt
+const httpLink = new HttpLink({
+  uri: process.env.NEXT_PUBLIC_GRAPHQL_SERVER_URI,
+})
+
+const authLink = setContext(async (_, { headers }) => {
+  const token = firebaseUser() ? await firebaseUser().getIdToken(true) : null
+
+  if (token !== null) {
+    return {
+      headers: {
+        ...headers,
+        Authorization: token,
+      },
+    }
   }
-}
-
-const createApolloClient = () => {
-  return new ApolloClient({ uri: '', cache: new InMemoryCache() })
-}
+})
 
 const client = new ApolloClient({
-  uri: process.env.NEXT_PUBLIC_GRAPHQL_SERVER_URI,
   cache: new InMemoryCache(),
   credentials: 'include',
-  headers: {
-    // authorization: firebaseUser() ? `Bearer: ${getJWT()}` : '',
-  },
+  link: concat(authLink, httpLink),
 })
 
 export default client

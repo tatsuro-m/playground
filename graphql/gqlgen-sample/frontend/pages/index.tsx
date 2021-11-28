@@ -14,7 +14,6 @@ import {
 import { firebaseUser, onLogout } from '../src/lib/firebase'
 import Link from 'next/link'
 import { POSTS_QUERY } from '../graphql/queries/posts'
-import { getJWT } from '../src/apollo-client'
 
 interface Post {
   id: number
@@ -34,8 +33,6 @@ export const Home: React.VFC = () => {
   if (error) return <p>Error: {JSON.stringify(error)}</p>
 
   const { posts } = data
-
-  getJWT()
 
   return (
     <Box m={10}>
