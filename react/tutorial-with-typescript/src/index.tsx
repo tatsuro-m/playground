@@ -1,21 +1,37 @@
-import {VFC} from 'react';
+import {ReactElement, useState, VFC} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+type FillSquare = 'X' | 'O' | null;
+
 interface squareProps {
-  value: number
+  value: FillSquare
+  onClick: () => void;
 }
 
-const Square: VFC<squareProps> = ({value}) => (
-  <button type="button" className="square">
-    <button type="button" className="square" onClick={() => alert("click")}>
-      {value}
+const Square: VFC<squareProps> = (props) => {
+  const {value, onClick} = props
+  return (
+    <button type="button" className="square">
+      <button type="button" className="square" onClick={onClick}>
+        {value}
+      </button>
     </button>
-  </button>
-);
+  )
+}
 
 const Board: VFC = () => {
-  const renderSquare = (i: number) => <Square value={i}/>;
+  const [squares, setSquares] = useState<FillSquare[]>(Array(9).fill(null))
+
+  const handleClick = (i: number): void => {
+    const squaresSlice = squares.slice();
+    squaresSlice[i] = 'X';
+    setSquares(squaresSlice);
+  };
+
+  const renderSquare = (i: number): ReactElement => {
+    return <Square value={squares[i]} onClick={() => handleClick(i)} />
+  }
 
   const status = 'Next player: X';
 
