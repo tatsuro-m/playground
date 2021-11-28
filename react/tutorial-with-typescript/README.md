@@ -1,3 +1,6 @@
+# やりたいこと
+https://riku929hr.hatenablog.com/entry/2021/06/20/160430 のシリーズを参考にして React を思い出す。
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
