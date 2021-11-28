@@ -1,5 +1,6 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { firebaseUser } from './lib/firebase'
+import { cache } from 'browserslist'
 
 export const getJWT = async () => {
   if (firebaseUser()) {
@@ -7,6 +8,10 @@ export const getJWT = async () => {
     console.log(jwt)
     return jwt
   }
+}
+
+const createApolloClient = () => {
+  return new ApolloClient({ uri: '', cache: new InMemoryCache() })
 }
 
 const client = new ApolloClient({
