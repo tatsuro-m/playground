@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import { gql, useMutation } from '@apollo/client'
-import { Post } from '../../src/types/post'
-import { Box, Button, TextField } from '@material-ui/core'
+import React, { useState } from 'react';
+import { gql, useMutation } from '@apollo/client';
+import { Post } from '../../src/types/post';
+import { Box, Button, TextField } from '@material-ui/core';
 
 const CREATE_POST_M = gql`
   mutation createPost($title: String!) {
@@ -12,24 +12,24 @@ const CREATE_POST_M = gql`
       updatedAt
     }
   }
-`
+`;
 
 export const New: React.VFC = () => {
   const [createPost, { data, loading, error }] =
-    useMutation<Post>(CREATE_POST_M)
-  console.log(JSON.stringify(error))
+    useMutation<Post>(CREATE_POST_M);
+  console.log(JSON.stringify(error));
 
   const [input, setInput] = useState({
     title: '',
-  })
+  });
 
   const updateInput = (event) => {
-    console.log(event.target.value)
-    setInput(event.target.value)
-  }
+    console.log(event.target.value);
+    setInput(event.target.value);
+  };
 
-  const post = data
-  console.log(post)
+  const post = data;
+  console.log(post);
 
   return (
     <Box m={10}>
@@ -49,7 +49,7 @@ export const New: React.VFC = () => {
       </Button>
       {loading ? <p>loading...</p> : <p>done</p>}
     </Box>
-  )
-}
+  );
+};
 
-export default New
+export default New;

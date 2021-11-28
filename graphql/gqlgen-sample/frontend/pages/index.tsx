@@ -1,5 +1,5 @@
-import { gql, useQuery } from '@apollo/client'
-import React from 'react'
+import { gql, useQuery } from '@apollo/client';
+import React from 'react';
 import {
   Box,
   Button,
@@ -10,10 +10,10 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from '@material-ui/core'
-import { firebaseUser, onLogout } from '../src/lib/firebase'
-import Link from 'next/link'
-import { Posts } from '../src/types/post'
+} from '@material-ui/core';
+import { firebaseUser, onLogout } from '../src/lib/firebase';
+import Link from 'next/link';
+import { Posts } from '../src/types/post';
 
 const POSTS_QUERY = gql`
   query GetPosts {
@@ -24,15 +24,15 @@ const POSTS_QUERY = gql`
       updatedAt
     }
   }
-`
+`;
 
 export const Home: React.VFC = () => {
-  const { loading, error, data } = useQuery<Posts>(POSTS_QUERY)
+  const { loading, error, data } = useQuery<Posts>(POSTS_QUERY);
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error: {JSON.stringify(error)}</p>
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {JSON.stringify(error)}</p>;
 
-  const { posts } = data
+  const { posts } = data;
 
   return (
     <Box m={10}>
@@ -78,7 +78,7 @@ export const Home: React.VFC = () => {
         </Table>
       </TableContainer>
     </Box>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

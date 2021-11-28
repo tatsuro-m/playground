@@ -1,6 +1,6 @@
-import firebase from 'firebase/app'
-import 'firebase/auth'
-import client from '../apollo-client' // If you need it
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import client from '../apollo-client'; // If you need it
 
 export const config = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -9,11 +9,11 @@ export const config = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-}
+};
 
-!firebase.apps.length ? firebase.initializeApp(config) : firebase.app()
+!firebase.apps.length ? firebase.initializeApp(config) : firebase.app();
 
-export const auth = firebase.auth()
+export const auth = firebase.auth();
 
 // ログイン状態の検知
 export const listenAuthState = (dispatch: any) => {
@@ -25,26 +25,26 @@ export const listenAuthState = (dispatch: any) => {
         payload: {
           user,
         },
-      })
+      });
     } else {
       // User is signed out.
       // ...
       dispatch({
         type: 'logout',
-      })
+      });
     }
-  })
-}
+  });
+};
 
 export const firebaseUser = (): firebase.User | null => {
-  return firebase.auth().currentUser
-}
+  return firebase.auth().currentUser;
+};
 
 export const onLogout = (): void => {
   auth.signOut().then(() => {
-    client.resetStore()
-  })
-}
+    client.resetStore();
+  });
+};
 
 // Configure FirebaseUI.
 export const uiConfig = {
@@ -54,8 +54,8 @@ export const uiConfig = {
   callbacks: {
     // Avoid redirects after sign-in.
     signInSuccessWithAuthResult: (): boolean => {
-      client.resetStore()
-      return false
+      client.resetStore();
+      return false;
     },
   },
-}
+};
