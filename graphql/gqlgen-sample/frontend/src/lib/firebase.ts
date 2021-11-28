@@ -16,7 +16,8 @@ export const config = {
 export const auth = firebase.auth();
 
 // ログイン状態の検知
-export const listenAuthState = (dispatch: any) => {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export const listenAuthState = (dispatch: any): any => {
   return firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
       // User is signed in.
