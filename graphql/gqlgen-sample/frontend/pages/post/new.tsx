@@ -19,9 +19,7 @@ export const New: React.VFC = () => {
     useMutation<Post>(CREATE_POST_M);
   console.log(JSON.stringify(error));
 
-  const [input, setInput] = useState({
-    title: "",
-  });
+  const [input, setInput] = useState("");
 
   const updateInput = (event) => {
     console.log(event.target.value);
@@ -37,13 +35,17 @@ export const New: React.VFC = () => {
         id="outlined-basic"
         label="Outlined"
         variant="standard"
-        value={input.title}
-        onChange={updateInput}
+        value={input}
+        onChange={(e) => updateInput(e)}
       />
       <Button
         variant="contained"
         color="primary"
-        onClick={() => createPost({ variables: { title: "一旦決め打ち" } })}
+        onClick={() =>
+          createPost({
+            variables: { title: input },
+          })
+        }
       >
         投稿を作成
       </Button>
