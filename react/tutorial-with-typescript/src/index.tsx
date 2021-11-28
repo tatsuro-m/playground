@@ -1,15 +1,21 @@
-import { VFC } from 'react';
+import {VFC} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const Square: VFC = () => (
+interface squareProps {
+  value: number
+}
+
+const Square: VFC<squareProps> = ({value}) => (
   <button type="button" className="square">
-    {/* TODO */}
+    <button type="button" className="square" onClick={() => alert("click")}>
+      {value}
+    </button>
   </button>
 );
 
 const Board: VFC = () => {
-  const renderSquare: VFC = () => <Square />;
+  const renderSquare = (i: number) => <Square value={i}/>;
 
   const status = 'Next player: X';
 
@@ -38,7 +44,7 @@ const Board: VFC = () => {
 const Game: VFC = () => (
   <div className="game">
     <div className="game-board">
-      <Board />
+      <Board/>
     </div>
     <div className="game-info">
       <div>{/* status */}</div>
@@ -49,4 +55,4 @@ const Game: VFC = () => (
 
 // ========================================
 
-ReactDOM.render(<Game />, document.getElementById('root'));
+ReactDOM.render(<Game/>, document.getElementById('root'));
