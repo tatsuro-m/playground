@@ -14,7 +14,7 @@ import { firebaseUser, onLogout } from "../src/lib/firebase";
 import Link from "next/link";
 import { useGetPostsQuery } from "../src/generated/graphql";
 
-export const Home: React.VFC = () => {
+const Home: React.VFC = () => {
   const { loading, error, data } = useGetPostsQuery();
 
   if (loading) return <p>Loading...</p>;
