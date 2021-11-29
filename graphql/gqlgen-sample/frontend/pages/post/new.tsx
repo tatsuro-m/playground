@@ -1,22 +1,9 @@
 import React, { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
-import { Post } from "../../src/types/post";
 import { Box, Button, TextField } from "@material-ui/core";
-
-const CREATE_POST_M = gql`
-  mutation createPost($title: String!) {
-    createPost(input: { title: $title }) {
-      id
-      title
-      createdAt
-      updatedAt
-    }
-  }
-`;
+import { useCreatePostMutation } from "../../src/generated/graphql";
 
 export const New: React.VFC = () => {
-  const [createPost, { data, loading, error }] =
-    useMutation<Post>(CREATE_POST_M);
+  const [createPost, { data, loading, error }] = useCreatePostMutation();
   console.log(JSON.stringify(error));
 
   const [input, setInput] = useState("");
