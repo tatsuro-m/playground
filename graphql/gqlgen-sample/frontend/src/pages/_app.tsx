@@ -3,12 +3,12 @@ import { AppProps } from "next/app";
 import Head from "next/head";
 import { CssBaseline } from "@material-ui/core";
 import { ThemeProvider } from "@material-ui/core/styles";
-import theme from "../src/theme";
-import AuthContext from "../src/lib/AuthContext";
-import authReducer from "../src/lib/authReducer";
-import { listenAuthState } from "../src/lib/firebase";
+import authReducer from "../lib/authReducer";
+import { listenAuthState } from "../lib/firebase";
+import theme from "../theme";
 import { ApolloProvider } from "@apollo/client";
-import client from "../src/apollo-client";
+import AuthContext from "../lib/AuthContext";
+import client from "../apollo-client";
 
 export default function MyApp({ Component, pageProps }: AppProps): JSX.Element {
   useEffect(() => {

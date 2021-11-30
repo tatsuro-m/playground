@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Button, TextField } from "@material-ui/core";
-import { useCreatePostMutation } from "../../src/generated/graphql";
+import { useCreatePostMutation } from "../../generated/graphql";
 
 export const New: React.VFC = () => {
   const [createPost, { data, loading, error }] = useCreatePostMutation();

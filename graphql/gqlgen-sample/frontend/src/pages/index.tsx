@@ -10,9 +10,9 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { firebaseUser, onLogout } from "../src/lib/firebase";
 import Link from "next/link";
-import { useGetPostsQuery } from "../src/generated/graphql";
+import { useGetPostsQuery } from "../generated/graphql";
+import { firebaseUser, onLogout } from "../lib/firebase";
 
 const Home: React.VFC = () => {
   const { loading, error, data } = useGetPostsQuery();
