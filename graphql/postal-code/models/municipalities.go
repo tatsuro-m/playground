@@ -23,42 +23,47 @@ import (
 
 // Municipality is an object representing the database table.
 type Municipality struct {
-	ID        int       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Name      string    `boil:"name" json:"name" toml:"name" yaml:"name"`
-	NameRoma  string    `boil:"name_roma" json:"name_roma" toml:"name_roma" yaml:"name_roma"`
-	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	ID           int       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	Name         string    `boil:"name" json:"name" toml:"name" yaml:"name"`
+	NameRoma     string    `boil:"name_roma" json:"name_roma" toml:"name_roma" yaml:"name_roma"`
+	CreatedAt    time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt    time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	PrefectureID int       `boil:"prefecture_id" json:"prefecture_id" toml:"prefecture_id" yaml:"prefecture_id"`
 
 	R *municipalityR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L municipalityL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var MunicipalityColumns = struct {
-	ID        string
-	Name      string
-	NameRoma  string
-	CreatedAt string
-	UpdatedAt string
+	ID           string
+	Name         string
+	NameRoma     string
+	CreatedAt    string
+	UpdatedAt    string
+	PrefectureID string
 }{
-	ID:        "id",
-	Name:      "name",
-	NameRoma:  "name_roma",
-	CreatedAt: "created_at",
-	UpdatedAt: "updated_at",
+	ID:           "id",
+	Name:         "name",
+	NameRoma:     "name_roma",
+	CreatedAt:    "created_at",
+	UpdatedAt:    "updated_at",
+	PrefectureID: "prefecture_id",
 }
 
 var MunicipalityTableColumns = struct {
-	ID        string
-	Name      string
-	NameRoma  string
-	CreatedAt string
-	UpdatedAt string
+	ID           string
+	Name         string
+	NameRoma     string
+	CreatedAt    string
+	UpdatedAt    string
+	PrefectureID string
 }{
-	ID:        "municipalities.id",
-	Name:      "municipalities.name",
-	NameRoma:  "municipalities.name_roma",
-	CreatedAt: "municipalities.created_at",
-	UpdatedAt: "municipalities.updated_at",
+	ID:           "municipalities.id",
+	Name:         "municipalities.name",
+	NameRoma:     "municipalities.name_roma",
+	CreatedAt:    "municipalities.created_at",
+	UpdatedAt:    "municipalities.updated_at",
+	PrefectureID: "municipalities.prefecture_id",
 }
 
 // Generated where
@@ -131,25 +136,37 @@ func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
 }
 
 var MunicipalityWhere = struct {
-	ID        whereHelperint
-	Name      whereHelperstring
-	NameRoma  whereHelperstring
-	CreatedAt whereHelpertime_Time
-	UpdatedAt whereHelpertime_Time
+	ID           whereHelperint
+	Name         whereHelperstring
+	NameRoma     whereHelperstring
+	CreatedAt    whereHelpertime_Time
+	UpdatedAt    whereHelpertime_Time
+	PrefectureID whereHelperint
 }{
-	ID:        whereHelperint{field: "`municipalities`.`id`"},
-	Name:      whereHelperstring{field: "`municipalities`.`name`"},
-	NameRoma:  whereHelperstring{field: "`municipalities`.`name_roma`"},
-	CreatedAt: whereHelpertime_Time{field: "`municipalities`.`created_at`"},
-	UpdatedAt: whereHelpertime_Time{field: "`municipalities`.`updated_at`"},
+	ID:           whereHelperint{field: "`municipalities`.`id`"},
+	Name:         whereHelperstring{field: "`municipalities`.`name`"},
+	NameRoma:     whereHelperstring{field: "`municipalities`.`name_roma`"},
+	CreatedAt:    whereHelpertime_Time{field: "`municipalities`.`created_at`"},
+	UpdatedAt:    whereHelpertime_Time{field: "`municipalities`.`updated_at`"},
+	PrefectureID: whereHelperint{field: "`municipalities`.`prefecture_id`"},
 }
 
 // MunicipalityRels is where relationship names are stored.
 var MunicipalityRels = struct {
-}{}
+	Prefecture  string
+	PostalCodes string
+	TownAreas   string
+}{
+	Prefecture:  "Prefecture",
+	PostalCodes: "PostalCodes",
+	TownAreas:   "TownAreas",
+}
 
 // municipalityR is where relationships are stored.
 type municipalityR struct {
+	Prefecture  *Prefecture     `boil:"Prefecture" json:"Prefecture" toml:"Prefecture" yaml:"Prefecture"`
+	PostalCodes PostalCodeSlice `boil:"PostalCodes" json:"PostalCodes" toml:"PostalCodes" yaml:"PostalCodes"`
+	TownAreas   TownAreaSlice   `boil:"TownAreas" json:"TownAreas" toml:"TownAreas" yaml:"TownAreas"`
 }
 
 // NewStruct creates a new relationship struct
@@ -161,8 +178,8 @@ func (*municipalityR) NewStruct() *municipalityR {
 type municipalityL struct{}
 
 var (
-	municipalityAllColumns            = []string{"id", "name", "name_roma", "created_at", "updated_at"}
-	municipalityColumnsWithoutDefault = []string{"name", "name_roma"}
+	municipalityAllColumns            = []string{"id", "name", "name_roma", "created_at", "updated_at", "prefecture_id"}
+	municipalityColumnsWithoutDefault = []string{"name", "name_roma", "prefecture_id"}
 	municipalityColumnsWithDefault    = []string{"id", "created_at", "updated_at"}
 	municipalityPrimaryKeyColumns     = []string{"id"}
 )
@@ -440,6 +457,515 @@ func (q municipalityQuery) Exists(ctx context.Context, exec boil.ContextExecutor
 	}
 
 	return count > 0, nil
+}
+
+// Prefecture pointed to by the foreign key.
+func (o *Municipality) Prefecture(mods ...qm.QueryMod) prefectureQuery {
+	queryMods := []qm.QueryMod{
+		qm.Where("`id` = ?", o.PrefectureID),
+	}
+
+	queryMods = append(queryMods, mods...)
+
+	query := Prefectures(queryMods...)
+	queries.SetFrom(query.Query, "`prefectures`")
+
+	return query
+}
+
+// PostalCodes retrieves all the postal_code's PostalCodes with an executor.
+func (o *Municipality) PostalCodes(mods ...qm.QueryMod) postalCodeQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("`postal_codes`.`municipality_id`=?", o.ID),
+	)
+
+	query := PostalCodes(queryMods...)
+	queries.SetFrom(query.Query, "`postal_codes`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`postal_codes`.*"})
+	}
+
+	return query
+}
+
+// TownAreas retrieves all the town_area's TownAreas with an executor.
+func (o *Municipality) TownAreas(mods ...qm.QueryMod) townAreaQuery {
+	var queryMods []qm.QueryMod
+	if len(mods) != 0 {
+		queryMods = append(queryMods, mods...)
+	}
+
+	queryMods = append(queryMods,
+		qm.Where("`town_areas`.`municipality_id`=?", o.ID),
+	)
+
+	query := TownAreas(queryMods...)
+	queries.SetFrom(query.Query, "`town_areas`")
+
+	if len(queries.GetSelect(query.Query)) == 0 {
+		queries.SetSelect(query.Query, []string{"`town_areas`.*"})
+	}
+
+	return query
+}
+
+// LoadPrefecture allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for an N-1 relationship.
+func (municipalityL) LoadPrefecture(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMunicipality interface{}, mods queries.Applicator) error {
+	var slice []*Municipality
+	var object *Municipality
+
+	if singular {
+		object = maybeMunicipality.(*Municipality)
+	} else {
+		slice = *maybeMunicipality.(*[]*Municipality)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &municipalityR{}
+		}
+		args = append(args, object.PrefectureID)
+
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &municipalityR{}
+			}
+
+			for _, a := range args {
+				if a == obj.PrefectureID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.PrefectureID)
+
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`prefectures`),
+		qm.WhereIn(`prefectures.id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load Prefecture")
+	}
+
+	var resultSlice []*Prefecture
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice Prefecture")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results of eager load for prefectures")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for prefectures")
+	}
+
+	if len(municipalityAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(resultSlice) == 0 {
+		return nil
+	}
+
+	if singular {
+		foreign := resultSlice[0]
+		object.R.Prefecture = foreign
+		if foreign.R == nil {
+			foreign.R = &prefectureR{}
+		}
+		foreign.R.Municipalities = append(foreign.R.Municipalities, object)
+		return nil
+	}
+
+	for _, local := range slice {
+		for _, foreign := range resultSlice {
+			if local.PrefectureID == foreign.ID {
+				local.R.Prefecture = foreign
+				if foreign.R == nil {
+					foreign.R = &prefectureR{}
+				}
+				foreign.R.Municipalities = append(foreign.R.Municipalities, local)
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadPostalCodes allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (municipalityL) LoadPostalCodes(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMunicipality interface{}, mods queries.Applicator) error {
+	var slice []*Municipality
+	var object *Municipality
+
+	if singular {
+		object = maybeMunicipality.(*Municipality)
+	} else {
+		slice = *maybeMunicipality.(*[]*Municipality)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &municipalityR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &municipalityR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`postal_codes`),
+		qm.WhereIn(`postal_codes.municipality_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load postal_codes")
+	}
+
+	var resultSlice []*PostalCode
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice postal_codes")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on postal_codes")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for postal_codes")
+	}
+
+	if len(postalCodeAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.PostalCodes = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &postalCodeR{}
+			}
+			foreign.R.Municipality = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.MunicipalityID {
+				local.R.PostalCodes = append(local.R.PostalCodes, foreign)
+				if foreign.R == nil {
+					foreign.R = &postalCodeR{}
+				}
+				foreign.R.Municipality = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// LoadTownAreas allows an eager lookup of values, cached into the
+// loaded structs of the objects. This is for a 1-M or N-M relationship.
+func (municipalityL) LoadTownAreas(ctx context.Context, e boil.ContextExecutor, singular bool, maybeMunicipality interface{}, mods queries.Applicator) error {
+	var slice []*Municipality
+	var object *Municipality
+
+	if singular {
+		object = maybeMunicipality.(*Municipality)
+	} else {
+		slice = *maybeMunicipality.(*[]*Municipality)
+	}
+
+	args := make([]interface{}, 0, 1)
+	if singular {
+		if object.R == nil {
+			object.R = &municipalityR{}
+		}
+		args = append(args, object.ID)
+	} else {
+	Outer:
+		for _, obj := range slice {
+			if obj.R == nil {
+				obj.R = &municipalityR{}
+			}
+
+			for _, a := range args {
+				if a == obj.ID {
+					continue Outer
+				}
+			}
+
+			args = append(args, obj.ID)
+		}
+	}
+
+	if len(args) == 0 {
+		return nil
+	}
+
+	query := NewQuery(
+		qm.From(`town_areas`),
+		qm.WhereIn(`town_areas.municipality_id in ?`, args...),
+	)
+	if mods != nil {
+		mods.Apply(query)
+	}
+
+	results, err := query.QueryContext(ctx, e)
+	if err != nil {
+		return errors.Wrap(err, "failed to eager load town_areas")
+	}
+
+	var resultSlice []*TownArea
+	if err = queries.Bind(results, &resultSlice); err != nil {
+		return errors.Wrap(err, "failed to bind eager loaded slice town_areas")
+	}
+
+	if err = results.Close(); err != nil {
+		return errors.Wrap(err, "failed to close results in eager load on town_areas")
+	}
+	if err = results.Err(); err != nil {
+		return errors.Wrap(err, "error occurred during iteration of eager loaded relations for town_areas")
+	}
+
+	if len(townAreaAfterSelectHooks) != 0 {
+		for _, obj := range resultSlice {
+			if err := obj.doAfterSelectHooks(ctx, e); err != nil {
+				return err
+			}
+		}
+	}
+	if singular {
+		object.R.TownAreas = resultSlice
+		for _, foreign := range resultSlice {
+			if foreign.R == nil {
+				foreign.R = &townAreaR{}
+			}
+			foreign.R.Municipality = object
+		}
+		return nil
+	}
+
+	for _, foreign := range resultSlice {
+		for _, local := range slice {
+			if local.ID == foreign.MunicipalityID {
+				local.R.TownAreas = append(local.R.TownAreas, foreign)
+				if foreign.R == nil {
+					foreign.R = &townAreaR{}
+				}
+				foreign.R.Municipality = local
+				break
+			}
+		}
+	}
+
+	return nil
+}
+
+// SetPrefecture of the municipality to the related item.
+// Sets o.R.Prefecture to related.
+// Adds o to related.R.Municipalities.
+func (o *Municipality) SetPrefecture(ctx context.Context, exec boil.ContextExecutor, insert bool, related *Prefecture) error {
+	var err error
+	if insert {
+		if err = related.Insert(ctx, exec, boil.Infer()); err != nil {
+			return errors.Wrap(err, "failed to insert into foreign table")
+		}
+	}
+
+	updateQuery := fmt.Sprintf(
+		"UPDATE `municipalities` SET %s WHERE %s",
+		strmangle.SetParamNames("`", "`", 0, []string{"prefecture_id"}),
+		strmangle.WhereClause("`", "`", 0, municipalityPrimaryKeyColumns),
+	)
+	values := []interface{}{related.ID, o.ID}
+
+	if boil.IsDebug(ctx) {
+		writer := boil.DebugWriterFrom(ctx)
+		fmt.Fprintln(writer, updateQuery)
+		fmt.Fprintln(writer, values)
+	}
+	if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+		return errors.Wrap(err, "failed to update local table")
+	}
+
+	o.PrefectureID = related.ID
+	if o.R == nil {
+		o.R = &municipalityR{
+			Prefecture: related,
+		}
+	} else {
+		o.R.Prefecture = related
+	}
+
+	if related.R == nil {
+		related.R = &prefectureR{
+			Municipalities: MunicipalitySlice{o},
+		}
+	} else {
+		related.R.Municipalities = append(related.R.Municipalities, o)
+	}
+
+	return nil
+}
+
+// AddPostalCodes adds the given related objects to the existing relationships
+// of the municipality, optionally inserting them as new records.
+// Appends related to o.R.PostalCodes.
+// Sets related.R.Municipality appropriately.
+func (o *Municipality) AddPostalCodes(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*PostalCode) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.MunicipalityID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `postal_codes` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"municipality_id"}),
+				strmangle.WhereClause("`", "`", 0, postalCodePrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.MunicipalityID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &municipalityR{
+			PostalCodes: related,
+		}
+	} else {
+		o.R.PostalCodes = append(o.R.PostalCodes, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &postalCodeR{
+				Municipality: o,
+			}
+		} else {
+			rel.R.Municipality = o
+		}
+	}
+	return nil
+}
+
+// AddTownAreas adds the given related objects to the existing relationships
+// of the municipality, optionally inserting them as new records.
+// Appends related to o.R.TownAreas.
+// Sets related.R.Municipality appropriately.
+func (o *Municipality) AddTownAreas(ctx context.Context, exec boil.ContextExecutor, insert bool, related ...*TownArea) error {
+	var err error
+	for _, rel := range related {
+		if insert {
+			rel.MunicipalityID = o.ID
+			if err = rel.Insert(ctx, exec, boil.Infer()); err != nil {
+				return errors.Wrap(err, "failed to insert into foreign table")
+			}
+		} else {
+			updateQuery := fmt.Sprintf(
+				"UPDATE `town_areas` SET %s WHERE %s",
+				strmangle.SetParamNames("`", "`", 0, []string{"municipality_id"}),
+				strmangle.WhereClause("`", "`", 0, townAreaPrimaryKeyColumns),
+			)
+			values := []interface{}{o.ID, rel.ID}
+
+			if boil.IsDebug(ctx) {
+				writer := boil.DebugWriterFrom(ctx)
+				fmt.Fprintln(writer, updateQuery)
+				fmt.Fprintln(writer, values)
+			}
+			if _, err = exec.ExecContext(ctx, updateQuery, values...); err != nil {
+				return errors.Wrap(err, "failed to update foreign table")
+			}
+
+			rel.MunicipalityID = o.ID
+		}
+	}
+
+	if o.R == nil {
+		o.R = &municipalityR{
+			TownAreas: related,
+		}
+	} else {
+		o.R.TownAreas = append(o.R.TownAreas, related...)
+	}
+
+	for _, rel := range related {
+		if rel.R == nil {
+			rel.R = &townAreaR{
+				Municipality: o,
+			}
+		} else {
+			rel.R.Municipality = o
+		}
+	}
+	return nil
 }
 
 // Municipalities retrieves all the records using an executor.
