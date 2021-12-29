@@ -1,8 +1,8 @@
 package main
 
 import (
-	"pcode/db"
 	"pcode/internal/seed"
+	"pcode/pkg/db"
 )
 
 func main() {
