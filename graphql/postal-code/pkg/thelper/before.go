@@ -1,8 +1,8 @@
 package thelper
 
 import (
-	"pcode/db"
-	"pcode/util"
+	"pcode/pkg/db"
+	"pcode/pkg/util"
 	"testing"
 )
 

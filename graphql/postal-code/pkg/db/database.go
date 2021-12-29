@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"os"
-	"pcode/util"
+	"pcode/pkg/util"
 
 	_ "github.com/go-sql-driver/mysql"
 )

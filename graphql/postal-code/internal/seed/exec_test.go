@@ -3,9 +3,9 @@ package seed
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"pcode/db"
-	"pcode/models"
-	"pcode/thelper"
+	"pcode/pkg/db"
+	"pcode/pkg/models"
+	"pcode/pkg/thelper"
 	"testing"
 )
 

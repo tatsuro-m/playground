@@ -5,10 +5,10 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-gonic/gin"
-	"pcode/db"
-	"pcode/graph/generated"
-	"pcode/graph/resolver"
-	"pcode/util"
+	"pcode/pkg/db"
+	"pcode/pkg/graph/generated"
+	"pcode/pkg/graph/resolver"
+	"pcode/pkg/util"
 )
 
 func graphqlHandler() gin.HandlerFunc {
