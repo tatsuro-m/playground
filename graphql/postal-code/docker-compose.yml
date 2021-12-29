@@ -35,24 +35,24 @@ services:
     ports:
       - "8080:8080"
 
-#  seed:
-#    build:
-#      context: .
-#      dockerfile: docker/seed.dockerfile
-#      target: dev
-#    volumes:
-#      - ./:/go/src/app
-#    tty: true
-#    stdin_open: true
-#    command: sh -c "echo 'seed データを登録する必要がある場合には go run してください'"
-#    environment:
-#      DB_HOST: db
-#      DB_NAME: dev
-#      DB_USER: root
-#      DB_PASSWORD: password
-#      BOIL_DEBUG: true
-#    depends_on:
-#      - db
+  seed:
+    build:
+      context: .
+      dockerfile: docker/seed.dockerfile
+      target: dev
+    volumes:
+      - ./:/go/src/app
+    tty: true
+    stdin_open: true
+    command: sh -c "echo 'seed データを登録する必要がある場合には go run してください'"
+    environment:
+      DB_HOST: db
+      DB_NAME: dev
+      DB_USER: root
+      DB_PASSWORD: password
+      BOIL_DEBUG: true
+    depends_on:
+      - db
 
   # 本来このサービスは不要だが、 gqlgen を動かす時に必要ライブラリがインストールされておらず失敗する不具合があるので効率化のために設定
   # generate する時はこのサービスを利用して自動生成を行う
