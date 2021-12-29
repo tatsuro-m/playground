@@ -6,19 +6,19 @@ package resolver
 import (
 	"context"
 	"fmt"
-	"pcode/graph/generated"
-	"pcode/graph/gqlmodel"
+	generated1 "pcode/pkg/graph/generated"
+	gqlmodel1 "pcode/pkg/graph/gqlmodel"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input gqlmodel.NewTodo) (*gqlmodel.Todo, error) {
+func (r *mutationResolver) CreateTodo(ctx context.Context, input gqlmodel1.NewTodo) (*gqlmodel1.Todo, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Todos(ctx context.Context) ([]*gqlmodel.Todo, error) {
+func (r *queryResolver) Todos(ctx context.Context) ([]*gqlmodel1.Todo, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-// Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+// Mutation returns generated1.MutationResolver implementation.
+func (r *Resolver) Mutation() generated1.MutationResolver { return &mutationResolver{r} }
 
 type mutationResolver struct{ *Resolver }

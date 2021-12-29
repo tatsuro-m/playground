@@ -4,10 +4,10 @@ package resolver
 // will be copied through when generating and any unknown code will be moved to the end.
 
 import (
-	"pcode/graph/generated"
+	generated1 "pcode/pkg/graph/generated"
 )
 
-// Query returns generated.QueryResolver implementation.
-func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
+// Query returns generated1.QueryResolver implementation.
+func (r *Resolver) Query() generated1.QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }
