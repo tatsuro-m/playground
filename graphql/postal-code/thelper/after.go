@@ -13,9 +13,7 @@ import (
 func FinalizeTest(t *testing.T) {
 	t.Helper()
 
-	// 現状では players テーブルをクエリするだけ（編集しない）ので truncate はしない。
-	// この先テストケースごとに変更するようであれば書き換える
-	//truncateTable()
+	truncateTable()
 }
 
 func truncateTable() {
