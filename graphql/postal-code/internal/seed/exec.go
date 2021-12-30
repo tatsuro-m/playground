@@ -65,7 +65,7 @@ func insertData(csvRow []string) {
 func getCSVPath() string {
 	var p string
 	if util.IsDev() {
-		p, _ = filepath.Abs("../../KEN_ALL_ROME.CSV")
+		p, _ = filepath.Abs("./KEN_ALL_ROME.CSV")
 		return p
 	} else if util.IsTest() {
 		p, _ = filepath.Abs("../../internal/seed/testdata/KEN_ALL_ROME_TEST.CSV")
