@@ -30,5 +30,9 @@ func TestExec(t *testing.T) {
 		assert.Equal(t, prefecture.ID, postalCode.PrefectureID)
 		assert.Equal(t, municipality.ID, postalCode.MunicipalityID)
 		assert.Equal(t, townArea.ID, postalCode.TownAreaID)
+
+		count, _ := models.PostalCodes().Count(ctx, d)
+		testDataRow := int64(34)
+		assert.Equal(t, testDataRow, count)
 	})
 }
