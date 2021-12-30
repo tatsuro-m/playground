@@ -1014,8 +1014,6 @@ func (o TownAreaSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor,
 
 var mySQLTownAreaUniqueColumns = []string{
 	"id",
-	"name",
-	"name_roma",
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
