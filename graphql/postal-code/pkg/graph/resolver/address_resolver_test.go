@@ -32,6 +32,7 @@ func TestQueryResolver_Address(t *testing.T) {
 		t.Run(td.name, func(t *testing.T) {
 			thelper.SetupTest(t)
 			defer thelper.FinalizeTest(t)
+			thelper.InsertAddressData(t)
 
 			var resp interface{}
 			c.MustPost(td.query, &resp, client.Var("postal_code", td.postalCode))
