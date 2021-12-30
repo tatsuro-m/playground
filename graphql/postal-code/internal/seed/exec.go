@@ -43,7 +43,7 @@ func getCSVPath() string {
 		p, _ = filepath.Abs("../../KEN_ALL_ROME.CSV")
 		return p
 	} else if util.IsTest() {
-		p, _ = filepath.Abs("../../KEN_ALL_ROME.CSV")
+		p, _ = filepath.Abs("../../testdata/KEN_ALL_ROME_TEST.CSV")
 		return p
 	}
 
