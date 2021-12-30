@@ -26,7 +26,7 @@ func TestExec(t *testing.T) {
 		townArea, _ := models.TownAreas(models.TownAreaWhere.Name.EQ("四谷")).One(ctx, d)
 		assert.Equal(t, "YOTSUYA", townArea.NameRoma)
 
-		postalCode, _ := models.PostalCodes(models.PostalCodeWhere.Number.EQ(1600004)).One(ctx, d)
+		postalCode, _ := models.PostalCodes(models.PostalCodeWhere.Number.EQ("1600004")).One(ctx, d)
 		assert.Equal(t, prefecture.ID, postalCode.PrefectureID)
 		assert.Equal(t, municipality.ID, postalCode.MunicipalityID)
 		assert.Equal(t, townArea.ID, postalCode.TownAreaID)

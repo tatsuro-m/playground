@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"pcode/pkg/db"
 	"pcode/pkg/models"
-	"strconv"
 )
 
 func Exec() error {
@@ -59,7 +58,6 @@ func insertData(csvRow []string) {
 	townArea.Insert(ctx, d, boil.Infer())
 
 	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(townArea.Name)).One(ctx, d)
-	code, _ := strconv.Atoi(csvRow[0])
-	postalCode := models.PostalCode{Number: code, PrefectureID: p.ID, MunicipalityID: m.ID, TownAreaID: t.ID}
+	postalCode := models.PostalCode{Number: csvRow[0], PrefectureID: p.ID, MunicipalityID: m.ID, TownAreaID: t.ID}
 	postalCode.Insert(ctx, d, boil.Infer())
 }
