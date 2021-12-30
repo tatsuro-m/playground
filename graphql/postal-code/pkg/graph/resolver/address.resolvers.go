@@ -18,5 +18,5 @@ func (r *queryResolver) Address(ctx context.Context, postalCode string) (*gqlmod
 		return nil, graph.NewGqlError(err.Error(), code.RecordNotFoundErr)
 	}
 
-	return &gqlmodel.Address{ID: strconv.Itoa(a.ID), Name: a.Name}, nil
+	return &gqlmodel.Address{ID: strconv.Itoa(a.PostalCode.ID), Name: a.Name}, nil
 }
