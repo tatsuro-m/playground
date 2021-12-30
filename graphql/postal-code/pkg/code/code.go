@@ -1,5 +1,5 @@
 package code
 
 const (
-	InternalErr = "INTERNAL_SERVER_ERROR"
+	RecordNotFoundErr = "RECORD_NOT_FOUND_ERROR"
 )
