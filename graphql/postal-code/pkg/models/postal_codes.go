@@ -24,7 +24,7 @@ import (
 // PostalCode is an object representing the database table.
 type PostalCode struct {
 	ID             int       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Number         int       `boil:"number" json:"number" toml:"number" yaml:"number"`
+	Number         string    `boil:"number" json:"number" toml:"number" yaml:"number"`
 	CreatedAt      time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt      time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 	PrefectureID   int       `boil:"prefecture_id" json:"prefecture_id" toml:"prefecture_id" yaml:"prefecture_id"`
@@ -75,7 +75,7 @@ var PostalCodeTableColumns = struct {
 
 var PostalCodeWhere = struct {
 	ID             whereHelperint
-	Number         whereHelperint
+	Number         whereHelperstring
 	CreatedAt      whereHelpertime_Time
 	UpdatedAt      whereHelpertime_Time
 	PrefectureID   whereHelperint
@@ -83,7 +83,7 @@ var PostalCodeWhere = struct {
 	TownAreaID     whereHelperint
 }{
 	ID:             whereHelperint{field: "`postal_codes`.`id`"},
-	Number:         whereHelperint{field: "`postal_codes`.`number`"},
+	Number:         whereHelperstring{field: "`postal_codes`.`number`"},
 	CreatedAt:      whereHelpertime_Time{field: "`postal_codes`.`created_at`"},
 	UpdatedAt:      whereHelpertime_Time{field: "`postal_codes`.`updated_at`"},
 	PrefectureID:   whereHelperint{field: "`postal_codes`.`prefecture_id`"},

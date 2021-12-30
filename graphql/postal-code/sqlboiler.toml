@@ -1,5 +1,6 @@
 wipe = true
 no-tests = true
+output   = "pkg/models"
 
 [mysql]
 dbname = "dev"
