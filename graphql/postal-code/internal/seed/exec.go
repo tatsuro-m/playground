@@ -49,15 +49,15 @@ func insertData(csvRow []string) {
 
 	p, _ := models.Prefectures(qm.Select(models.PrefectureColumns.ID), models.PrefectureWhere.Name.EQ(prefecture.Name)).One(ctx, d)
 	municipality := models.Municipality{Name: csvRow[2], NameRoma: csvRow[5], PrefectureID: p.ID}
-	if b, _ := models.Municipalities(models.MunicipalityWhere.Name.EQ(municipality.Name)).Exists(ctx, d); !b {
+	if b, _ := models.Municipalities(models.MunicipalityWhere.Name.EQ(municipality.Name), models.MunicipalityWhere.PrefectureID.EQ(p.ID)).Exists(ctx, d); !b {
 		municipality.Insert(ctx, d, boil.Infer())
 	}
 
-	m, _ := models.Municipalities(qm.Select(models.MunicipalityColumns.ID), models.MunicipalityWhere.Name.EQ(municipality.Name)).One(ctx, d)
+	m, _ := models.Municipalities(qm.Select(models.MunicipalityColumns.ID), models.MunicipalityWhere.Name.EQ(municipality.Name), models.MunicipalityWhere.PrefectureID.EQ(p.ID)).One(ctx, d)
 	townArea := models.TownArea{Name: csvRow[3], NameRoma: csvRow[6], MunicipalityID: m.ID}
 	townArea.Insert(ctx, d, boil.Infer())
 
-	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(townArea.Name)).One(ctx, d)
+	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(townArea.Name), models.TownAreaWhere.MunicipalityID.EQ(m.ID)).One(ctx, d)
 	postalCode := models.PostalCode{Number: csvRow[0], PrefectureID: p.ID, MunicipalityID: m.ID, TownAreaID: t.ID}
 	postalCode.Insert(ctx, d, boil.Infer())
 }
