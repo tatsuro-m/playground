@@ -13,11 +13,11 @@ import (
 	"path/filepath"
 	"pcode/pkg/db"
 	"pcode/pkg/models"
+	"pcode/pkg/util"
 )
 
 func Exec() error {
-	p, _ := filepath.Abs("../../KEN_ALL_ROME.CSV")
-	utf8F, _ := os.OpenFile(p, os.O_RDONLY, 0666)
+	utf8F, _ := os.OpenFile(getCSVPath(), os.O_RDONLY, 0666)
 	defer utf8F.Close()
 	r := csv.NewReader(transform.NewReader(utf8F, japanese.ShiftJIS.NewDecoder()))
 
@@ -35,6 +35,19 @@ func Exec() error {
 	}
 
 	return nil
+}
+
+func getCSVPath() string {
+	var p string
+	if util.IsDev() {
+		p, _ = filepath.Abs("../../KEN_ALL_ROME.CSV")
+		return p
+	} else if util.IsTest() {
+		p, _ = filepath.Abs("../../KEN_ALL_ROME.CSV")
+		return p
+	}
+
+	return p
 }
 
 func insertData(csvRow []string) {
