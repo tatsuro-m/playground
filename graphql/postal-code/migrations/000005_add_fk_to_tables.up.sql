@@ -1,6 +1,7 @@
 ALTER TABLE town_areas
     ADD COLUMN municipality_id int NOT NULL,
-    ADD FOREIGN KEY (municipality_id) REFERENCES municipalities (id);
+    ADD FOREIGN KEY (municipality_id) REFERENCES municipalities (id),
+    ADD UNIQUE (name, municipality_id);
 
 
 ALTER TABLE municipalities
