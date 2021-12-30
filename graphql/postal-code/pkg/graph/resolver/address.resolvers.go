@@ -8,6 +8,6 @@ import (
 	"pcode/pkg/graph/gqlmodel"
 )
 
-func (r *queryResolver) Address(ctx context.Context, postalCode int) (*gqlmodel.Address, error) {
+func (r *queryResolver) Address(ctx context.Context, postalCode string) (*gqlmodel.Address, error) {
 	return &gqlmodel.Address{}, nil
 }

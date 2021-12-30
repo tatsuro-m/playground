@@ -13,13 +13,18 @@ func TestQueryResolver_Address(t *testing.T) {
 
 	table := []struct {
 		name       string
-		postalCode int
+		postalCode string
 		query      string
 	}{
 		{
-			name:       "新宿区四谷が返ってくること",
-			postalCode: 1600004,
-			query:      "query address($postal_code: Int!) {\n  address(postal_code: $postal_code) {\n    id\n    name\n}\n}",
+			name:       "新宿区四谷 が返ってくること",
+			postalCode: "1600004",
+			query:      "query address($postal_code: String!) {\n  address(postal_code: $postal_code) {\n    id\n    name\n}\n}",
+		},
+		{
+			name:       "札幌市中央区旭ケ丘 が返ってくること",
+			postalCode: "0640941",
+			query:      "query address($postal_code: String!) {\n  address(postal_code: $postal_code) {\n    id\n    name\n}\n}",
 		},
 	}
 
