@@ -37,19 +37,6 @@ func Exec() error {
 	return nil
 }
 
-func getCSVPath() string {
-	var p string
-	if util.IsDev() {
-		p, _ = filepath.Abs("../../KEN_ALL_ROME.CSV")
-		return p
-	} else if util.IsTest() {
-		p, _ = filepath.Abs("../../internal/seed/testdata/KEN_ALL_ROME_TEST.CSV")
-		return p
-	}
-
-	return p
-}
-
 func insertData(csvRow []string) {
 	ctx := context.Background()
 	d := db.GetDB()
@@ -73,4 +60,17 @@ func insertData(csvRow []string) {
 	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(townArea.Name)).One(ctx, d)
 	postalCode := models.PostalCode{Number: csvRow[0], PrefectureID: p.ID, MunicipalityID: m.ID, TownAreaID: t.ID}
 	postalCode.Insert(ctx, d, boil.Infer())
+}
+
+func getCSVPath() string {
+	var p string
+	if util.IsDev() {
+		p, _ = filepath.Abs("../../KEN_ALL_ROME.CSV")
+		return p
+	} else if util.IsTest() {
+		p, _ = filepath.Abs("../../internal/seed/testdata/KEN_ALL_ROME_TEST.CSV")
+		return p
+	}
+
+	return p
 }
