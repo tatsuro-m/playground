@@ -5,10 +5,9 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 	"pcode/pkg/graph/gqlmodel"
 )
 
 func (r *queryResolver) Address(ctx context.Context, postalCode int) (*gqlmodel.Address, error) {
-	panic(fmt.Errorf("not implemented"))
+	return &gqlmodel.Address{}, nil
 }
