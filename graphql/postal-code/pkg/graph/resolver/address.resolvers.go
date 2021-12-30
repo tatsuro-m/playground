@@ -9,6 +9,6 @@ import (
 	"pcode/pkg/graph/gqlmodel"
 )
 
-func (r *queryResolver) Address(ctx context.Context, postalCode *int) (*gqlmodel.Address, error) {
+func (r *queryResolver) Address(ctx context.Context, postalCode int) (*gqlmodel.Address, error) {
 	panic(fmt.Errorf("not implemented"))
 }

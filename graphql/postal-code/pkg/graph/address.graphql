@@ -4,5 +4,5 @@ type Address {
 }
 
 extend type Query  {
-    address(postal_code: Int): Address!
+    address(postal_code: Int!): Address!
 }
