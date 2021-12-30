@@ -1,0 +1,8 @@
+type Address {
+    id: ID!
+    name: String!
+}
+
+extend type Query  {
+    address(postal_code: Int): Address!
+}
