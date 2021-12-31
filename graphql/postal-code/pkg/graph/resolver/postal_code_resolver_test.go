@@ -27,6 +27,16 @@ func TestQueryResolver_PostalCode(t *testing.T) {
 				address: "北海道札幌市中央区旭ケ丘",
 				query:   "query address($address: String!) {\n  postalCode(address: $address) {\n    id\n    code\n}\n}",
 			},
+			{
+				name:    "全角スペースを入れても 0640941（札幌市中央区旭ケ丘） が返ってくること",
+				address: "北海道札幌市　中央区旭ケ丘",
+				query:   "query address($address: String!) {\n  postalCode(address: $address) {\n    id\n    code\n}\n}",
+			},
+			{
+				name:    "複数の全角スペースを入れても 0640941（札幌市中央区旭ケ丘） が返ってくること",
+				address: "北海道　札幌市　中央区　旭ケ丘",
+				query:   "query address($address: String!) {\n  postalCode(address: $address) {\n    id\n    code\n}\n}",
+			},
 		}
 
 		for _, td := range table {
