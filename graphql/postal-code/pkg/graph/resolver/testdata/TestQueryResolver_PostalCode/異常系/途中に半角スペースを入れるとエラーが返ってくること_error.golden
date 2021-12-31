@@ -1,0 +1,11 @@
+[
+  {
+    "message": "sql: no rows in result set",
+    "path": [
+      "postalCode"
+    ],
+    "extensions": {
+      "code": "RECORD_NOT_FOUND_ERROR"
+    }
+  }
+]
