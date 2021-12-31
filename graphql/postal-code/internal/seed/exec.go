@@ -28,6 +28,7 @@ var townAreaNameRome string
 
 var rowPrefecture *models.Prefecture
 var rowMunicipality *models.Municipality
+var rowTownArea *models.TownArea
 
 func Exec() error {
 	utf8F, _ := os.OpenFile(getCSVPath(), os.O_RDONLY, 0666)
@@ -80,12 +81,34 @@ func insertData() {
 		return
 	}
 
-	townArea := models.TownArea{Name: townAreaName, NameRoma: townAreaNameRome, MunicipalityID: rowMunicipality.ID}
-	townArea.Insert(ctx, d, boil.Infer())
+	err = insertTownArea()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(townArea.Name), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
+	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(rowTownArea.Name), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
 	pCode := models.PostalCode{Code: postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: t.ID}
 	pCode.Insert(ctx, d, boil.Infer())
+}
+
+func insertTownArea() error {
+	ctx := context.Background()
+	d := db.GetDB()
+
+	townArea := models.TownArea{Name: townAreaName, NameRoma: townAreaNameRome, MunicipalityID: rowMunicipality.ID}
+	err := townArea.Insert(ctx, d, boil.Infer())
+	if err != nil {
+		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(townAreaName), models.TownAreaWhere.Name.EQ(townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
+		if err != nil {
+			return err
+		}
+		rowTownArea = t
+	} else {
+		rowTownArea = &townArea
+	}
+
+	return nil
 }
 
 func insertMunicipality() error {
