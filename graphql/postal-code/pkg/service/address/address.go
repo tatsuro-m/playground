@@ -33,7 +33,7 @@ WHERE number = ?;
 	var a Address
 	err := queries.Raw(q, postalCode).Bind(ctx, d, &a)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 	a.ID = strconv.Itoa(a.PostalCode.ID)
 	a.Name = fmt.Sprintf("%s%s%s", a.Prefecture.Name, a.Municipality.Name, a.TownArea.Name)
