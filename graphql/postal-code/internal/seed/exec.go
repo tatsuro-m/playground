@@ -58,7 +58,7 @@ func insertData(csvRow []string) {
 	townArea.Insert(ctx, d, boil.Infer())
 
 	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(townArea.Name), models.TownAreaWhere.MunicipalityID.EQ(m.ID)).One(ctx, d)
-	postalCode := models.PostalCode{Number: csvRow[0], PrefectureID: p.ID, MunicipalityID: m.ID, TownAreaID: t.ID}
+	postalCode := models.PostalCode{Code: csvRow[0], PrefectureID: p.ID, MunicipalityID: m.ID, TownAreaID: t.ID}
 	postalCode.Insert(ctx, d, boil.Infer())
 }
 
