@@ -80,12 +80,11 @@ func insertData() {
 		return
 	}
 
-	m, _ := models.Municipalities(qm.Select(models.MunicipalityColumns.ID), models.MunicipalityWhere.Name.EQ(rowMunicipality.Name), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
-	townArea := models.TownArea{Name: townAreaName, NameRoma: townAreaNameRome, MunicipalityID: m.ID}
+	townArea := models.TownArea{Name: townAreaName, NameRoma: townAreaNameRome, MunicipalityID: rowMunicipality.ID}
 	townArea.Insert(ctx, d, boil.Infer())
 
-	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(townArea.Name), models.TownAreaWhere.MunicipalityID.EQ(m.ID)).One(ctx, d)
-	pCode := models.PostalCode{Code: postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: m.ID, TownAreaID: t.ID}
+	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(townArea.Name), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
+	pCode := models.PostalCode{Code: postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: t.ID}
 	pCode.Insert(ctx, d, boil.Infer())
 }
 
