@@ -191,7 +191,7 @@ extend type Query  {
 `, BuiltIn: false},
 	{Name: "pkg/graph/common.graphql", Input: `type Query
 `, BuiltIn: false},
-	{Name: "pkg/graph/postalCode.graphql", Input: `type PostalCode {
+	{Name: "pkg/graph/postal_code.graphql", Input: `type PostalCode {
     id: ID!
     code: String!
 }
