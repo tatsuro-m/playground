@@ -5,10 +5,18 @@ package resolver
 
 import (
 	"context"
-	"fmt"
+	"pcode/pkg/code"
+	"pcode/pkg/graph"
 	"pcode/pkg/graph/gqlmodel"
+	"pcode/pkg/service/postalcode"
+	"strconv"
 )
 
 func (r *queryResolver) PostalCode(ctx context.Context, address string) (*gqlmodel.PostalCode, error) {
-	panic(fmt.Errorf("not implemented"))
+	p, err := postalcode.Service{}.GetOne(address)
+	if err != nil {
+		return nil, graph.NewGqlError(err.Error(), code.RecordNotFoundErr)
+	}
+
+	return &gqlmodel.PostalCode{ID: strconv.Itoa(p.ID), Code: p.Number}, nil
 }
