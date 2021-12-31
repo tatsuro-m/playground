@@ -31,7 +31,7 @@ func insertHokkaido(t *testing.T) {
 	town.Insert(ctx, d, boil.Infer())
 	town, _ = models.TownAreas(models.TownAreaWhere.Name.EQ(town.Name), models.TownAreaWhere.MunicipalityID.EQ(m.ID)).One(ctx, d)
 
-	postalCode := models.PostalCode{Number: "0640941", PrefectureID: p.ID, MunicipalityID: m.ID, TownAreaID: town.ID}
+	postalCode := models.PostalCode{Code: "0640941", PrefectureID: p.ID, MunicipalityID: m.ID, TownAreaID: town.ID}
 	postalCode.Insert(ctx, d, boil.Infer())
 }
 
@@ -53,6 +53,6 @@ func insertTokyo(t *testing.T) {
 	town.Insert(ctx, d, boil.Infer())
 	town, _ = models.TownAreas(models.TownAreaWhere.Name.EQ(town.Name), models.TownAreaWhere.MunicipalityID.EQ(m.ID)).One(ctx, d)
 
-	postalCode := models.PostalCode{Number: "1600004", PrefectureID: p.ID, MunicipalityID: m.ID, TownAreaID: town.ID}
+	postalCode := models.PostalCode{Code: "1600004", PrefectureID: p.ID, MunicipalityID: m.ID, TownAreaID: town.ID}
 	postalCode.Insert(ctx, d, boil.Infer())
 }
