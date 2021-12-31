@@ -43,7 +43,7 @@ func Exec() error {
 			return err
 		}
 
-		assign(record)
+		assignCSVDataToVar(record)
 		insertData()
 	}
 
@@ -128,7 +128,7 @@ func getCSVPath() string {
 	return p
 }
 
-func assign(csvRow []string) {
+func assignCSVDataToVar(csvRow []string) {
 	// ex. []string{"8180025", "福岡県", "筑紫野市", "筑紫", "FUKUOKA KEN", "CHIKUSHINO SHI", "CHIKUSHI"}
 	postalCode = csvRow[0]
 	prefectureName = csvRow[1]
