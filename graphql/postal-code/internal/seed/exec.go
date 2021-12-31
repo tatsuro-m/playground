@@ -92,20 +92,21 @@ func insertData() {
 	pCode.Insert(ctx, d, boil.Infer())
 }
 
-func insertTownArea() error {
+func insertPrefecture() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	townArea := models.TownArea{Name: townAreaName, NameRoma: townAreaNameRome, MunicipalityID: rowMunicipality.ID}
-	err := townArea.Insert(ctx, d, boil.Infer())
+	prefecture, err := models.Prefectures(models.PrefectureWhere.Name.EQ(prefectureName)).One(ctx, d)
 	if err != nil {
-		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(townAreaName), models.TownAreaWhere.Name.EQ(townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
+		p := models.Prefecture{Name: prefectureName, NameRoma: prefectureNameRome}
+		err = p.Insert(context.Background(), db.GetDB(), boil.Infer())
 		if err != nil {
 			return err
 		}
-		rowTownArea = t
+
+		rowPrefecture = &p
 	} else {
-		rowTownArea = &townArea
+		rowPrefecture = prefecture
 	}
 
 	return nil
@@ -131,21 +132,20 @@ func insertMunicipality() error {
 	return nil
 }
 
-func insertPrefecture() error {
+func insertTownArea() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	prefecture, err := models.Prefectures(models.PrefectureWhere.Name.EQ(prefectureName)).One(ctx, d)
+	townArea := models.TownArea{Name: townAreaName, NameRoma: townAreaNameRome, MunicipalityID: rowMunicipality.ID}
+	err := townArea.Insert(ctx, d, boil.Infer())
 	if err != nil {
-		p := models.Prefecture{Name: prefectureName, NameRoma: prefectureNameRome}
-		err = p.Insert(context.Background(), db.GetDB(), boil.Infer())
+		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(townAreaName), models.TownAreaWhere.Name.EQ(townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
 		if err != nil {
 			return err
 		}
-
-		rowPrefecture = &p
+		rowTownArea = t
 	} else {
-		rowPrefecture = prefecture
+		rowTownArea = &townArea
 	}
 
 	return nil
