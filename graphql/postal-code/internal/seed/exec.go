@@ -61,11 +61,7 @@ func insertData() {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	var a address.Address
-	queries.Raw(q, postalCode, prefectureName, municipalityName, townAreaName).Bind(ctx, d, &a)
-
-	b := a.PostalCode.Code == postalCode && a.Prefecture.Name == prefectureName && a.Municipality.Name == municipalityName && a.TownArea.Name == townAreaName
-	if b {
+	if checkAlreadyExits() {
 		return
 	}
 
@@ -87,6 +83,15 @@ func insertData() {
 	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(townArea.Name), models.TownAreaWhere.MunicipalityID.EQ(m.ID)).One(ctx, d)
 	pCode := models.PostalCode{Code: postalCode, PrefectureID: p.ID, MunicipalityID: m.ID, TownAreaID: t.ID}
 	pCode.Insert(ctx, d, boil.Infer())
+}
+
+func checkAlreadyExits() bool {
+	ctx := context.Background()
+	d := db.GetDB()
+
+	var a address.Address
+	queries.Raw(q, postalCode, prefectureName, municipalityName, townAreaName).Bind(ctx, d, &a)
+	return a.PostalCode.Code == postalCode && a.Prefecture.Name == prefectureName && a.Municipality.Name == municipalityName && a.TownArea.Name == townAreaName
 }
 
 func getCSVPath() string {
