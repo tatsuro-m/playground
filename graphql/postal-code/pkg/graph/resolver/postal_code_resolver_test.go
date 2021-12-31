@@ -63,6 +63,11 @@ func TestQueryResolver_PostalCode(t *testing.T) {
 				address: "北海道札幌市 中央区旭ケ丘",
 				query:   "query address($address: String!) {\n  postalCode(address: $address) {\n    id\n    code\n}\n}",
 			},
+			{
+				name:    "存在しない住所を入れるとエラーが返ってくること",
+				address: "東京都新宿区ほげほげ",
+				query:   "query address($address: String!) {\n  postalCode(address: $address) {\n    id\n    code\n}\n}",
+			},
 		}
 
 		for _, td := range table {
