@@ -15,7 +15,7 @@ func (s Service) GetOne(address string) (*models.PostalCode, error) {
 		qm.LeftOuterJoin("prefectures p on p.id = postal_codes.prefecture_id"),
 		qm.LeftOuterJoin("municipalities m on m.id = postal_codes.municipality_id"),
 		qm.LeftOuterJoin("town_areas t on t.id = postal_codes.town_area_id"),
-		qm.Where("CONCAT(p.name,m.name,t.name) = ?", util.TrimFullWidthSpace(address)),
+		qm.Where("REPLACE(CONCAT(p.name,m.name,t.name), '　', '') = ?", util.TrimFullWidthSpace(address)),
 	).One(context.Background(), db.GetDB())
 
 	if err != nil {
