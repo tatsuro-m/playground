@@ -1,2 +1,2 @@
 ALTER TABLE postal_codes
-    MODIFY COLUMN number int NOT NULL UNIQUE;
+    MODIFY COLUMN code int NOT NULL UNIQUE;

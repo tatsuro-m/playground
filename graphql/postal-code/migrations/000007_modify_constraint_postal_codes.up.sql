@@ -1,3 +1,3 @@
 ALTER TABLE postal_codes
-    DROP CONSTRAINT number,
-    ADD UNIQUE pcode_uk_uniq (number, prefecture_id, municipality_id, town_area_id);
+    DROP CONSTRAINT code,
+    ADD UNIQUE pcode_uk_uniq (code, prefecture_id, municipality_id, town_area_id);

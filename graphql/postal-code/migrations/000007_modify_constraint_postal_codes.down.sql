@@ -1,3 +1,3 @@
 ALTER TABLE postal_codes
-    ADD UNIQUE (number),
+    ADD UNIQUE (code),
     DROP CONSTRAINT pcode_uk_uniq;
