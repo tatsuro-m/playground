@@ -24,7 +24,7 @@ import (
 // PostalCode is an object representing the database table.
 type PostalCode struct {
 	ID             int       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Number         string    `boil:"number" json:"number" toml:"number" yaml:"number"`
+	Code           string    `boil:"code" json:"code" toml:"code" yaml:"code"`
 	CreatedAt      time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt      time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 	PrefectureID   int       `boil:"prefecture_id" json:"prefecture_id" toml:"prefecture_id" yaml:"prefecture_id"`
@@ -37,7 +37,7 @@ type PostalCode struct {
 
 var PostalCodeColumns = struct {
 	ID             string
-	Number         string
+	Code           string
 	CreatedAt      string
 	UpdatedAt      string
 	PrefectureID   string
@@ -45,7 +45,7 @@ var PostalCodeColumns = struct {
 	TownAreaID     string
 }{
 	ID:             "id",
-	Number:         "number",
+	Code:           "code",
 	CreatedAt:      "created_at",
 	UpdatedAt:      "updated_at",
 	PrefectureID:   "prefecture_id",
@@ -55,7 +55,7 @@ var PostalCodeColumns = struct {
 
 var PostalCodeTableColumns = struct {
 	ID             string
-	Number         string
+	Code           string
 	CreatedAt      string
 	UpdatedAt      string
 	PrefectureID   string
@@ -63,7 +63,7 @@ var PostalCodeTableColumns = struct {
 	TownAreaID     string
 }{
 	ID:             "postal_codes.id",
-	Number:         "postal_codes.number",
+	Code:           "postal_codes.code",
 	CreatedAt:      "postal_codes.created_at",
 	UpdatedAt:      "postal_codes.updated_at",
 	PrefectureID:   "postal_codes.prefecture_id",
@@ -75,7 +75,7 @@ var PostalCodeTableColumns = struct {
 
 var PostalCodeWhere = struct {
 	ID             whereHelperint
-	Number         whereHelperstring
+	Code           whereHelperstring
 	CreatedAt      whereHelpertime_Time
 	UpdatedAt      whereHelpertime_Time
 	PrefectureID   whereHelperint
@@ -83,7 +83,7 @@ var PostalCodeWhere = struct {
 	TownAreaID     whereHelperint
 }{
 	ID:             whereHelperint{field: "`postal_codes`.`id`"},
-	Number:         whereHelperstring{field: "`postal_codes`.`number`"},
+	Code:           whereHelperstring{field: "`postal_codes`.`code`"},
 	CreatedAt:      whereHelpertime_Time{field: "`postal_codes`.`created_at`"},
 	UpdatedAt:      whereHelpertime_Time{field: "`postal_codes`.`updated_at`"},
 	PrefectureID:   whereHelperint{field: "`postal_codes`.`prefecture_id`"},
@@ -118,8 +118,8 @@ func (*postalCodeR) NewStruct() *postalCodeR {
 type postalCodeL struct{}
 
 var (
-	postalCodeAllColumns            = []string{"id", "number", "created_at", "updated_at", "prefecture_id", "municipality_id", "town_area_id"}
-	postalCodeColumnsWithoutDefault = []string{"number", "prefecture_id", "municipality_id", "town_area_id"}
+	postalCodeAllColumns            = []string{"id", "code", "created_at", "updated_at", "prefecture_id", "municipality_id", "town_area_id"}
+	postalCodeColumnsWithoutDefault = []string{"code", "prefecture_id", "municipality_id", "town_area_id"}
 	postalCodeColumnsWithDefault    = []string{"id", "created_at", "updated_at"}
 	postalCodePrimaryKeyColumns     = []string{"id"}
 )
@@ -1182,7 +1182,6 @@ func (o PostalCodeSlice) UpdateAll(ctx context.Context, exec boil.ContextExecuto
 
 var mySQLPostalCodeUniqueColumns = []string{
 	"id",
-	"number",
 }
 
 // Upsert attempts an insert using an executor, and does an update or ignore on conflict.
