@@ -12,7 +12,7 @@ import (
 )
 
 func (r *queryResolver) Address(ctx context.Context, postalCode string) (*gqlmodel.Address, error) {
-	a, err := address.Service{}.GetAddress(postalCode)
+	a, err := address.Service{}.GetOne(postalCode)
 	if err != nil {
 		return nil, graph.NewGqlError(err.Error(), code.RecordNotFoundErr)
 	}

@@ -20,7 +20,7 @@ type Address struct {
 	models.TownArea     `boil:",bind"`
 }
 
-func (s Service) GetAddress(postalCode string) (*Address, error) {
+func (s Service) GetOne(postalCode string) (*Address, error) {
 	q := `
 SELECT postal_codes.id AS 'postal_code.id' ,postal_codes.number AS 'postal_code.number', p.name AS 'prefecture.name', m.name AS 'municipality.name', t.name AS 'town_area.name'
 FROM postal_codes
