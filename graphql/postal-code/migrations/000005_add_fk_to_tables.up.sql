@@ -6,6 +6,7 @@ ALTER TABLE town_areas
 
 ALTER TABLE municipalities
     ADD COLUMN prefecture_id int NOT NULL,
+    ADD UNIQUE (name, prefecture_id),
     ADD FOREIGN KEY (prefecture_id) REFERENCES prefectures (id);
 
 
