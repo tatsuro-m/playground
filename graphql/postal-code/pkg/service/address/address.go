@@ -22,12 +22,12 @@ type Address struct {
 
 func (s Service) GetOne(postalCode string) (*Address, error) {
 	q := `
-SELECT postal_codes.id AS 'postal_code.id' ,postal_codes.number AS 'postal_code.number', p.name AS 'prefecture.name', m.name AS 'municipality.name', t.name AS 'town_area.name'
+SELECT postal_codes.id AS 'postal_code.id' ,postal_codes.code AS 'postal_code.code', p.name AS 'prefecture.name', m.name AS 'municipality.name', t.name AS 'town_area.name'
 FROM postal_codes
          LEFT JOIN prefectures p on p.id = postal_codes.prefecture_id
          LEFT JOIN municipalities m on m.id = postal_codes.municipality_id
          LEFT JOIN town_areas t on t.id = postal_codes.town_area_id
-WHERE number = ?;
+WHERE code = ?;
 `
 	ctx := context.Background()
 	d := db.GetDB()
