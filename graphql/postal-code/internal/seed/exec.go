@@ -27,6 +27,7 @@ var municipalityNameRome string
 var townAreaNameRome string
 
 var rowPrefecture *models.Prefecture
+var rowMunicipality *models.Municipality
 
 func Exec() error {
 	utf8F, _ := os.OpenFile(getCSVPath(), os.O_RDONLY, 0666)
@@ -62,6 +63,7 @@ WHERE code = ? AND p.name = ? AND m.name = ? AND t.name = ?;
 func insertData() {
 	ctx := context.Background()
 	d := db.GetDB()
+
 	if checkAlreadyExits() {
 		return
 	}
@@ -72,18 +74,39 @@ func insertData() {
 		return
 	}
 
-	municipality := models.Municipality{Name: municipalityName, NameRoma: municipalityNameRome, PrefectureID: rowPrefecture.ID}
-	if b, _ := models.Municipalities(models.MunicipalityWhere.Name.EQ(municipality.Name), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).Exists(ctx, d); !b {
-		municipality.Insert(ctx, d, boil.Infer())
+	err = insertMunicipality()
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
 
-	m, _ := models.Municipalities(qm.Select(models.MunicipalityColumns.ID), models.MunicipalityWhere.Name.EQ(municipality.Name), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
+	m, _ := models.Municipalities(qm.Select(models.MunicipalityColumns.ID), models.MunicipalityWhere.Name.EQ(rowMunicipality.Name), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
 	townArea := models.TownArea{Name: townAreaName, NameRoma: townAreaNameRome, MunicipalityID: m.ID}
 	townArea.Insert(ctx, d, boil.Infer())
 
 	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(townArea.Name), models.TownAreaWhere.MunicipalityID.EQ(m.ID)).One(ctx, d)
 	pCode := models.PostalCode{Code: postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: m.ID, TownAreaID: t.ID}
 	pCode.Insert(ctx, d, boil.Infer())
+}
+
+func insertMunicipality() error {
+	ctx := context.Background()
+	d := db.GetDB()
+
+	municipality, err := models.Municipalities(models.MunicipalityWhere.Name.EQ(municipalityName), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
+	if err != nil {
+		m := models.Municipality{Name: municipalityName, NameRoma: municipalityNameRome, PrefectureID: rowPrefecture.ID}
+		err = m.Insert(ctx, d, boil.Infer())
+		if err != nil {
+			return err
+		}
+
+		rowMunicipality = &m
+	} else {
+		rowMunicipality = municipality
+	}
+
+	return nil
 }
 
 func insertPrefecture() error {
