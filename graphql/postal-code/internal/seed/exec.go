@@ -26,6 +26,8 @@ var prefectureNameRome string
 var municipalityNameRome string
 var townAreaNameRome string
 
+var rowPrefecture *models.Prefecture
+
 func Exec() error {
 	utf8F, _ := os.OpenFile(getCSVPath(), os.O_RDONLY, 0666)
 	defer utf8F.Close()
@@ -64,27 +66,27 @@ func insertData() {
 		return
 	}
 
-	prefecture, err := insertPrefecture()
+	err := insertPrefecture()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	municipality := models.Municipality{Name: municipalityName, NameRoma: municipalityNameRome, PrefectureID: prefecture.ID}
-	if b, _ := models.Municipalities(models.MunicipalityWhere.Name.EQ(municipality.Name), models.MunicipalityWhere.PrefectureID.EQ(prefecture.ID)).Exists(ctx, d); !b {
+	municipality := models.Municipality{Name: municipalityName, NameRoma: municipalityNameRome, PrefectureID: rowPrefecture.ID}
+	if b, _ := models.Municipalities(models.MunicipalityWhere.Name.EQ(municipality.Name), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).Exists(ctx, d); !b {
 		municipality.Insert(ctx, d, boil.Infer())
 	}
 
-	m, _ := models.Municipalities(qm.Select(models.MunicipalityColumns.ID), models.MunicipalityWhere.Name.EQ(municipality.Name), models.MunicipalityWhere.PrefectureID.EQ(prefecture.ID)).One(ctx, d)
+	m, _ := models.Municipalities(qm.Select(models.MunicipalityColumns.ID), models.MunicipalityWhere.Name.EQ(municipality.Name), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
 	townArea := models.TownArea{Name: townAreaName, NameRoma: townAreaNameRome, MunicipalityID: m.ID}
 	townArea.Insert(ctx, d, boil.Infer())
 
 	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(townArea.Name), models.TownAreaWhere.MunicipalityID.EQ(m.ID)).One(ctx, d)
-	pCode := models.PostalCode{Code: postalCode, PrefectureID: prefecture.ID, MunicipalityID: m.ID, TownAreaID: t.ID}
+	pCode := models.PostalCode{Code: postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: m.ID, TownAreaID: t.ID}
 	pCode.Insert(ctx, d, boil.Infer())
 }
 
-func insertPrefecture() (*models.Prefecture, error) {
+func insertPrefecture() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
@@ -93,13 +95,15 @@ func insertPrefecture() (*models.Prefecture, error) {
 		p := models.Prefecture{Name: prefectureName, NameRoma: prefectureNameRome}
 		err = p.Insert(context.Background(), db.GetDB(), boil.Infer())
 		if err != nil {
-			return nil, err
+			return err
 		}
 
-		prefecture = &p
+		rowPrefecture = &p
+	} else {
+		rowPrefecture = prefecture
 	}
 
-	return prefecture, err
+	return nil
 }
 
 func checkAlreadyExits() bool {
