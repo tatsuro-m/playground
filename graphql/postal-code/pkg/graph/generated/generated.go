@@ -47,13 +47,20 @@ type ComplexityRoot struct {
 		Name func(childComplexity int) int
 	}
 
+	PostalCode struct {
+		Code func(childComplexity int) int
+		ID   func(childComplexity int) int
+	}
+
 	Query struct {
-		Address func(childComplexity int, postalCode string) int
+		Address    func(childComplexity int, postalCode string) int
+		PostalCode func(childComplexity int, address string) int
 	}
 }
 
 type QueryResolver interface {
 	Address(ctx context.Context, postalCode string) (*gqlmodel.Address, error)
+	PostalCode(ctx context.Context, address string) (*gqlmodel.PostalCode, error)
 }
 
 type executableSchema struct {
@@ -85,6 +92,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Address.Name(childComplexity), true
 
+	case "PostalCode.code":
+		if e.complexity.PostalCode.Code == nil {
+			break
+		}
+
+		return e.complexity.PostalCode.Code(childComplexity), true
+
+	case "PostalCode.id":
+		if e.complexity.PostalCode.ID == nil {
+			break
+		}
+
+		return e.complexity.PostalCode.ID(childComplexity), true
+
 	case "Query.address":
 		if e.complexity.Query.Address == nil {
 			break
@@ -96,6 +117,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Address(childComplexity, args["postal_code"].(string)), true
+
+	case "Query.postalCode":
+		if e.complexity.Query.PostalCode == nil {
+			break
+		}
+
+		args, err := ec.field_Query_postalCode_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PostalCode(childComplexity, args["address"].(string)), true
 
 	}
 	return 0, false
@@ -158,6 +191,15 @@ extend type Query  {
 `, BuiltIn: false},
 	{Name: "pkg/graph/common.graphql", Input: `type Query
 `, BuiltIn: false},
+	{Name: "pkg/graph/postalCode.graphql", Input: `type PostalCode {
+    id: ID!
+    code: String!
+}
+
+extend type Query {
+    postalCode(address: String!): PostalCode!
+}
+`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -192,6 +234,21 @@ func (ec *executionContext) field_Query_address_args(ctx context.Context, rawArg
 		}
 	}
 	args["postal_code"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_postalCode_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["address"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("address"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["address"] = arg0
 	return args, nil
 }
 
@@ -303,6 +360,76 @@ func (ec *executionContext) _Address_name(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PostalCode_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PostalCode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PostalCode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PostalCode_code(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PostalCode) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PostalCode",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Code, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_address(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -343,6 +470,48 @@ func (ec *executionContext) _Query_address(ctx context.Context, field graphql.Co
 	res := resTmp.(*gqlmodel.Address)
 	fc.Result = res
 	return ec.marshalNAddress2ᚖpcodeᚋpkgᚋgraphᚋgqlmodelᚐAddress(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_postalCode(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_postalCode_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().PostalCode(rctx, args["address"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.PostalCode)
+	fc.Result = res
+	return ec.marshalNPostalCode2ᚖpcodeᚋpkgᚋgraphᚋgqlmodelᚐPostalCode(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query___type(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -1578,6 +1747,38 @@ func (ec *executionContext) _Address(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
+var postalCodeImplementors = []string{"PostalCode"}
+
+func (ec *executionContext) _PostalCode(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.PostalCode) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, postalCodeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PostalCode")
+		case "id":
+			out.Values[i] = ec._PostalCode_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "code":
+			out.Values[i] = ec._PostalCode_code(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var queryImplementors = []string{"Query"}
 
 func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -1602,6 +1803,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_address(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "postalCode":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_postalCode(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -1914,6 +2129,20 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNPostalCode2pcodeᚋpkgᚋgraphᚋgqlmodelᚐPostalCode(ctx context.Context, sel ast.SelectionSet, v gqlmodel.PostalCode) graphql.Marshaler {
+	return ec._PostalCode(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPostalCode2ᚖpcodeᚋpkgᚋgraphᚋgqlmodelᚐPostalCode(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.PostalCode) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PostalCode(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {

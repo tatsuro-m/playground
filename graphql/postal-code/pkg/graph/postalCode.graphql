@@ -1,0 +1,8 @@
+type PostalCode {
+    id: ID!
+    code: String!
+}
+
+extend type Query {
+    postalCode(address: String!): PostalCode!
+}

@@ -6,3 +6,8 @@ type Address struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
+
+type PostalCode struct {
+	ID   string `json:"id"`
+	Code string `json:"code"`
+}
