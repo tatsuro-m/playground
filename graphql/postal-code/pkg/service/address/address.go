@@ -6,6 +6,7 @@ import (
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"pcode/pkg/db"
 	"pcode/pkg/models"
+	"pcode/pkg/util"
 	"strconv"
 )
 
@@ -37,6 +38,7 @@ WHERE number = ?;
 	}
 	a.ID = strconv.Itoa(a.PostalCode.ID)
 	a.Name = fmt.Sprintf("%s%s%s", a.Prefecture.Name, a.Municipality.Name, a.TownArea.Name)
+	a.Name = util.TrimFullWidthSpace(a.Name)
 
 	return &a, nil
 }
