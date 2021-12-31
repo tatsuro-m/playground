@@ -9,7 +9,6 @@ import (
 	"pcode/pkg/graph"
 	"pcode/pkg/graph/gqlmodel"
 	"pcode/pkg/service/address"
-	"strconv"
 )
 
 func (r *queryResolver) Address(ctx context.Context, postalCode string) (*gqlmodel.Address, error) {
@@ -18,5 +17,5 @@ func (r *queryResolver) Address(ctx context.Context, postalCode string) (*gqlmod
 		return nil, graph.NewGqlError(err.Error(), code.RecordNotFoundErr)
 	}
 
-	return &gqlmodel.Address{ID: strconv.Itoa(a.PostalCode.ID), Name: a.Name}, nil
+	return &gqlmodel.Address{ID: a.ID, Name: a.Name}, nil
 }
