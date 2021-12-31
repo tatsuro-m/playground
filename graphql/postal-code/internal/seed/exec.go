@@ -49,7 +49,7 @@ func Exec() error {
 }
 
 var q = `
-SELECT postal_codes.id AS 'postal_code.id' ,postal_codes.code AS 'postal_code.code', p.name AS 'prefecture.name', m.name AS 'municipality.name', t.name AS 'town_area.name'
+SELECT postal_codes.id AS 'postal_code.id',postal_codes.code AS 'postal_code.code', p.name AS 'prefecture.name', m.name AS 'municipality.name', t.name AS 'town_area.name'
 FROM postal_codes
          LEFT JOIN prefectures p on p.id = postal_codes.prefecture_id
          LEFT JOIN municipalities m on m.id = postal_codes.municipality_id
@@ -60,15 +60,12 @@ WHERE code = ? AND p.name = ? AND m.name = ? AND t.name = ?;
 func insertData() {
 	ctx := context.Background()
 	d := db.GetDB()
-
 	if checkAlreadyExits() {
 		return
 	}
 
 	prefecture := models.Prefecture{Name: prefectureName, NameRoma: prefectureNameRome}
-	if b, _ := models.Prefectures(models.PrefectureWhere.Name.EQ(prefecture.Name)).Exists(ctx, d); !b {
-		prefecture.Insert(ctx, d, boil.Infer())
-	}
+	prefecture.Insert(ctx, d, boil.Infer())
 
 	p, _ := models.Prefectures(qm.Select(models.PrefectureColumns.ID), models.PrefectureWhere.Name.EQ(prefecture.Name)).One(ctx, d)
 	municipality := models.Municipality{Name: municipalityName, NameRoma: municipalityNameRome, PrefectureID: p.ID}
