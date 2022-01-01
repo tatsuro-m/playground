@@ -141,7 +141,7 @@ func insertTownArea() error {
 	townArea := models.TownArea{Name: r.townAreaName, NameRoma: r.townAreaNameRome, MunicipalityID: rowMunicipality.ID}
 	err := townArea.Insert(ctx, d, boil.Infer())
 	if err != nil {
-		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(r.townAreaName), models.TownAreaWhere.Name.EQ(r.townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
+		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(r.townAreaName), models.TownAreaWhere.NameRoma.EQ(r.townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
 		if err != nil {
 			return err
 		}
