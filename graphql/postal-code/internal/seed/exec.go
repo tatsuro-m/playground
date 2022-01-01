@@ -27,7 +27,7 @@ type Record struct {
 	townAreaNameRome     string
 }
 
-var record Record
+var r Record
 
 var rowPrefecture *models.Prefecture
 var rowMunicipality *models.Municipality
@@ -98,9 +98,9 @@ func insertPrefecture() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	prefecture, err := models.Prefectures(models.PrefectureWhere.Name.EQ(record.prefectureName)).One(ctx, d)
+	prefecture, err := models.Prefectures(models.PrefectureWhere.Name.EQ(r.prefectureName)).One(ctx, d)
 	if err != nil {
-		p := models.Prefecture{Name: record.prefectureName, NameRoma: record.prefectureNameRome}
+		p := models.Prefecture{Name: r.prefectureName, NameRoma: r.prefectureNameRome}
 		err = p.Insert(context.Background(), db.GetDB(), boil.Infer())
 		if err != nil {
 			return err
@@ -118,9 +118,9 @@ func insertMunicipality() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	municipality, err := models.Municipalities(models.MunicipalityWhere.Name.EQ(record.municipalityName), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
+	municipality, err := models.Municipalities(models.MunicipalityWhere.Name.EQ(r.municipalityName), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
 	if err != nil {
-		m := models.Municipality{Name: record.municipalityName, NameRoma: record.municipalityNameRome, PrefectureID: rowPrefecture.ID}
+		m := models.Municipality{Name: r.municipalityName, NameRoma: r.municipalityNameRome, PrefectureID: rowPrefecture.ID}
 		err = m.Insert(ctx, d, boil.Infer())
 		if err != nil {
 			return err
@@ -138,10 +138,10 @@ func insertTownArea() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	townArea := models.TownArea{Name: record.townAreaName, NameRoma: record.townAreaNameRome, MunicipalityID: rowMunicipality.ID}
+	townArea := models.TownArea{Name: r.townAreaName, NameRoma: r.townAreaNameRome, MunicipalityID: rowMunicipality.ID}
 	err := townArea.Insert(ctx, d, boil.Infer())
 	if err != nil {
-		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(record.townAreaName), models.TownAreaWhere.Name.EQ(record.townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
+		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(r.townAreaName), models.TownAreaWhere.Name.EQ(r.townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
 		if err != nil {
 			return err
 		}
@@ -157,10 +157,10 @@ func insertPostalCode() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	pCode := models.PostalCode{Code: record.postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: rowTownArea.ID}
+	pCode := models.PostalCode{Code: r.postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: rowTownArea.ID}
 	err := pCode.Insert(ctx, d, boil.Infer())
 	if err != nil {
-		_, err := models.PostalCodes(models.PostalCodeWhere.Code.EQ(record.postalCode),
+		_, err := models.PostalCodes(models.PostalCodeWhere.Code.EQ(r.postalCode),
 			models.PostalCodeWhere.PrefectureID.EQ(rowPrefecture.ID),
 			models.PostalCodeWhere.MunicipalityID.EQ(rowMunicipality.ID),
 			models.PostalCodeWhere.TownAreaID.EQ(rowTownArea.ID),
@@ -179,8 +179,8 @@ func checkAlreadyExits() bool {
 	d := db.GetDB()
 
 	var a address.Address
-	queries.Raw(q, record.postalCode, record.prefectureName, record.municipalityName, record.townAreaName).Bind(ctx, d, &a)
-	return a.PostalCode.Code == record.postalCode && a.Prefecture.Name == record.prefectureName && a.Municipality.Name == record.municipalityName && a.TownArea.Name == record.townAreaName
+	queries.Raw(q, r.postalCode, r.prefectureName, r.municipalityName, r.townAreaName).Bind(ctx, d, &a)
+	return a.PostalCode.Code == r.postalCode && a.Prefecture.Name == r.prefectureName && a.Municipality.Name == r.municipalityName && a.TownArea.Name == r.townAreaName
 }
 
 func getCSVPath() string {
@@ -198,11 +198,11 @@ func getCSVPath() string {
 
 func assignCSVDataToVar(csvRow []string) {
 	// ex. []string{"8180025", "福岡県", "筑紫野市", "筑紫", "FUKUOKA KEN", "CHIKUSHINO SHI", "CHIKUSHI"}
-	record.postalCode = csvRow[0]
-	record.prefectureName = csvRow[1]
-	record.municipalityName = csvRow[2]
-	record.townAreaName = csvRow[3]
-	record.prefectureNameRome = csvRow[4]
-	record.municipalityNameRome = csvRow[5]
-	record.townAreaNameRome = csvRow[6]
+	r.postalCode = csvRow[0]
+	r.prefectureName = csvRow[1]
+	r.municipalityName = csvRow[2]
+	r.townAreaName = csvRow[3]
+	r.prefectureNameRome = csvRow[4]
+	r.municipalityNameRome = csvRow[5]
+	r.townAreaNameRome = csvRow[6]
 }
