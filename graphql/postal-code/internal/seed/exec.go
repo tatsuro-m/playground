@@ -17,13 +17,17 @@ import (
 	"pcode/pkg/util"
 )
 
-var postalCode string
-var prefectureName string
-var municipalityName string
-var townAreaName string
-var prefectureNameRome string
-var municipalityNameRome string
-var townAreaNameRome string
+type Record struct {
+	postalCode           string
+	prefectureName       string
+	municipalityName     string
+	townAreaName         string
+	prefectureNameRome   string
+	municipalityNameRome string
+	townAreaNameRome     string
+}
+
+var record Record
 
 var rowPrefecture *models.Prefecture
 var rowMunicipality *models.Municipality
@@ -94,9 +98,9 @@ func insertPrefecture() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	prefecture, err := models.Prefectures(models.PrefectureWhere.Name.EQ(prefectureName)).One(ctx, d)
+	prefecture, err := models.Prefectures(models.PrefectureWhere.Name.EQ(record.prefectureName)).One(ctx, d)
 	if err != nil {
-		p := models.Prefecture{Name: prefectureName, NameRoma: prefectureNameRome}
+		p := models.Prefecture{Name: record.prefectureName, NameRoma: record.prefectureNameRome}
 		err = p.Insert(context.Background(), db.GetDB(), boil.Infer())
 		if err != nil {
 			return err
@@ -114,9 +118,9 @@ func insertMunicipality() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	municipality, err := models.Municipalities(models.MunicipalityWhere.Name.EQ(municipalityName), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
+	municipality, err := models.Municipalities(models.MunicipalityWhere.Name.EQ(record.municipalityName), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
 	if err != nil {
-		m := models.Municipality{Name: municipalityName, NameRoma: municipalityNameRome, PrefectureID: rowPrefecture.ID}
+		m := models.Municipality{Name: record.municipalityName, NameRoma: record.municipalityNameRome, PrefectureID: rowPrefecture.ID}
 		err = m.Insert(ctx, d, boil.Infer())
 		if err != nil {
 			return err
@@ -134,10 +138,10 @@ func insertTownArea() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	townArea := models.TownArea{Name: townAreaName, NameRoma: townAreaNameRome, MunicipalityID: rowMunicipality.ID}
+	townArea := models.TownArea{Name: record.townAreaName, NameRoma: record.townAreaNameRome, MunicipalityID: rowMunicipality.ID}
 	err := townArea.Insert(ctx, d, boil.Infer())
 	if err != nil {
-		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(townAreaName), models.TownAreaWhere.Name.EQ(townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
+		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(record.townAreaName), models.TownAreaWhere.Name.EQ(record.townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
 		if err != nil {
 			return err
 		}
@@ -153,10 +157,10 @@ func insertPostalCode() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	pCode := models.PostalCode{Code: postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: rowTownArea.ID}
+	pCode := models.PostalCode{Code: record.postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: rowTownArea.ID}
 	err := pCode.Insert(ctx, d, boil.Infer())
 	if err != nil {
-		_, err := models.PostalCodes(models.PostalCodeWhere.Code.EQ(postalCode),
+		_, err := models.PostalCodes(models.PostalCodeWhere.Code.EQ(record.postalCode),
 			models.PostalCodeWhere.PrefectureID.EQ(rowPrefecture.ID),
 			models.PostalCodeWhere.MunicipalityID.EQ(rowMunicipality.ID),
 			models.PostalCodeWhere.TownAreaID.EQ(rowTownArea.ID),
@@ -175,8 +179,8 @@ func checkAlreadyExits() bool {
 	d := db.GetDB()
 
 	var a address.Address
-	queries.Raw(q, postalCode, prefectureName, municipalityName, townAreaName).Bind(ctx, d, &a)
-	return a.PostalCode.Code == postalCode && a.Prefecture.Name == prefectureName && a.Municipality.Name == municipalityName && a.TownArea.Name == townAreaName
+	queries.Raw(q, record.postalCode, record.prefectureName, record.municipalityName, record.townAreaName).Bind(ctx, d, &a)
+	return a.PostalCode.Code == record.postalCode && a.Prefecture.Name == record.prefectureName && a.Municipality.Name == record.municipalityName && a.TownArea.Name == record.townAreaName
 }
 
 func getCSVPath() string {
@@ -194,11 +198,11 @@ func getCSVPath() string {
 
 func assignCSVDataToVar(csvRow []string) {
 	// ex. []string{"8180025", "福岡県", "筑紫野市", "筑紫", "FUKUOKA KEN", "CHIKUSHINO SHI", "CHIKUSHI"}
-	postalCode = csvRow[0]
-	prefectureName = csvRow[1]
-	municipalityName = csvRow[2]
-	townAreaName = csvRow[3]
-	prefectureNameRome = csvRow[4]
-	municipalityNameRome = csvRow[5]
-	townAreaNameRome = csvRow[6]
+	record.postalCode = csvRow[0]
+	record.prefectureName = csvRow[1]
+	record.municipalityName = csvRow[2]
+	record.townAreaName = csvRow[3]
+	record.prefectureNameRome = csvRow[4]
+	record.municipalityNameRome = csvRow[5]
+	record.townAreaNameRome = csvRow[6]
 }
