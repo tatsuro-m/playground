@@ -32,7 +32,7 @@ func TestExec(t *testing.T) {
 		assert.Equal(t, townArea.ID, postalCode.TownAreaID)
 
 		count, _ := models.PostalCodes().Count(ctx, d)
-		testDataRow := int64(34)
+		testDataRow := int64(36)
 		assert.Equal(t, testDataRow, count)
 	})
 }
