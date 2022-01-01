@@ -61,9 +61,6 @@ WHERE code = ? AND p.name = ? AND m.name = ? AND t.name = ?;
 `
 
 func insertData() {
-	ctx := context.Background()
-	d := db.GetDB()
-
 	if checkAlreadyExits() {
 		return
 	}
@@ -86,8 +83,11 @@ func insertData() {
 		return
 	}
 
-	pCode := models.PostalCode{Code: postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: rowTownArea.ID}
-	pCode.Insert(ctx, d, boil.Infer())
+	err = insertPostalCode()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 }
 
 func insertPrefecture() error {
@@ -144,6 +144,27 @@ func insertTownArea() error {
 		rowTownArea = t
 	} else {
 		rowTownArea = &townArea
+	}
+
+	return nil
+}
+
+func insertPostalCode() error {
+	ctx := context.Background()
+	d := db.GetDB()
+
+	pCode := models.PostalCode{Code: postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: rowTownArea.ID}
+	err := pCode.Insert(ctx, d, boil.Infer())
+	if err != nil {
+		_, err := models.PostalCodes(models.PostalCodeWhere.Code.EQ(postalCode),
+			models.PostalCodeWhere.PrefectureID.EQ(rowPrefecture.ID),
+			models.PostalCodeWhere.MunicipalityID.EQ(rowMunicipality.ID),
+			models.PostalCodeWhere.TownAreaID.EQ(rowTownArea.ID),
+		).One(ctx, d)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
