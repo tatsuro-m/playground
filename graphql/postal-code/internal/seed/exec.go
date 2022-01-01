@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
-	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/transform"
 	"io"
@@ -87,8 +86,7 @@ func insertData() {
 		return
 	}
 
-	t, _ := models.TownAreas(qm.Select(models.TownAreaColumns.ID), models.TownAreaWhere.Name.EQ(rowTownArea.Name), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
-	pCode := models.PostalCode{Code: postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: t.ID}
+	pCode := models.PostalCode{Code: postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: rowTownArea.ID}
 	pCode.Insert(ctx, d, boil.Infer())
 }
 
