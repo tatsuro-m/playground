@@ -10,6 +10,7 @@ import (
 	"pcode/pkg/graph/generated"
 	"pcode/pkg/graph/resolver"
 	"pcode/pkg/util"
+	"time"
 )
 
 func graphqlHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,6 +34,13 @@ func playgroundHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func loggingReq(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println(time.Now())
+		next.ServeHTTP(w, r)
+	}
+}
+
 func main() {
 	err := db.Init()
 	if err != nil {
@@ -41,9 +49,9 @@ func main() {
 	}
 	defer db.Close()
 
-	http.HandleFunc("/query", graphqlHandler)
+	http.HandleFunc("/query", loggingReq(graphqlHandler))
 	if !util.IsProd() {
-		http.HandleFunc("/", playgroundHandler)
+		http.HandleFunc("/", loggingReq(playgroundHandler))
 	}
 
 	log.Fatalln(http.ListenAndServe(":8080", nil))
