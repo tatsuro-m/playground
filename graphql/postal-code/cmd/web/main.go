@@ -13,10 +13,16 @@ import (
 )
 
 func graphqlHandler(w http.ResponseWriter, r *http.Request) {
-	c := generated.Config{Resolvers: &resolver.Resolver{}}
-	h := handler.NewDefaultServer(generated.NewExecutableSchema(c))
+	switch r.Method {
+	case http.MethodPost:
+		c := generated.Config{Resolvers: &resolver.Resolver{}}
+		h := handler.NewDefaultServer(generated.NewExecutableSchema(c))
 
-	h.ServeHTTP(w, r)
+		h.ServeHTTP(w, r)
+	default:
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(fmt.Sprintf("Not support http method %s", r.Method)))
+	}
 }
 
 func playgroundHandler(w http.ResponseWriter, r *http.Request) {
