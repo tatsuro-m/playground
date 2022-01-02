@@ -4,29 +4,24 @@ import (
 	"fmt"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/gin-gonic/gin"
+	"log"
+	"net/http"
 	"pcode/pkg/db"
 	"pcode/pkg/graph/generated"
 	"pcode/pkg/graph/resolver"
 	"pcode/pkg/util"
 )
 
-func graphqlHandler() gin.HandlerFunc {
+func graphqlHandler(w http.ResponseWriter, r *http.Request) {
 	c := generated.Config{Resolvers: &resolver.Resolver{}}
 	h := handler.NewDefaultServer(generated.NewExecutableSchema(c))
 
-	return func(c *gin.Context) {
-		h.ServeHTTP(c.Writer, c.Request)
-	}
+	h.ServeHTTP(w, r)
 }
 
-// Defining the Playground handler
-func playgroundHandler() gin.HandlerFunc {
+func playgroundHandler(w http.ResponseWriter, r *http.Request) {
 	h := playground.Handler("GraphQL", "/query")
-
-	return func(c *gin.Context) {
-		h.ServeHTTP(c.Writer, c.Request)
-	}
+	h.ServeHTTP(w, r)
 }
 
 func main() {
@@ -37,12 +32,10 @@ func main() {
 	}
 	defer db.Close()
 
-	// Setting up Gin
-	r := gin.Default()
-
-	r.POST("/query", graphqlHandler())
+	http.HandleFunc("/query", graphqlHandler)
 	if !util.IsProd() {
-		r.GET("/", playgroundHandler())
+		http.HandleFunc("/", playgroundHandler)
 	}
-	r.Run(":8080")
+
+	log.Fatalln(http.ListenAndServe(":8080", nil))
 }
