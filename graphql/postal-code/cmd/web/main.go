@@ -20,8 +20,14 @@ func graphqlHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func playgroundHandler(w http.ResponseWriter, r *http.Request) {
-	h := playground.Handler("GraphQL", "/query")
-	h.ServeHTTP(w, r)
+	switch r.Method {
+	case http.MethodGet:
+		h := playground.Handler("GraphQL", "/query")
+		h.ServeHTTP(w, r)
+	default:
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(fmt.Sprintf("Not support http method %s", r.Method)))
+	}
 }
 
 func main() {
