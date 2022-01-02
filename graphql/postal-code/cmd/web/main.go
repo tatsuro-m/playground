@@ -6,6 +6,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"log"
 	"net/http"
+	"os"
 	"pcode/pkg/db"
 	"pcode/pkg/graph/generated"
 	"pcode/pkg/graph/resolver"
@@ -36,7 +37,7 @@ func playgroundHandler(w http.ResponseWriter, r *http.Request) {
 
 func loggingReq(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(time.Now())
+		fmt.Fprintf(os.Stdout, "[%s][%s]: %s\n", r.Method, r.URL, time.Now().Format(time.RFC3339))
 		next.ServeHTTP(w, r)
 	}
 }
