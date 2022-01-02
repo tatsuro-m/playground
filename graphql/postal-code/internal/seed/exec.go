@@ -34,7 +34,7 @@ var rowMunicipality *models.Municipality
 var rowTownArea *models.TownArea
 
 func Exec() error {
-	utf8F, _ := os.OpenFile(getCSVPath(), os.O_RDONLY, 0666)
+	utf8F, _ := os.Open(getCSVPath())
 	defer utf8F.Close()
 	r := csv.NewReader(transform.NewReader(utf8F, japanese.ShiftJIS.NewDecoder()))
 
