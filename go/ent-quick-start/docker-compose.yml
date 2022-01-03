@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  db:
+    platform: linux/x86_64
+    image: mysql:8.0.26
+    environment:
+      MYSQL_DATABASE: dev
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_HOST: "%"
+    volumes:
+      - ./tmp/db/data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./:/go/src/app
+    tty: true
+    stdin_open: true
+    environment:
+      DB_HOST: db
+      DB_NAME: dev
+      DB_USER: root
+      DB_PASSWORD: password
+      BOIL_DEBUG: true
+      APP_ENV: dev
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
