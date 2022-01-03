@@ -7,11 +7,11 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	client, err := ent.Open("sqlite3", "file:ent?mode=memory&cache=shared&_fk=1")
+	client, err := ent.Open("mysql", getDSN())
 	if err != nil {
 		log.Fatalf("failed opening connection to sqlite: %v", err)
 	}
@@ -36,4 +36,13 @@ func CreateUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
 	}
 	log.Println("user was created: ", u)
 	return u, nil
+}
+
+func getDSN() string {
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+
+	return fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?parseTime=true",
+		dbUser, dbPassword, os.Getenv("DB_HOST"), dbName)
 }
