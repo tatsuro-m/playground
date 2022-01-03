@@ -37,7 +37,21 @@ func main() {
 
 	//CreateGraph(ctx, client)
 	//QueryGithub(ctx, client)
-	QueryArielCars(ctx, client)
+	//QueryArielCars(ctx, client)
+	QueryGroupWithUsers(ctx, client)
+}
+
+func QueryGroupWithUsers(ctx context.Context, client *ent.Client) error {
+	groups, err := client.Group.
+		Query().
+		Where(group.HasUsers()).
+		All(ctx)
+	if err != nil {
+		return fmt.Errorf("failed getting groups: %w", err)
+	}
+	log.Println("groups returned:", groups)
+	// Output: (Group(Name=GitHub), Group(Name=GitLab),)
+	return nil
 }
 
 func QueryArielCars(ctx context.Context, client *ent.Client) error {
