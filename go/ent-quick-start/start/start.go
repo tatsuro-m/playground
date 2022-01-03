@@ -17,12 +17,14 @@ func main() {
 	}
 	defer client.Close()
 
-	// DDL を標準出力にも吐き出してみる
+	// DDL を標準出力に吐き出してみる
 	client.Schema.WriteTo(context.Background(), os.Stdout)
 	// オートマイグレーションツールを実行する
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
+
+	CreateUser(context.Background(), client)
 }
 
 func CreateUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
