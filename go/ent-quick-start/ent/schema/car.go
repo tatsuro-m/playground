@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -20,5 +21,14 @@ func (Car) Fields() []ent.Field {
 
 // Edges of the Car.
 func (Car) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		// `User`型の "owner "という逆エッジを作成し
+		// `Ref`メソッドを使って明示的に
+		// (Userスキーマの)"cars"エッジを参照します
+		edge.From("owner", User.Type).
+			Ref("cars").
+			// エッジをuniqueに設定することで、
+			// 1台の車は1人のオーナーのみが所有することを保証する
+			Unique(),
+	}
 }
