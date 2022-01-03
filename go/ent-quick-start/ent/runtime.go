@@ -28,8 +28,4 @@ func init() {
 	userDescName := userFields[1].Descriptor()
 	// user.DefaultName holds the default value on creation for the name field.
 	user.DefaultName = userDescName.Default.(string)
-	// userDescActive is the schema descriptor for active field.
-	userDescActive := userFields[2].Descriptor()
-	// user.DefaultActive holds the default value on creation for the active field.
-	user.DefaultActive = userDescActive.Default.(bool)
 }
