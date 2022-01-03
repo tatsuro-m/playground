@@ -5,6 +5,7 @@ package ent
 import (
 	"entqs/ent/group"
 	"entqs/ent/schema"
+	"entqs/ent/test"
 	"entqs/ent/user"
 )
 
@@ -18,6 +19,12 @@ func init() {
 	groupDescName := groupFields[0].Descriptor()
 	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	group.NameValidator = groupDescName.Validators[0].(func(string) error)
+	testFields := schema.Test{}.Fields()
+	_ = testFields
+	// testDescTest is the schema descriptor for test field.
+	testDescTest := testFields[0].Descriptor()
+	// test.DefaultTest holds the default value on creation for the test field.
+	test.DefaultTest = testDescTest.Default.(bool)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescAge is the schema descriptor for age field.
@@ -28,4 +35,8 @@ func init() {
 	userDescName := userFields[1].Descriptor()
 	// user.DefaultName holds the default value on creation for the name field.
 	user.DefaultName = userDescName.Default.(string)
+	// userDescActive is the schema descriptor for active field.
+	userDescActive := userFields[2].Descriptor()
+	// user.DefaultActive holds the default value on creation for the active field.
+	user.DefaultActive = userDescActive.Default.(bool)
 }

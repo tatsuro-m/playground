@@ -1,6 +1,9 @@
 package schema
 
-import "entgo.io/ent"
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/schema/field"
+)
 
 // Test holds the schema definition for the Test entity.
 type Test struct {
@@ -9,7 +12,9 @@ type Test struct {
 
 // Fields of the Test.
 func (Test) Fields() []ent.Field {
-	return nil
+	return []ent.Field{
+		field.Bool("test").Default(true),
+	}
 }
 
 // Edges of the Test.

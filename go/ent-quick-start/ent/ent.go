@@ -5,6 +5,7 @@ package ent
 import (
 	"entqs/ent/car"
 	"entqs/ent/group"
+	"entqs/ent/test"
 	"entqs/ent/user"
 	"errors"
 	"fmt"
@@ -33,6 +34,7 @@ func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		car.Table:   car.ValidColumn,
 		group.Table: group.ValidColumn,
+		test.Table:  test.ValidColumn,
 		user.Table:  user.ValidColumn,
 	}
 	check, ok := checks[table]

@@ -40,11 +40,23 @@ var (
 		Columns:    GroupsColumns,
 		PrimaryKey: []*schema.Column{GroupsColumns[0]},
 	}
+	// TestsColumns holds the columns for the "tests" table.
+	TestsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "test", Type: field.TypeBool, Default: true},
+	}
+	// TestsTable holds the schema information for the "tests" table.
+	TestsTable = &schema.Table{
+		Name:       "tests",
+		Columns:    TestsColumns,
+		PrimaryKey: []*schema.Column{TestsColumns[0]},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "age", Type: field.TypeInt},
 		{Name: "name", Type: field.TypeString, Default: "unknown"},
+		{Name: "active", Type: field.TypeBool, Default: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -81,6 +93,7 @@ var (
 	Tables = []*schema.Table{
 		CarsTable,
 		GroupsTable,
+		TestsTable,
 		UsersTable,
 		GroupUsersTable,
 	}
