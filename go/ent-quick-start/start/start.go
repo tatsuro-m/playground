@@ -5,6 +5,7 @@ import (
 	"entqs/ent"
 	"entqs/ent/car"
 	"entqs/ent/group"
+	"entqs/ent/migrate"
 	"entqs/ent/user"
 	"fmt"
 	"log"
@@ -21,11 +22,10 @@ func main() {
 	}
 	defer client.Close()
 
-	// DDL を標準出力に吐き出してみる
 	ctx := context.Background()
-	client.Schema.WriteTo(ctx, os.Stdout)
+	client.Schema.WriteTo(ctx, os.Stdout, migrate.WithDropColumn(true), migrate.WithDropIndex(true))
 	// オートマイグレーションツールを実行する
-	if err := client.Schema.Create(ctx); err != nil {
+	if err := client.Schema.Create(ctx, migrate.WithDropIndex(true), migrate.WithDropColumn(true)); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
@@ -38,7 +38,7 @@ func main() {
 	//CreateGraph(ctx, client)
 	//QueryGithub(ctx, client)
 	//QueryArielCars(ctx, client)
-	QueryGroupWithUsers(ctx, client)
+	//QueryGroupWithUsers(ctx, client)
 }
 
 func QueryGroupWithUsers(ctx context.Context, client *ent.Client) error {
