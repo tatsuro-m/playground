@@ -16,7 +16,7 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("age").Positive(),
 		field.String("name").Default("unknown"),
-		field.Bool("active").Default(true).Optional(),
+		field.Bool("active").Default(true),
 	}
 }
 

@@ -314,20 +314,6 @@ func ActiveNEQ(v bool) predicate.User {
 	})
 }
 
-// ActiveIsNil applies the IsNil predicate on the "active" field.
-func ActiveIsNil() predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldActive)))
-	})
-}
-
-// ActiveNotNil applies the NotNil predicate on the "active" field.
-func ActiveNotNil() predicate.User {
-	return predicate.User(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldActive)))
-	})
-}
-
 // HasCars applies the HasEdge predicate on the "cars" edge.
 func HasCars() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

@@ -45,7 +45,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "age", Type: field.TypeInt},
 		{Name: "name", Type: field.TypeString, Default: "unknown"},
-		{Name: "active", Type: field.TypeBool, Nullable: true, Default: true},
+		{Name: "active", Type: field.TypeBool, Default: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

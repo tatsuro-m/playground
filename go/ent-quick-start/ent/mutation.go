@@ -1053,22 +1053,9 @@ func (m *UserMutation) OldActive(ctx context.Context) (v bool, err error) {
 	return oldValue.Active, nil
 }
 
-// ClearActive clears the value of the "active" field.
-func (m *UserMutation) ClearActive() {
-	m.active = nil
-	m.clearedFields[user.FieldActive] = struct{}{}
-}
-
-// ActiveCleared returns if the "active" field was cleared in this mutation.
-func (m *UserMutation) ActiveCleared() bool {
-	_, ok := m.clearedFields[user.FieldActive]
-	return ok
-}
-
 // ResetActive resets all changes to the "active" field.
 func (m *UserMutation) ResetActive() {
 	m.active = nil
-	delete(m.clearedFields, user.FieldActive)
 }
 
 // AddCarIDs adds the "cars" edge to the Car entity by ids.
@@ -1311,11 +1298,7 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
-	var fields []string
-	if m.FieldCleared(user.FieldActive) {
-		fields = append(fields, user.FieldActive)
-	}
-	return fields
+	return nil
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1328,11 +1311,6 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
-	switch name {
-	case user.FieldActive:
-		m.ClearActive()
-		return nil
-	}
 	return fmt.Errorf("unknown User nullable field %s", name)
 }
 

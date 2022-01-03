@@ -69,12 +69,6 @@ func (uu *UserUpdate) SetNillableActive(b *bool) *UserUpdate {
 	return uu
 }
 
-// ClearActive clears the value of the "active" field.
-func (uu *UserUpdate) ClearActive() *UserUpdate {
-	uu.mutation.ClearActive()
-	return uu
-}
-
 // AddCarIDs adds the "cars" edge to the Car entity by IDs.
 func (uu *UserUpdate) AddCarIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddCarIDs(ids...)
@@ -268,12 +262,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: user.FieldActive,
 		})
 	}
-	if uu.mutation.ActiveCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
-			Column: user.FieldActive,
-		})
-	}
 	if uu.mutation.CarsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -439,12 +427,6 @@ func (uuo *UserUpdateOne) SetNillableActive(b *bool) *UserUpdateOne {
 	if b != nil {
 		uuo.SetActive(*b)
 	}
-	return uuo
-}
-
-// ClearActive clears the value of the "active" field.
-func (uuo *UserUpdateOne) ClearActive() *UserUpdateOne {
-	uuo.mutation.ClearActive()
 	return uuo
 }
 
@@ -662,12 +644,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBool,
 			Value:  value,
-			Column: user.FieldActive,
-		})
-	}
-	if uuo.mutation.ActiveCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeBool,
 			Column: user.FieldActive,
 		})
 	}
