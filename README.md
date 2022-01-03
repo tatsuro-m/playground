@@ -1,2 +1,2 @@
 # Playground
-Repository for various experiments
+Repository for various experiments.
