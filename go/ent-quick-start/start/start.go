@@ -43,6 +43,18 @@ func main() {
 	//QueryGithub(ctx, client)
 	//QueryArielCars(ctx, client)
 	//QueryGroupWithUsers(ctx, client)
+
+	CreateTest(ctx, client)
+}
+
+func CreateTest(ctx context.Context, client *ent.Client) error {
+	t, err := client.Test.Create().SetTest(true).Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("created test: ", t)
+	return nil
 }
 
 func QueryGroupWithUsers(ctx context.Context, client *ent.Client) error {
