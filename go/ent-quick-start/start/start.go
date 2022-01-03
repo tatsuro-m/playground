@@ -29,10 +29,79 @@ func main() {
 	}
 
 	//CreateUser(ctx, client)
-	users, _ := QueryUser(ctx, client)
-	CreateCars(ctx, client)
-	QueryCars(ctx, users[len(users)-1])
-	QueryCarUsers(ctx, users[len(users)-1])
+	//users, _ := QueryUser(ctx, client)
+	//CreateCars(ctx, client)
+	//QueryCars(ctx, users[len(users)-1])
+	//QueryCarUsers(ctx, users[len(users)-1])
+
+	CreateGraph(ctx, client)
+}
+
+func CreateGraph(ctx context.Context, client *ent.Client) error {
+	// 最初に、ユーザーを複数作成する
+	a8m, err := client.User.
+		Create().
+		SetAge(30).
+		SetName("Ariel").
+		Save(ctx)
+	if err != nil {
+		return err
+	}
+	neta, err := client.User.
+		Create().
+		SetAge(28).
+		SetName("Neta").
+		Save(ctx)
+	if err != nil {
+		return err
+	}
+	// その後、車を複数作成し、作成中のユーザーと紐付けます
+	err = client.Car.
+		Create().
+		SetModel("Tesla").
+		SetRegisteredAt(time.Now()). // グラフ内の時間を無視する
+		SetOwner(a8m).               // このグラフをユーザー"Ariel"にアタッチする
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+	err = client.Car.
+		Create().
+		SetModel("Mazda").
+		SetRegisteredAt(time.Now()). // グラフ内の時間を無視する
+		SetOwner(a8m).               // このグラフをユーザー"Ariel"にアタッチする
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+	err = client.Car.
+		Create().
+		SetModel("Ford").
+		SetRegisteredAt(time.Now()). // グラフ内の時間を無視する
+		SetOwner(neta).              // このグラフをユーザー"Neta"にアタッチする
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+	// グループを作って、作成中にユーザーを追加します。
+	err = client.Group.
+		Create().
+		SetName("GitLab").
+		AddUsers(neta, a8m).
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+	err = client.Group.
+		Create().
+		SetName("GitHub").
+		AddUsers(a8m).
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+	log.Println("The graph was created successfully")
+	return nil
 }
 
 func CreateUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
