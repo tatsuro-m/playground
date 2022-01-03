@@ -32,6 +32,7 @@ func main() {
 	users, _ := QueryUser(ctx, client)
 	CreateCars(ctx, client)
 	QueryCars(ctx, users[len(users)-1])
+	QueryCarUsers(ctx, users[len(users)-1])
 }
 
 func CreateUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
@@ -110,6 +111,22 @@ func QueryCars(ctx context.Context, a8m *ent.User) error {
 		return fmt.Errorf("failed querying user cars: %w", err)
 	}
 	log.Println(ford)
+	return nil
+}
+
+func QueryCarUsers(ctx context.Context, a8m *ent.User) error {
+	cars, err := a8m.QueryCars().All(ctx)
+	if err != nil {
+		return fmt.Errorf("failed querying user cars: %w", err)
+	}
+	// 逆エッジを取得する
+	for _, ca := range cars {
+		owner, err := ca.QueryOwner().Only(ctx)
+		if err != nil {
+			return fmt.Errorf("failed querying car %q owner: %w", ca.Model, err)
+		}
+		log.Printf("car %q owner: %q\n", ca.Model, owner.Name)
+	}
 	return nil
 }
 
