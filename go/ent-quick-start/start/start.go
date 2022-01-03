@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"entqs/ent"
+	"entqs/ent/user"
 	"fmt"
 	"log"
 	"os"
@@ -18,13 +19,18 @@ func main() {
 	defer client.Close()
 
 	// DDL を標準出力に吐き出してみる
-	client.Schema.WriteTo(context.Background(), os.Stdout)
+	ctx := context.Background()
+	client.Schema.WriteTo(ctx, os.Stdout)
 	// オートマイグレーションツールを実行する
-	if err := client.Schema.Create(context.Background()); err != nil {
+	if err := client.Schema.Create(ctx); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
 	}
 
-	CreateUser(context.Background(), client)
+	CreateUser(ctx, client)
+	_, err = QueryUser(ctx, client)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func CreateUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
@@ -37,6 +43,17 @@ func CreateUser(ctx context.Context, client *ent.Client) (*ent.User, error) {
 		return nil, fmt.Errorf("failed creating user: %w", err)
 	}
 	log.Println("user was created: ", u)
+	return u, nil
+}
+
+func QueryUser(ctx context.Context, client *ent.Client) ([]*ent.User, error) {
+	u, err := client.User.
+		Query().
+		Where(user.Name("a8m")).All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed querying user: %w", err)
+	}
+	fmt.Println("user returned: ", u)
 	return u, nil
 }
 
