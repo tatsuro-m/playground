@@ -36,7 +36,35 @@ func main() {
 	//QueryCarUsers(ctx, users[len(users)-1])
 
 	//CreateGraph(ctx, client)
-	QueryGithub(ctx, client)
+	//QueryGithub(ctx, client)
+	QueryArielCars(ctx, client)
+}
+
+func QueryArielCars(ctx context.Context, client *ent.Client) error {
+	// 前の手順でユーザー "Ariel" を入手する
+	a8m := client.User.
+		Query().
+		Where(
+			user.HasCars(),
+			user.Name("Ariel"),
+		).
+		OnlyX(ctx)
+	cars, err := a8m. // a8mが接続されているグループを取得する
+				QueryGroups(). // (Group(Name=GitHub), Group(Name=GitLab),)
+				QueryUsers().  // (User(Name=Ariel, Age=30), User(Name=Neta, Age=28),)
+				QueryCars().   //
+				Where(         //
+			car.Not( //  NetaとArielの車を取得する
+				car.Model("Mazda"), //  しかし、"Mazda"というモデル名の車は除外する
+			), //
+		). //
+		All(ctx)
+	if err != nil {
+		return fmt.Errorf("failed getting cars: %w", err)
+	}
+	log.Println("cars returned:", cars)
+	// Output: (Car(Model=Tesla, RegisteredAt=<Time>), Car(Model=Ford, RegisteredAt=<Time>),)
+	return nil
 }
 
 func QueryGithub(ctx context.Context, client *ent.Client) error {
