@@ -21,6 +21,7 @@ require (
 	cloud.google.com/go/firestore v1.5.0 // indirect
 	cloud.google.com/go/storage v1.10.0 // indirect
 	github.com/agnivade/levenshtein v1.1.0 // indirect
+	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
@@ -35,14 +36,20 @@ require (
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
+	github.com/matryer/moq v0.0.0-20200106131100-75d0ddfc0007 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/russross/blackfriday/v2 v2.0.1 // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
+	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
+	github.com/urfave/cli/v2 v2.1.1 // indirect
+	github.com/vektah/dataloaden v0.2.1-0.20190515034641-a19b9a6e7c9e // indirect
 	github.com/volatiletech/inflect v0.0.1 // indirect
 	go.opencensus.io v0.22.5 // indirect
 	golang.org/x/crypto v0.0.0-20210506145944-38f3c27a63bf // indirect
