@@ -34,19 +34,6 @@ services:
     ports:
       - "8080:8080"
 
-  # 本来このサービスは不要だが、 gqlgen を動かす時に必要ライブラリがインストールされておらず失敗する不具合があるので効率化のために設定
-  # generate する時はこのサービスを利用して自動生成を行う
-  gqlgen_generator:
-    build:
-      context: ./graphql
-      dockerfile: docker/Dockerfile
-      target: dev
-    volumes:
-      - ./graphql/:/go/src/app
-    tty: true
-    stdin_open: true
-    command: sh -c "sleep 5 && go get github.com/99designs/gqlgen/cmd@v0.14.0 && go run github.com/99designs/gqlgen && go mod tidy"
-
   migration:
     build:
       context: ./graphql
