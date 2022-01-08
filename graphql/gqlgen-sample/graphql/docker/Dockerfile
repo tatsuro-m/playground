@@ -10,8 +10,10 @@ COPY go.mod go.sum ./
 RUN go mod download
 EXPOSE 8080
 
-CMD ["go", "run", "main.go"]
+RUN go install github.com/volatiletech/sqlboiler/v4@latest && \
+    go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-mysql@latest \
 
+CMD ["go", "run", "main.go"]
 
 FROM golang:1.17.0-alpine3.14 as builder
 
