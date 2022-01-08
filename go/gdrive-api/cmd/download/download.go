@@ -29,12 +29,11 @@ func main() {
 			continue
 		}
 
-		fmt.Printf("%s の parent ids は、 %v\n", f.Name, f.Parents)
+		fmt.Printf("%s の parent id は、 %v\n", f.Name, f.Parents[0])
 		if err := download(ctx, srv, f.Name, f.Id); err != nil {
 			log.Fatalf("Unable to download: %v", err)
 		}
 	}
-
 }
 
 func download(ctx context.Context, srv *drive.Service, name, id string) error {
