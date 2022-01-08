@@ -18,7 +18,7 @@ func main() {
 	}
 
 	r, err := srv.Files.List().PageSize(1000).
-		Fields("files(id, name, mimeType)"). // mimeTypeを追加する
+		Fields("files(id, name, mimeType, parents)").
 		Context(ctx).Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve files: %v", err)
@@ -29,6 +29,7 @@ func main() {
 			continue
 		}
 
+		fmt.Printf("%s の parent ids は、 %v\n", f.Name, f.Parents)
 		if err := download(ctx, srv, f.Name, f.Id); err != nil {
 			log.Fatalf("Unable to download: %v", err)
 		}
