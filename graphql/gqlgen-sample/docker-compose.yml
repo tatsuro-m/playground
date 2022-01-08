@@ -48,17 +48,6 @@ services:
     depends_on:
       - db
 
-  boiler:
-    build:
-      context: ./graphql
-      dockerfile: docker/boiler.dockerfile
-    tty: true
-    stdin_open: true
-    volumes:
-      - ./graphql/:/go/src/app
-    depends_on:
-      - db
-
   test:
     build:
       context: ./graphql
