@@ -1,3 +1,3 @@
 package gen
 
-//go:generate sqlboiler mysql
+//go:generate sqlboiler -c ../sqlboiler.toml -o ../models mysql
