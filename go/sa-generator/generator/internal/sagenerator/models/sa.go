@@ -10,5 +10,12 @@ type Sa struct {
 }
 
 func GetMatrix(c *config.Config) *[]Sa {
-	return nil
+	sas := make([]Sa, 0)
+	for _, env := range c.TargetEnvs {
+		for _, service := range c.TargetServices {
+			sas = append(sas, Sa{Env: env, ServiceName: service})
+		}
+	}
+
+	return &sas
 }
