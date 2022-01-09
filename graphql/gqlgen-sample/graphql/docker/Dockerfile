@@ -11,7 +11,7 @@ RUN go mod download
 EXPOSE 8080
 
 RUN go install github.com/volatiletech/sqlboiler/v4@latest && \
-    go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-mysql@latest \
+    go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-mysql@latest
 
 CMD ["go", "run", "main.go"]
 
