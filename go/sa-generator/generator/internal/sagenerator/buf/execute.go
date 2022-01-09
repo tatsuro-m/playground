@@ -8,7 +8,8 @@ import (
 )
 
 func TmplExec(sa *models.Sa) (*bytes.Buffer, error) {
-	t, err := template.ParseFiles("./tf-tmpl/sa.tf.tmpl")
+	// プログラム起動時のワーキングディレクトリから見ての相対パス
+	t, err := template.ParseFiles("./internal/sagenerator/tf-tmpl/sa.tf.tmpl")
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
