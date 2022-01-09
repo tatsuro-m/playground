@@ -15,11 +15,20 @@ func TestTmplExec(t *testing.T) {
 		{
 			name: "正常にテンプレートが埋め込まれたバイトが返ってくること",
 			in:   &models.Sa{Env: "stg", ServiceName: "a"},
-			out: `
-resource "google_service_account" "a" {
+			out: `resource "google_service_account" "a" {
   account_id   = "${local.app_prefix}-a"
   display_name = "${local.app_prefix}-a"
   description  = "${local.app_prefix} の a で利用する SA"
+}
+`,
+		},
+		{
+			name: "prod, boo でも正常に返ってくること",
+			in:   &models.Sa{Env: "prod", ServiceName: "boo"},
+			out: `resource "google_service_account" "boo" {
+  account_id   = "${local.app_prefix}-boo"
+  display_name = "${local.app_prefix}-boo"
+  description  = "${local.app_prefix} の boo で利用する SA"
 }
 `,
 		},
