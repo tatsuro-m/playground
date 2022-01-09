@@ -9,13 +9,13 @@ type Sa struct {
 	ServiceName string
 }
 
-func GetMatrix(c *config.Config) *[]Sa {
-	sas := make([]Sa, 0)
+func GetMatrix(c *config.Config) []*Sa {
+	sas := make([]*Sa, 0)
 	for _, env := range c.TargetEnvs {
 		for _, service := range c.TargetServices {
-			sas = append(sas, Sa{Env: env, ServiceName: service})
+			sas = append(sas, &Sa{Env: env, ServiceName: service})
 		}
 	}
 
-	return &sas
+	return sas
 }
