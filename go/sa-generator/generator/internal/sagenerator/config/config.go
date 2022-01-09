@@ -1,4 +1,4 @@
-package sagenerator
+package config
 
 type Config struct {
 	TargetEnvs     []string
