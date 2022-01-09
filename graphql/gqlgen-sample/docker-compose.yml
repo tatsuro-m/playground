@@ -20,6 +20,7 @@ services:
       target: dev
     volumes:
       - ./graphql/:/go/src/app
+    command: sh -c "go generate ./... & go run main.go"
     tty: true
     stdin_open: true
     environment:
