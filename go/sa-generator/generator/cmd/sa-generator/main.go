@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "generator/internal/sagenerator"
 
 func main() {
-	fmt.Println("hello generator!")
+	sagenerator.Exec()
 }
