@@ -2,10 +2,11 @@ package sagenerator
 
 import (
 	"fmt"
+	"generator/internal/sagenerator/config"
 	"generator/internal/sagenerator/models"
 )
 
 func Exec() {
-	fmt.Println("hello generator!")
-	models.GetMatrix(getConfig())
+	sas := models.GetMatrix(config.GetConfig())
+	fmt.Println(sas)
 }
