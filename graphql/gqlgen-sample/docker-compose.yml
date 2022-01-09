@@ -45,7 +45,7 @@ services:
       - ./graphql/migrations/:/go/src/app/migrations
     # マイグレーションファイル作成コマンド: migrate create -ext sql -dir migrations/ -seq file_name
     # down バージョン sh -c "migrate -database mysql://root:password@tcp\(db:3306\)/dev -path migrations/ down && migrate -database mysql://root:password@tcp\(db:3306\)/test -path migrations/ down"
-    command: sh -c "migrate -database mysql://root:password@tcp\(db:3306\)/dev -path migrations/ up && migrate -database mysql://root:password@tcp\(db:3306\)/test -path migrations/ up"
+    command: sh ./migrations/migration.sh
     depends_on:
       - db
 
