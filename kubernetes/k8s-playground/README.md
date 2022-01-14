@@ -2,5 +2,9 @@
 Kubernetes の挙動を確認したい時にサクッと立ち上げて使用できる playground 的なクラスターを構築するもの。  
 
 構成は好きに変えて良いが、それなりに実践を意識した構成にする。  
-`kubectl apply` で Pod を操作するのではなく、 ArgoCD にするとか。  
-グローバル static な IP を取得して Ingress に関連付けるとか。
+- `kubectl apply` で Pod を操作するのではなく、 ArgoCD にするとか。  
+- グローバル static な IP を取得して Ingress に関連付ける
+- GCPマネージド証明書を使って SSL 通信
+- １クラスターマルチテナント方式
+
+とか。
