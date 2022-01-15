@@ -12,7 +12,7 @@ resource "google_container_cluster" "main" {
   subnetwork = google_compute_subnetwork.main.id
 
   workload_identity_config {
-    identity_namespace = "${data.google_project.project.project_id}.svc.id.goog"
+    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
   }
 }
 
@@ -25,9 +25,11 @@ resource "google_container_node_pool" "main_default_node_pool" {
   node_config {
     machine_type = "e2-micro"
     preemptible  = false
+    disk_size_gb = 10
+    disk_type    = "pd-standard"
 
     workload_metadata_config {
-      node_metadata = "GKE_METADATA_SERVER"
+      mode = "GKE_METADATA"
     }
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.

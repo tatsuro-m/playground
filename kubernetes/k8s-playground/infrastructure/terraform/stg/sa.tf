@@ -4,13 +4,15 @@ resource "google_service_account" "default_node_pool" {
 }
 
 resource "google_project_iam_member" "bind1" {
-  role   = "roles/artifactregistry.reader"
-  member = "serviceAccount:${google_service_account.default_node_pool.email}"
+  project = data.google_project.project.number
+  role    = "roles/artifactregistry.reader"
+  member  = "serviceAccount:${google_service_account.default_node_pool.email}"
 }
 
 resource "google_project_iam_member" "bind2" {
-  role   = "roles/logging.logWriter"
-  member = "serviceAccount:${google_service_account.default_node_pool.email}"
+  project = data.google_project.project.number
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.default_node_pool.email}"
 }
 
 resource "google_service_account" "workload_identity" {
