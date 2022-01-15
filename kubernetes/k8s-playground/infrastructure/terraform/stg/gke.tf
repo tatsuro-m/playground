@@ -11,6 +11,7 @@ resource "google_container_cluster" "main" {
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   remove_default_node_pool = true
+  initial_node_count       = 1
 
   network    = google_compute_network.main_vpc.id
   subnetwork = google_compute_subnetwork.main.id
