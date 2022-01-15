@@ -1,7 +1,5 @@
 resource "google_container_cluster" "main" {
-  #  環境ごとにクラスターを分けるのではなく、 namespace で分離する方法を取る
-  #  実プロダクトなら、おそらくクラスターレベルで分けるのが良い
-  name     = "${local.app_name}-main"
+  name     = "${local.app_prefix}-main"
   location = "asia-northeast1-a"
   node_locations = [
     "asia-northeast1-b"
