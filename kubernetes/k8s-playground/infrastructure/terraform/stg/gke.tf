@@ -1,12 +1,14 @@
 resource "google_container_cluster" "main" {
   name     = "${local.app_prefix}-main"
-  location = var.default_region
+  location = "asia-northeast1-a"
+  node_locations = [
+    "asia-northeast1-b"
+  ]
 
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   remove_default_node_pool = true
-  initial_node_count       = 1
 
   network    = google_compute_network.main_vpc.id
   subnetwork = google_compute_subnetwork.main.id
@@ -18,7 +20,6 @@ resource "google_container_cluster" "main" {
 
 resource "google_container_node_pool" "main_default_node_pool" {
   name       = "${local.app_prefix}-default"
-  location   = var.default_region
   cluster    = google_container_cluster.main.name
   node_count = 1
 
