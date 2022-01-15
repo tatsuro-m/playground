@@ -20,7 +20,7 @@ resource "google_container_cluster" "main" {
 }
 
 resource "google_container_node_pool" "main_default_node_pool" {
-  name       = "${local.app_name}-default"
+  name       = "${local.app_prefix}-default"
   cluster    = google_container_cluster.main.name
   node_count = 1
 
