@@ -11,7 +11,7 @@ type hello struct {
 }
 
 func (h *hello) Render() app.UI {
-	return app.H1().Text("Hello World!")
+	return app.H1().Text("Hello WASM!!")
 }
 
 func main() {
