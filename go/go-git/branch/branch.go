@@ -12,7 +12,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Print(branches)
+	log.Println(branches)
 
 	tree, err := repo.Worktree()
 	log.Print(tree)
