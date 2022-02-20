@@ -21,7 +21,7 @@ func main() {
 
 	http.Handle("/", &app.Handler{
 		Name:        "Hello",
-		Description: "An Hello World! example",
+		Description: "An Hello World! example！",
 	})
 
 	err := http.ListenAndServe(":8080", nil)
