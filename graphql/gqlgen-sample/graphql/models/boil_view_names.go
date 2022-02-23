@@ -3,14 +3,5 @@
 
 package models
 
-var TableNames = struct {
-	PostTags string
-	Posts    string
-	Tags     string
-	Users    string
-}{
-	PostTags: "post_tags",
-	Posts:    "posts",
-	Tags:     "tags",
-	Users:    "users",
-}
+var ViewNames = struct {
+}{}
