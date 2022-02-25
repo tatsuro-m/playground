@@ -12,8 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const defaultPort = "8080"
-
 func graphqlHandler() gin.HandlerFunc {
 	c := generated.Config{Resolvers: &resolver.Resolver{}}
 	graph.ConfigDirectives(&c)
