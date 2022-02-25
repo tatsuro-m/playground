@@ -44,14 +44,6 @@ func main() {
 	r.Use(middleware.Authentication())
 	r.Use(middleware.GinContextToContext())
 
-	r.GET("/ping", func(c *gin.Context) {
-		u := middleware.ForContext(c)
-
-		c.JSON(200, gin.H{
-			"user": u,
-		})
-	})
-
 	r.POST("/query", graphqlHandler())
 	r.GET("/", playgroundHandler())
 	r.Run(":8080")
