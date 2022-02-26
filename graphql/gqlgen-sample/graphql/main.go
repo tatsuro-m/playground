@@ -32,7 +32,11 @@ func playgroundHandler() gin.HandlerFunc {
 }
 
 func main() {
-	db.Init()
+	err := db.Init()
+	if err != nil {
+		panic(err)
+	}
+
 	defer db.Close()
 
 	// Setting up Gin
