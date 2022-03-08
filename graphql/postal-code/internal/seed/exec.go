@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"github.com/volatiletech/sqlboiler/v4/boil"
-	"github.com/volatiletech/sqlboiler/v4/queries"
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/transform"
 	"io"
@@ -13,7 +12,6 @@ import (
 	"path/filepath"
 	"pcode/pkg/db"
 	"pcode/pkg/models"
-	"pcode/pkg/service/address"
 	"pcode/pkg/util"
 )
 
@@ -65,10 +63,6 @@ WHERE code = ? AND p.name = ? AND m.name = ? AND t.name = ?;
 `
 
 func insertData() {
-	if checkAlreadyExits() {
-		return
-	}
-
 	err := insertPrefecture()
 	if err != nil {
 		fmt.Println(err)
@@ -172,15 +166,6 @@ func insertPostalCode() error {
 	}
 
 	return nil
-}
-
-func checkAlreadyExits() bool {
-	ctx := context.Background()
-	d := db.GetDB()
-
-	var a address.Address
-	queries.Raw(q, r.postalCode, r.prefectureName, r.municipalityName, r.townAreaName).Bind(ctx, d, &a)
-	return a.PostalCode.Code == r.postalCode && a.Prefecture.Name == r.prefectureName && a.Municipality.Name == r.municipalityName && a.TownArea.Name == r.townAreaName
 }
 
 func getCSVPath() string {
