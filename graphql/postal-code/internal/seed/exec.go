@@ -15,7 +15,7 @@ import (
 	"pcode/pkg/util"
 )
 
-type Record struct {
+type Row struct {
 	postalCode           string
 	prefectureName       string
 	municipalityName     string
@@ -25,7 +25,16 @@ type Record struct {
 	townAreaNameRome     string
 }
 
-var r Record
+// DB PK を保存する構造体
+type Pk struct {
+	prefecture   string
+	municipality string
+	townArea     string
+}
+
+var previousRow Row
+var currentRow Row
+var pk Pk
 
 var rowPrefecture *models.Prefecture
 var rowMunicipality *models.Municipality
@@ -37,7 +46,7 @@ func Exec() error {
 	r := csv.NewReader(transform.NewReader(utf8F, japanese.ShiftJIS.NewDecoder()))
 
 	for {
-		record, err := r.Read()
+		row, err := r.Read()
 		if err == io.EOF {
 			break
 		}
@@ -46,8 +55,9 @@ func Exec() error {
 			return err
 		}
 
-		assignCSVDataToVar(record)
+		assignCSVDataToCurrentRow(row)
 		insertData()
+		assignCSVDataToPreviousRow(row)
 	}
 
 	return nil
@@ -92,9 +102,9 @@ func insertPrefecture() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	prefecture, err := models.Prefectures(models.PrefectureWhere.Name.EQ(r.prefectureName)).One(ctx, d)
+	prefecture, err := models.Prefectures(models.PrefectureWhere.Name.EQ(currentRow.prefectureName)).One(ctx, d)
 	if err != nil {
-		p := models.Prefecture{Name: r.prefectureName, NameRoma: r.prefectureNameRome}
+		p := models.Prefecture{Name: currentRow.prefectureName, NameRoma: currentRow.prefectureNameRome}
 		err = p.Insert(context.Background(), db.GetDB(), boil.Infer())
 		if err != nil {
 			return err
@@ -112,9 +122,9 @@ func insertMunicipality() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	municipality, err := models.Municipalities(models.MunicipalityWhere.Name.EQ(r.municipalityName), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
+	municipality, err := models.Municipalities(models.MunicipalityWhere.Name.EQ(currentRow.municipalityName), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
 	if err != nil {
-		m := models.Municipality{Name: r.municipalityName, NameRoma: r.municipalityNameRome, PrefectureID: rowPrefecture.ID}
+		m := models.Municipality{Name: currentRow.municipalityName, NameRoma: currentRow.municipalityNameRome, PrefectureID: rowPrefecture.ID}
 		err = m.Insert(ctx, d, boil.Infer())
 		if err != nil {
 			return err
@@ -132,10 +142,10 @@ func insertTownArea() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	townArea := models.TownArea{Name: r.townAreaName, NameRoma: r.townAreaNameRome, MunicipalityID: rowMunicipality.ID}
+	townArea := models.TownArea{Name: currentRow.townAreaName, NameRoma: currentRow.townAreaNameRome, MunicipalityID: rowMunicipality.ID}
 	err := townArea.Insert(ctx, d, boil.Infer())
 	if err != nil {
-		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(r.townAreaName), models.TownAreaWhere.NameRoma.EQ(r.townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
+		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(currentRow.townAreaName), models.TownAreaWhere.NameRoma.EQ(currentRow.townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
 		if err != nil {
 			return err
 		}
@@ -151,10 +161,10 @@ func insertPostalCode() error {
 	ctx := context.Background()
 	d := db.GetDB()
 
-	pCode := models.PostalCode{Code: r.postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: rowTownArea.ID}
+	pCode := models.PostalCode{Code: currentRow.postalCode, PrefectureID: rowPrefecture.ID, MunicipalityID: rowMunicipality.ID, TownAreaID: rowTownArea.ID}
 	err := pCode.Insert(ctx, d, boil.Infer())
 	if err != nil {
-		_, err := models.PostalCodes(models.PostalCodeWhere.Code.EQ(r.postalCode),
+		_, err := models.PostalCodes(models.PostalCodeWhere.Code.EQ(currentRow.postalCode),
 			models.PostalCodeWhere.PrefectureID.EQ(rowPrefecture.ID),
 			models.PostalCodeWhere.MunicipalityID.EQ(rowMunicipality.ID),
 			models.PostalCodeWhere.TownAreaID.EQ(rowTownArea.ID),
@@ -181,13 +191,24 @@ func getCSVPath() string {
 	return p
 }
 
-func assignCSVDataToVar(csvRow []string) {
+func assignCSVDataToCurrentRow(csvRow []string) {
 	// ex. []string{"8180025", "福岡県", "筑紫野市", "筑紫", "FUKUOKA KEN", "CHIKUSHINO SHI", "CHIKUSHI"}
-	r.postalCode = csvRow[0]
-	r.prefectureName = csvRow[1]
-	r.municipalityName = csvRow[2]
-	r.townAreaName = csvRow[3]
-	r.prefectureNameRome = csvRow[4]
-	r.municipalityNameRome = csvRow[5]
-	r.townAreaNameRome = csvRow[6]
+	currentRow.postalCode = csvRow[0]
+	currentRow.prefectureName = csvRow[1]
+	currentRow.municipalityName = csvRow[2]
+	currentRow.townAreaName = csvRow[3]
+	currentRow.prefectureNameRome = csvRow[4]
+	currentRow.municipalityNameRome = csvRow[5]
+	currentRow.townAreaNameRome = csvRow[6]
+}
+
+func assignCSVDataToPreviousRow(csvRow []string) {
+	// ex. []string{"8180025", "福岡県", "筑紫野市", "筑紫", "FUKUOKA KEN", "CHIKUSHINO SHI", "CHIKUSHI"}
+	previousRow.postalCode = csvRow[0]
+	previousRow.prefectureName = csvRow[1]
+	previousRow.municipalityName = csvRow[2]
+	previousRow.townAreaName = csvRow[3]
+	previousRow.prefectureNameRome = csvRow[4]
+	previousRow.municipalityNameRome = csvRow[5]
+	previousRow.townAreaNameRome = csvRow[6]
 }
