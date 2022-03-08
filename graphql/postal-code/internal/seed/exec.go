@@ -108,18 +108,6 @@ func insertPrefecture() (int, error) {
 	d := db.GetDB()
 
 	id := 0
-	if previousRow.prefectureName != currentRow.prefectureName {
-		// 一致していない時だけ INSERT する
-		p := models.Prefecture{Name: currentRow.prefectureName, NameRoma: currentRow.prefectureNameRome}
-		err := p.Insert(context.Background(), db.GetDB(), boil.Infer())
-		if err != nil {
-			return 0, err
-		}
-
-		id = p.ID
-		rowPrefecture = &p
-	}
-
 	prefecture, err := models.Prefectures(models.PrefectureWhere.Name.EQ(currentRow.prefectureName)).One(ctx, d)
 	if err != nil {
 		p := models.Prefecture{Name: currentRow.prefectureName, NameRoma: currentRow.prefectureNameRome}
