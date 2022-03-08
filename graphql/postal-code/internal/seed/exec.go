@@ -27,9 +27,9 @@ type Row struct {
 
 // DB PK を保存する構造体
 type Pk struct {
-	prefecture   string
-	municipality string
-	townArea     string
+	prefecture   int
+	municipality int
+	townArea     int
 }
 
 var previousRow Row
@@ -73,88 +73,103 @@ WHERE code = ? AND p.name = ? AND m.name = ? AND t.name = ?;
 `
 
 func insertData() {
-	err := insertPrefecture()
+	id, err := insertPrefecture()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	pk.prefecture = id
 
-	err = insertMunicipality()
+	id, err = insertMunicipality()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	pk.municipality = id
 
-	err = insertTownArea()
+	id, err = insertTownArea()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	pk.townArea = id
 
 	err = insertPostalCode()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+
+	fmt.Println("pk: ", pk)
 }
 
-func insertPrefecture() error {
+func insertPrefecture() (int, error) {
 	ctx := context.Background()
 	d := db.GetDB()
 
+	id := 0
 	prefecture, err := models.Prefectures(models.PrefectureWhere.Name.EQ(currentRow.prefectureName)).One(ctx, d)
 	if err != nil {
 		p := models.Prefecture{Name: currentRow.prefectureName, NameRoma: currentRow.prefectureNameRome}
 		err = p.Insert(context.Background(), db.GetDB(), boil.Infer())
 		if err != nil {
-			return err
+			return 0, err
 		}
 
+		id = p.ID
 		rowPrefecture = &p
 	} else {
+		id = prefecture.ID
 		rowPrefecture = prefecture
 	}
 
-	return nil
+	return id, nil
 }
 
-func insertMunicipality() error {
+func insertMunicipality() (int, error) {
 	ctx := context.Background()
 	d := db.GetDB()
 
+	id := 0
 	municipality, err := models.Municipalities(models.MunicipalityWhere.Name.EQ(currentRow.municipalityName), models.MunicipalityWhere.PrefectureID.EQ(rowPrefecture.ID)).One(ctx, d)
 	if err != nil {
 		m := models.Municipality{Name: currentRow.municipalityName, NameRoma: currentRow.municipalityNameRome, PrefectureID: rowPrefecture.ID}
 		err = m.Insert(ctx, d, boil.Infer())
 		if err != nil {
-			return err
+			return 0, err
 		}
 
+		id = m.ID
 		rowMunicipality = &m
 	} else {
+		id = municipality.ID
 		rowMunicipality = municipality
 	}
 
-	return nil
+	return id, nil
 }
 
-func insertTownArea() error {
+func insertTownArea() (int, error) {
 	ctx := context.Background()
 	d := db.GetDB()
 
+	id := 0
 	townArea := models.TownArea{Name: currentRow.townAreaName, NameRoma: currentRow.townAreaNameRome, MunicipalityID: rowMunicipality.ID}
 	err := townArea.Insert(ctx, d, boil.Infer())
 	if err != nil {
 		t, err := models.TownAreas(models.TownAreaWhere.Name.EQ(currentRow.townAreaName), models.TownAreaWhere.NameRoma.EQ(currentRow.townAreaNameRome), models.TownAreaWhere.MunicipalityID.EQ(rowMunicipality.ID)).One(ctx, d)
 		if err != nil {
-			return err
+			return 0, err
 		}
+
+		id = t.ID
 		rowTownArea = t
 	} else {
+		id = townArea.ID
 		rowTownArea = &townArea
 	}
 
-	return nil
+	return id, nil
 }
 
 func insertPostalCode() error {
