@@ -8,18 +8,18 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: dev
     volumes:
-      - ./graphql/tmp/db/data:/var/lib/mysql
-      - ./graphql/initdb:/docker-entrypoint-initdb.d
+      - ./tmp/db/data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
 
   server:
     build:
-      context: ./graphql
+      context: .
       dockerfile: docker/Dockerfile
       target: dev
     volumes:
-      - ./graphql/:/go/src/app
+      - ./:/go/src/app
     command: sh -c "go generate ./... & go run main.go"
     tty: true
     stdin_open: true
@@ -37,12 +37,12 @@ services:
 
   migration:
     build:
-      context: ./graphql
+      context: .
       dockerfile: docker/migration.dockerfile
     tty: true
     stdin_open: true
     volumes:
-      - ./graphql/migrations/:/go/src/app/migrations
+      - ./migrations/:/go/src/app/migrations
     # マイグレーションファイル作成コマンド: migrate create -ext sql -dir migrations/ -seq file_name
     command: sh ./migrations/migration.sh
     depends_on:
@@ -50,7 +50,7 @@ services:
 
   test:
     build:
-      context: ./graphql
+      context: .
       dockerfile: docker/test.dockerfile
     environment:
       DB_HOST: db
@@ -62,6 +62,6 @@ services:
     stdin_open: true
     command: go test -v ./...
     volumes:
-      - ./graphql/:/go/src/app
+      - ./:/go/src/app
     depends_on:
       - db
