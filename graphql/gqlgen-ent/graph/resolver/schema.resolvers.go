@@ -1,4 +1,4 @@
-package graph
+package resolver
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
@@ -7,14 +7,14 @@ import (
 	"context"
 	"fmt"
 	"gqlgent/graph/generated"
-	"gqlgent/graph/model"
+	gqlmodel "gqlgent/graph/model"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+func (r *mutationResolver) CreateTodo(ctx context.Context, input gqlmodel.NewTodo) (*gqlmodel.Todo, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
+func (r *queryResolver) Todos(ctx context.Context) ([]*gqlmodel.Todo, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
