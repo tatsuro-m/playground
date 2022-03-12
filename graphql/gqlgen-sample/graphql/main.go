@@ -2,32 +2,35 @@ package main
 
 import (
 	"graphql/db"
-	"graphql/graph"
 	"graphql/graph/generated"
 	"graphql/graph/resolver"
 	"graphql/middleware"
+	"graphql/util"
+	"log"
+	"net/http"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/gin-gonic/gin"
 )
 
-func graphqlHandler() gin.HandlerFunc {
-	c := generated.Config{Resolvers: &resolver.Resolver{}}
-	graph.ConfigDirectives(&c)
-	h := handler.NewDefaultServer(generated.NewExecutableSchema(c))
-
-	return func(c *gin.Context) {
-		h.ServeHTTP(c.Writer, c.Request)
+func graphqlHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPost:
+		c := generated.Config{Resolvers: &resolver.Resolver{}}
+		h := handler.NewDefaultServer(generated.NewExecutableSchema(c))
+		h.ServeHTTP(w, r)
+	default:
+		util.NotSupportHTTPMethod(w, r)
 	}
 }
 
-// Defining the Playground handler
-func playgroundHandler() gin.HandlerFunc {
-	h := playground.Handler("GraphQL", "/query")
-
-	return func(c *gin.Context) {
-		h.ServeHTTP(c.Writer, c.Request)
+func playgroundHandler(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		h := playground.Handler("GraphQL", "/query")
+		h.ServeHTTP(w, r)
+	default:
+		util.NotSupportHTTPMethod(w, r)
 	}
 }
 
@@ -36,17 +39,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
 	defer db.Close()
 
-	// Setting up Gin
-	r := gin.Default()
+	http.HandleFunc("/query", middleware.LoggingReq(graphqlHandler))
+	http.HandleFunc("/", middleware.LoggingReq(playgroundHandler))
+	log.Fatalln(http.ListenAndServe(":8080", nil))
 
-	r.Use(middleware.Cors())
-	r.Use(middleware.Authentication())
-	r.Use(middleware.GinContextToContext())
+	//r.Use(middleware.Cors())
+	//r.Use(middleware.Authentication())
+	//r.Use(middleware.GinContextToContext())
 
-	r.POST("/query", graphqlHandler())
-	r.GET("/", playgroundHandler())
-	r.Run(":8080")
 }
