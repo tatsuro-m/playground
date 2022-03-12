@@ -1,25 +1,19 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
-	"time"
-
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 )
 
-func Cors() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		f := cors.New(cors.Config{
-			AllowOrigins:     []string{"http://localhost:3000"},
-			AllowMethods:     []string{http.MethodGet, http.MethodPost},
-			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-			ExposeHeaders:    []string{"*"},
-			AllowCredentials: true,
-			MaxAge:           12 * time.Hour,
-		})
-		f(c)
+func Cors(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		next.ServeHTTP(w, r)
 
-		c.Next()
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Expose-Headers", "*")
+		w.Header().Set("Access-Control-Max-Age", fmt.Sprintf("%d", 12*60))
 	}
 }
