@@ -6,6 +6,7 @@ require (
 	firebase.google.com/go/v4 v4.6.0
 	github.com/99designs/gqlgen v0.15.1
 	github.com/friendsofgo/errors v0.9.2
+	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/sebdah/goldie/v2 v2.5.3

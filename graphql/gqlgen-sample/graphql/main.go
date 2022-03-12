@@ -41,13 +41,11 @@ func main() {
 	}
 	defer db.Close()
 
-	http.HandleFunc("/query",
-		middleware.LoggingReq(middleware.Cors(graphqlHandler)))
-	http.HandleFunc("/",
-		middleware.LoggingReq(middleware.Cors(playgroundHandler)))
-
+	http.HandleFunc("/query", middleware.LoggingReq(graphqlHandler))
+	http.HandleFunc("/", middleware.LoggingReq(playgroundHandler))
 	log.Fatalln(http.ListenAndServe(":8080", nil))
 
+	//r.Use(middleware.Cors())
 	//r.Use(middleware.Authentication())
 	//r.Use(middleware.GinContextToContext())
 
