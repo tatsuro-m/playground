@@ -1,8 +1,8 @@
 package main
 
 import (
-	"gqlgent/graph/generated"
-	"gqlgent/graph/resolver"
+	"gqlgent/internal/web/graph/generated"
+	"gqlgent/internal/web/graph/resolver"
 	"log"
 	"net/http"
 	"os"
