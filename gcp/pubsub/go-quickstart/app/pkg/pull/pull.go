@@ -27,7 +27,7 @@ func PullMsgs(w io.Writer, projectID, subID string) error {
 	err = sub.Receive(cctx, func(ctx context.Context, msg *pubsub.Message) {
 		mu.Lock()
 		defer mu.Unlock()
-		fmt.Fprintf(w, "Got message: %q\n  Attribute: %s\n", string(msg.Data), msg.Attributes)
+		fmt.Fprintf(w, "Got message: %q\n  -> Attribute: %s\n", string(msg.Data), msg.Attributes)
 		msg.Ack()
 		received++
 		if received == 10 {
