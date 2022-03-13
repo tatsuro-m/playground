@@ -19,3 +19,7 @@ resource "google_project_iam_member" "mt_pubsub_admin" {
   role    = "roles/pubsub.admin"
   member  = "serviceAccount:${google_service_account.main_topic.email}"
 }
+
+resource "google_service_account" "gcf1" {
+  account_id   = "${local.app_prefix}-gcf-runtime"
+}
