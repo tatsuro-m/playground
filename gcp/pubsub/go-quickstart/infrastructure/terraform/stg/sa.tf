@@ -13,3 +13,9 @@ resource "local_file" main_topic_key {
   file_permission      = "0600"
   directory_permission = "0755"
 }
+
+resource "google_project_iam_member" "mt_pubsub_admin" {
+  project = "playground-318023"
+  role    = "roles/pubsub.admin"
+  member  = "serviceAccount:${google_service_account.main_topic.email}"
+}
