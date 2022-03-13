@@ -47,12 +47,12 @@ resource "google_pubsub_schema" "main" {
   "name" : "Avro",
   "fields" : [
     {
-      "name" : "StringField",
+      "name" : "title",
       "type" : "string"
     },
     {
-      "name" : "IntField",
-      "type" : "int"
+      "name" : "origin",
+      "type" : "string"
     }
   ]
 }

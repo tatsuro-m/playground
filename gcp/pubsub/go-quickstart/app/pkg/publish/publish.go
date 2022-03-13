@@ -8,6 +8,11 @@ import (
 	"cloud.google.com/go/pubsub"
 )
 
+type MessageSchema struct {
+	Title  string `json:"title"`
+	Origin string `json:"origin"`
+}
+
 func Publish(w io.Writer, projectID, topicID, msg string) error {
 	// projectID := "my-project-id"
 	// topicID := "my-topic"
