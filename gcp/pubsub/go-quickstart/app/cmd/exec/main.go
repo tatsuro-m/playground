@@ -5,7 +5,6 @@ import (
 	"os"
 	"pubsubgo/pkg/publish"
 	"pubsubgo/pkg/pull"
-	"strconv"
 )
 
 func main() {
@@ -14,7 +13,7 @@ func main() {
 	topicID := "stg-pubsub-go-my-topic"
 
 	for i := 0; i < 11; i++ {
-		err := publish.Publish(os.Stdout, projectID, topicID, fmt.Sprintf("test message %d", i), "key"+strconv.Itoa(i))
+		err := publish.Publish(os.Stdout, projectID, topicID, fmt.Sprintf("test message %d", i))
 		if err != nil {
 			fmt.Println(err)
 			return

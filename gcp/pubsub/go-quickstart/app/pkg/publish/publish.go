@@ -8,7 +8,7 @@ import (
 	"cloud.google.com/go/pubsub"
 )
 
-func Publish(w io.Writer, projectID, topicID, msg, orderingKey string) error {
+func Publish(w io.Writer, projectID, topicID, msg string) error {
 	// projectID := "my-project-id"
 	// topicID := "my-topic"
 	// msg := "Hello World"
@@ -20,7 +20,6 @@ func Publish(w io.Writer, projectID, topicID, msg, orderingKey string) error {
 	defer client.Close()
 
 	t := client.Topic(topicID)
-	t.EnableMessageOrdering = true
 	result := t.Publish(ctx, &pubsub.Message{
 		Data: []byte(msg),
 		Attributes: map[string]string{
@@ -28,7 +27,6 @@ func Publish(w io.Writer, projectID, topicID, msg, orderingKey string) error {
 			"user":   "gcp",
 			"test":   "true",
 		},
-		OrderingKey: orderingKey,
 	})
 	// Block until the result is returned and a server-generated
 	// ID is returned for the published message.
