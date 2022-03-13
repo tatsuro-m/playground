@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"pubsubgo/pkg/publish"
+	"pubsubgo/pkg/pull"
 )
 
 func main() {
@@ -11,8 +12,18 @@ func main() {
 	projectID := "playground-318023"
 	topicID := "stg-pubsub-go-my-topic"
 
-	err := publish.Publish(os.Stdout, projectID, topicID, "test message!!")
+	for i := 0; i < 11; i++ {
+		err := publish.Publish(os.Stdout, projectID, topicID, fmt.Sprintf("test message %d", i))
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+
+	subID := "stg-pubsub-go-my-topic-sub1"
+	err := pull.PullMsgs(os.Stdout, projectID, subID)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 }
