@@ -22,6 +22,11 @@ func Publish(w io.Writer, projectID, topicID, msg string) error {
 	t := client.Topic(topicID)
 	result := t.Publish(ctx, &pubsub.Message{
 		Data: []byte(msg),
+		Attributes: map[string]string{
+			"origin": "golang",
+			"user":   "gcp",
+			"test":   "true",
+		},
 	})
 	// Block until the result is returned and a server-generated
 	// ID is returned for the published message.
