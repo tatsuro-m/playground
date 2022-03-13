@@ -26,7 +26,8 @@ import (
 // See the documentation for more details:
 // https://cloud.google.com/pubsub/docs/reference/rest/v1/PubsubMessage
 type PubSubMessage struct {
-	Data []byte `json:"data"`
+	Data       []byte            `json:"data"`
+	Attributes map[string]string `json:"attributes"`
 }
 
 // HelloPubSub consumes a Pub/Sub message.
@@ -35,7 +36,8 @@ func HelloPubSub(ctx context.Context, m PubSubMessage) error {
 	if name == "" {
 		name = "World"
 	}
-	log.Printf("Hello, %s!", name)
+	log.Printf("message attributes: %v\n", m.Attributes)
+	log.Printf("Hello, %s!\n", name)
 	return nil
 }
 
