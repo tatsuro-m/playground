@@ -1,5 +1,9 @@
 resource "google_pubsub_topic" "my_topic" {
   name = "${local.app_prefix}-my-topic"
+  schema_settings {
+    schema = google_pubsub_schema.main.id
+    encoding = "JSON"
+  }
 
   labels = {
     foo = "bar"
@@ -30,5 +34,27 @@ resource "google_pubsub_subscription" "my_topic_sub1" {
     minimum_backoff = "10s"
   }
 
-  enable_message_ordering    = false
+  enable_message_ordering = false
+}
+
+resource "google_pubsub_schema" "main" {
+  name = "${local.app_prefix}-main"
+  type = "AVRO"
+
+  definition = <<EOF
+{
+  "type" : "record",
+  "name" : "Avro",
+  "fields" : [
+    {
+      "name" : "StringField",
+      "type" : "string"
+    },
+    {
+      "name" : "IntField",
+      "type" : "int"
+    }
+  ]
+}
+EOF
 }
