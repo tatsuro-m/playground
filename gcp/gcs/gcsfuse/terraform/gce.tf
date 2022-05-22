@@ -6,7 +6,7 @@ resource "google_compute_instance_template" "tpl" {
   disk {
     source_image = "centos-cloud/centos-7"
     auto_delete  = true
-    disk_size_gb = 35
+    disk_size_gb = 30
     boot         = true
   }
 
