@@ -1,6 +1,6 @@
 resource "google_compute_instance_template" "tpl" {
   name         = "${local.app_prefix}-template"
-  machine_type = "e2-small"
+  machine_type = "e2-medium"
   region       = "asia-northeast1"
 
   disk {
@@ -24,30 +24,7 @@ resource "google_compute_instance_template" "tpl" {
   }
 
   can_ip_forward = false
-
-  metadata_startup_script = <<-EOT
-#!/bin/bash
-
-sudo tee /etc/yum.repos.d/gcsfuse.repo > /dev/null <<EOF
-[gcsfuse]
-name=gcsfuse (packages.cloud.google.com)
-baseurl=https://packages.cloud.google.com/yum/repos/gcsfuse-el7-x86_64
-enabled=1
-gpgcheck=1
-repo_gpgcheck=0
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-EOF
-
-sudo yum install gcsfuse -y
-
-mkdir -p /root/gcsfuse/test1
-gcsfuse stg-gcsfuse-test1 /root/gcsfuse/test1
-
-mkdir -p /root/gcsfuse/test2
-gcsfuse stg-gcsfuse-test2 /root/gcsfuse/test2
-
-EOT
+  metadata_startup_script = file("./script/start.sh")
 
   service_account {
     scopes = ["cloud-platform"]
@@ -60,7 +37,7 @@ resource "google_compute_instance_from_template" "test1" {
   source_instance_template = google_compute_instance_template.tpl.id
 }
 
-resource "google_compute_instance_from_template" "test2" {
-  name                     = "${local.app_prefix}-test2"
-  source_instance_template = google_compute_instance_template.tpl.id
-}
+#resource "google_compute_instance_from_template" "test2" {
+#  name                     = "${local.app_prefix}-test2"
+#  source_instance_template = google_compute_instance_template.tpl.id
+#}
