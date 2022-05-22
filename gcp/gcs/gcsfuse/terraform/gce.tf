@@ -59,3 +59,8 @@ resource "google_compute_instance_from_template" "test1" {
   name                     = "${local.app_prefix}-test1"
   source_instance_template = google_compute_instance_template.tpl.id
 }
+
+resource "google_compute_instance_from_template" "test2" {
+  name                     = "${local.app_prefix}-test2"
+  source_instance_template = google_compute_instance_template.tpl.id
+}
