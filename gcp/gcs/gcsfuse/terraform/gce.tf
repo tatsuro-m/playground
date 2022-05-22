@@ -1,6 +1,6 @@
 resource "google_compute_instance_template" "tpl" {
   name         = "${local.app_prefix}-template"
-  machine_type = "e2-medium"
+  machine_type = "e2-small"
   region       = "asia-northeast1"
 
   disk {
@@ -37,7 +37,7 @@ resource "google_compute_instance_from_template" "test1" {
   source_instance_template = google_compute_instance_template.tpl.id
 }
 
-#resource "google_compute_instance_from_template" "test2" {
-#  name                     = "${local.app_prefix}-test2"
-#  source_instance_template = google_compute_instance_template.tpl.id
-#}
+resource "google_compute_instance_from_template" "test2" {
+  name                     = "${local.app_prefix}-test2"
+  source_instance_template = google_compute_instance_template.tpl.id
+}
