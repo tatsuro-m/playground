@@ -13,6 +13,12 @@ resource "google_compute_instance_template" "tpl" {
     boot         = true
   }
 
+  disk {
+    source = google_compute_disk.data.name
+    auto_delete = true
+    boot = false
+  }
+
   network_interface {
     network    = google_compute_network.vpc_network.id
     subnetwork = google_compute_subnetwork.private_1.id
@@ -33,6 +39,14 @@ resource "google_compute_instance_template" "tpl" {
     email  = google_service_account.main.email
   }
 }
+
+resource "google_compute_disk" "data" {
+  name  = "${local.app_prefix}-data"
+  size  = 10
+  type  = "pd-ssd"
+  zone  = "asia-northeast1-b"
+}
+
 
 resource "google_compute_instance_from_template" "test1" {
   name                     = "${local.app_prefix}-test1"
