@@ -32,7 +32,7 @@ resource "google_compute_instance_template" "tpl" {
     test = "true"
   }
 
-  metadata_startup_script = file("./script/start.sh")
+  metadata_startup_script = file("./script/startup-script.sh")
 
   service_account {
     scopes = ["cloud-platform"]
