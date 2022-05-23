@@ -1,18 +1,21 @@
 resource "google_compute_instance_template" "tpl" {
   name         = "${local.app_prefix}-template"
-  machine_type = "e2-small"
+  machine_type = "e2-medium"
   region       = "asia-northeast1"
+  tags         = [
+    "es"
+  ]
 
   disk {
-    source_image = "centos-cloud/centos-7"
+    source_image = "ubuntu-os-cloud/ubuntu-2204-lts"
     auto_delete  = true
     disk_size_gb = 30
     boot         = true
   }
 
   network_interface {
-    network    = "default"
-    subnetwork = "default"
+    network    = google_compute_network.vpc_network.id
+    subnetwork = google_compute_subnetwork.private_1.id
 
     access_config {
       network_tier = "PREMIUM"
@@ -23,12 +26,11 @@ resource "google_compute_instance_template" "tpl" {
     test = "true"
   }
 
-  can_ip_forward = false
   metadata_startup_script = file("./script/start.sh")
 
   service_account {
     scopes = ["cloud-platform"]
-    email = google_service_account.main.email
+    email  = google_service_account.main.email
   }
 }
 
@@ -37,7 +39,7 @@ resource "google_compute_instance_from_template" "test1" {
   source_instance_template = google_compute_instance_template.tpl.id
 }
 
-resource "google_compute_instance_from_template" "test2" {
-  name                     = "${local.app_prefix}-test2"
-  source_instance_template = google_compute_instance_template.tpl.id
-}
+#resource "google_compute_instance_from_template" "test2" {
+#  name                     = "${local.app_prefix}-test2"
+#  source_instance_template = google_compute_instance_template.tpl.id
+#}
