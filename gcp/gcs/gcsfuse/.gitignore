@@ -35,3 +35,4 @@ terraform.rc
 
 terraform/output/secrets/**
 terraform/ssh/
+Dockerfile
