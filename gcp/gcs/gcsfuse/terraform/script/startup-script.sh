@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# メタデータサーバーから、初回のみ必要なスクリプトを書き込む。
+# メタデータサーバーから、ファイルを取得する。
 curl -X GET --location "http://metadata.google.internal/computeMetadata/v1/instance/attributes/init-script" -H "Metadata-Flavor: Google" > /root/init.sh
+curl -X GET --location "http://metadata.google.internal/computeMetadata/v1/instance/attributes/es-config" -H "Metadata-Flavor: Google" > /usr/share/elasticsearch/config/elasticsearch.yml
 
 sudo mount -o discard,defaults /dev/sdb /usr/share/elasticsearch/data
 sudo -u elasticsearch bash -c '

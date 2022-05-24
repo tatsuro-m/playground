@@ -29,8 +29,8 @@ resource "google_compute_instance_template" "tpl" {
   }
 
   metadata = {
-    test = "true"
     init-script = file("./script/init-script.sh")
+    es-config = file("./script/elasticsearch.yml")
   }
 
   metadata_startup_script = file("./script/startup-script.sh")
@@ -52,6 +52,16 @@ resource "google_compute_disk" "data" {
 resource "google_compute_instance_from_template" "test1" {
   name                     = "${local.app_prefix}-test1"
   source_instance_template = google_compute_instance_template.tpl.id
+
+  network_interface {
+    network    = google_compute_network.vpc_network.id
+    subnetwork = google_compute_subnetwork.private_1.id
+    network_ip = "10.0.0.12"
+
+    access_config {
+      network_tier = "PREMIUM"
+    }
+  }
 }
 
 #resource "google_compute_instance_from_template" "test2" {

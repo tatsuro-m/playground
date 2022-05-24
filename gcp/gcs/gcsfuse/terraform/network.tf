@@ -16,7 +16,7 @@ resource "google_compute_firewall" "allow" {
 
   allow {
     protocol = "tcp"
-    ports    = ["80", "443", "22"]
+    ports    = ["80", "443", "22", "9200"]
   }
 
   target_tags = [

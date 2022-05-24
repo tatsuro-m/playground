@@ -19,14 +19,6 @@ EOF
 
 sudo yum install gcsfuse -y
 
-# 外部永続ディスクのマウント設定
-sudo lsblk # デバイス名を表示するが、今回なら「sdb」。
-yes | sudo mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/sdb
-sudo mkdir -p /usr/share/elasticsearch/data
-sudo mount -o discard,defaults /dev/sdb /usr/share/elasticsearch/data
-sudo chmod a+w /usr/share/elasticsearch/data
-
-
 # elasticsearch の設定
 sudo yum install java-1.8.0-openjdk -y
 curl -L -o /root/elasticsearch-5.3.2.tar.gz https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.3.2.tar.gz
@@ -39,3 +31,10 @@ yes | /usr/share/elasticsearch/bin/elasticsearch-plugin install repository-gcs
 mkdir -p /usr/share/elasticsearch/config/user_dictionary
 
 chmod 777 -R /usr/share/elasticsearch
+
+# 外部永続ディスクのマウント設定
+sudo lsblk # デバイス名を表示するが、今回なら「sdb」。
+yes | sudo mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/sdb
+sudo mkdir -p /usr/share/elasticsearch/data
+sudo mount -o discard,defaults /dev/sdb /usr/share/elasticsearch/data
+sudo chmod a+w /usr/share/elasticsearch/data
