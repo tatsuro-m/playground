@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # このスクリプトは、 root ユーザとして SSH 接続して実行する。
+set -eu
 
 useradd -m elasticsearch
 passwd -u -f elasticsearch
