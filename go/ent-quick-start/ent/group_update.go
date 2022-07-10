@@ -6,7 +6,6 @@ import (
 	"context"
 	"entqs/ent/group"
 	"entqs/ent/predicate"
-	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
@@ -102,7 +101,7 @@ func (gu *GroupUpdate) ExecX(ctx context.Context) {
 func (gu *GroupUpdate) check() error {
 	if v, ok := gu.mutation.Name(); ok {
 		if err := group.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Group.name": %w`, err)}
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
 	return nil
@@ -234,7 +233,7 @@ func (guo *GroupUpdateOne) ExecX(ctx context.Context) {
 func (guo *GroupUpdateOne) check() error {
 	if v, ok := guo.mutation.Name(); ok {
 		if err := group.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Group.name": %w`, err)}
+			return &ValidationError{Name: "name", err: fmt.Errorf("ent: validator failed for field \"name\": %w", err)}
 		}
 	}
 	return nil
@@ -253,7 +252,7 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 	}
 	id, ok := guo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Group.id" for update`)}
+		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Group.ID for update")}
 	}
 	_spec.Node.ID.Value = id
 	if fields := guo.fields; len(fields) > 0 {

@@ -6,7 +6,6 @@ import (
 	"context"
 	"entqs/ent/car"
 	"entqs/ent/predicate"
-	"errors"
 	"fmt"
 	"time"
 
@@ -117,7 +116,7 @@ func (cu *CarUpdate) ExecX(ctx context.Context) {
 func (cu *CarUpdate) check() error {
 	if v, ok := cu.mutation.Model(); ok {
 		if err := car.ModelValidator(v); err != nil {
-			return &ValidationError{Name: "model", err: fmt.Errorf(`ent: validator failed for field "Car.model": %w`, err)}
+			return &ValidationError{Name: "model", err: fmt.Errorf("ent: validator failed for field \"model\": %w", err)}
 		}
 	}
 	return nil
@@ -270,7 +269,7 @@ func (cuo *CarUpdateOne) ExecX(ctx context.Context) {
 func (cuo *CarUpdateOne) check() error {
 	if v, ok := cuo.mutation.Model(); ok {
 		if err := car.ModelValidator(v); err != nil {
-			return &ValidationError{Name: "model", err: fmt.Errorf(`ent: validator failed for field "Car.model": %w`, err)}
+			return &ValidationError{Name: "model", err: fmt.Errorf("ent: validator failed for field \"model\": %w", err)}
 		}
 	}
 	return nil
@@ -289,7 +288,7 @@ func (cuo *CarUpdateOne) sqlSave(ctx context.Context) (_node *Car, err error) {
 	}
 	id, ok := cuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Car.id" for update`)}
+		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Car.ID for update")}
 	}
 	_spec.Node.ID.Value = id
 	if fields := cuo.fields; len(fields) > 0 {

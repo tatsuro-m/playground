@@ -15,6 +15,7 @@ import (
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // Client is the client that holds all ent builders.
@@ -97,7 +98,6 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:    ctx,
 		config: cfg,
 		Car:    NewCarClient(cfg),
 		Group:  NewGroupClient(cfg),
@@ -399,6 +399,22 @@ func (c *UserClient) GetX(ctx context.Context, id int) *User {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryCars queries the cars edge of a User.
+func (c *UserClient) QueryCars(u *User) *CarQuery {
+	query := &CarQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(car.Table, car.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.CarsTable, user.CarsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

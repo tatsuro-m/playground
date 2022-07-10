@@ -24,6 +24,7 @@ type CarQuery struct {
 	order      []OrderFunc
 	fields     []string
 	predicates []predicate.Car
+	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -106,7 +107,7 @@ func (cq *CarQuery) FirstIDX(ctx context.Context) int {
 }
 
 // Only returns a single Car entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one Car entity is found.
+// Returns a *NotSingularError when exactly one Car entity is not found.
 // Returns a *NotFoundError when no Car entities are found.
 func (cq *CarQuery) Only(ctx context.Context) (*Car, error) {
 	nodes, err := cq.Limit(2).All(ctx)
@@ -133,7 +134,7 @@ func (cq *CarQuery) OnlyX(ctx context.Context) *Car {
 }
 
 // OnlyID is like Only, but returns the only Car ID in the query.
-// Returns a *NotSingularError when more than one Car ID is found.
+// Returns a *NotSingularError when exactly one Car ID is not found.
 // Returns a *NotFoundError when no entities are found.
 func (cq *CarQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
@@ -242,9 +243,8 @@ func (cq *CarQuery) Clone() *CarQuery {
 		order:      append([]OrderFunc{}, cq.order...),
 		predicates: append([]predicate.Car{}, cq.predicates...),
 		// clone intermediate query.
-		sql:    cq.sql.Clone(),
-		path:   cq.path,
-		unique: cq.unique,
+		sql:  cq.sql.Clone(),
+		path: cq.path,
 	}
 }
 
@@ -311,9 +311,13 @@ func (cq *CarQuery) prepareQuery(ctx context.Context) error {
 
 func (cq *CarQuery) sqlAll(ctx context.Context) ([]*Car, error) {
 	var (
-		nodes = []*Car{}
-		_spec = cq.querySpec()
+		nodes   = []*Car{}
+		withFKs = cq.withFKs
+		_spec   = cq.querySpec()
 	)
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, car.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]interface{}, error) {
 		node := &Car{config: cq.config}
 		nodes = append(nodes, node)
@@ -337,10 +341,6 @@ func (cq *CarQuery) sqlAll(ctx context.Context) ([]*Car, error) {
 
 func (cq *CarQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := cq.querySpec()
-	_spec.Node.Columns = cq.fields
-	if len(cq.fields) > 0 {
-		_spec.Unique = cq.unique != nil && *cq.unique
-	}
 	return sqlgraph.CountNodes(ctx, cq.driver, _spec)
 }
 
@@ -411,9 +411,6 @@ func (cq *CarQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if cq.sql != nil {
 		selector = cq.sql
 		selector.Select(selector.Columns(columns...)...)
-	}
-	if cq.unique != nil && *cq.unique {
-		selector.Distinct()
 	}
 	for _, p := range cq.predicates {
 		p(selector)
@@ -693,7 +690,9 @@ func (cgb *CarGroupBy) sqlQuery() *sql.Selector {
 		for _, f := range cgb.fields {
 			columns = append(columns, selector.C(f))
 		}
-		columns = append(columns, aggregation...)
+		for _, c := range aggregation {
+			columns = append(columns, c)
+		}
 		selector.Select(columns...)
 	}
 	return selector.GroupBy(selector.Columns(cgb.fields...)...)

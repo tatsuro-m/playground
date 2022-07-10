@@ -120,15 +120,15 @@ func (cc *CarCreate) defaults() {
 // check runs all checks and user-defined validators on the builder.
 func (cc *CarCreate) check() error {
 	if _, ok := cc.mutation.Model(); !ok {
-		return &ValidationError{Name: "model", err: errors.New(`ent: missing required field "Car.model"`)}
+		return &ValidationError{Name: "model", err: errors.New(`ent: missing required field "model"`)}
 	}
 	if v, ok := cc.mutation.Model(); ok {
 		if err := car.ModelValidator(v); err != nil {
-			return &ValidationError{Name: "model", err: fmt.Errorf(`ent: validator failed for field "Car.model": %w`, err)}
+			return &ValidationError{Name: "model", err: fmt.Errorf(`ent: validator failed for field "model": %w`, err)}
 		}
 	}
 	if _, ok := cc.mutation.RegisteredAt(); !ok {
-		return &ValidationError{Name: "registered_at", err: errors.New(`ent: missing required field "Car.registered_at"`)}
+		return &ValidationError{Name: "registered_at", err: errors.New(`ent: missing required field "registered_at"`)}
 	}
 	return nil
 }
