@@ -16,7 +16,7 @@ import (
 type Car struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int `json:"id,omitempty"`
+	ID uuid.UUID `json:"id,omitempty"`
 	// Model holds the value of the "model" field.
 	// モデル名
 	Model string `json:"model,omitempty"`
@@ -30,12 +30,12 @@ func (*Car) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case car.FieldID:
-			values[i] = new(sql.NullInt64)
 		case car.FieldModel:
 			values[i] = new(sql.NullString)
 		case car.FieldRegisteredAt:
 			values[i] = new(sql.NullTime)
+		case car.FieldID:
+			values[i] = new(uuid.UUID)
 		case car.ForeignKeys[0]: // user_cars
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
@@ -54,11 +54,11 @@ func (c *Car) assignValues(columns []string, values []interface{}) error {
 	for i := range columns {
 		switch columns[i] {
 		case car.FieldID:
-			value, ok := values[i].(*sql.NullInt64)
-			if !ok {
-				return fmt.Errorf("unexpected type %T for field id", value)
+			if value, ok := values[i].(*uuid.UUID); !ok {
+				return fmt.Errorf("unexpected type %T for field id", values[i])
+			} else if value != nil {
+				c.ID = *value
 			}
-			c.ID = int(value.Int64)
 		case car.FieldModel:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field model", values[i])

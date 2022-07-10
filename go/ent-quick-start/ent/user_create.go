@@ -48,14 +48,14 @@ func (uc *UserCreate) SetID(u uuid.UUID) *UserCreate {
 }
 
 // AddCarIDs adds the "cars" edge to the Car entity by IDs.
-func (uc *UserCreate) AddCarIDs(ids ...int) *UserCreate {
+func (uc *UserCreate) AddCarIDs(ids ...uuid.UUID) *UserCreate {
 	uc.mutation.AddCarIDs(ids...)
 	return uc
 }
 
 // AddCars adds the "cars" edges to the Car entity.
 func (uc *UserCreate) AddCars(c ...*Car) *UserCreate {
-	ids := make([]int, len(c))
+	ids := make([]uuid.UUID, len(c))
 	for i := range c {
 		ids[i] = c[i].ID
 	}
@@ -213,7 +213,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{
-					Type:   field.TypeInt,
+					Type:   field.TypeUUID,
 					Column: car.FieldID,
 				},
 			},

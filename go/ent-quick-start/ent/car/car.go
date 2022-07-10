@@ -4,6 +4,8 @@ package car
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -52,4 +54,6 @@ var (
 	ModelValidator func(string) error
 	// DefaultRegisteredAt holds the default value on creation for the "registered_at" field.
 	DefaultRegisteredAt func() time.Time
+	// DefaultID holds the default value on creation for the "id" field.
+	DefaultID func() uuid.UUID
 )
