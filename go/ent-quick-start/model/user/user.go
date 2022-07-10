@@ -5,7 +5,6 @@ import (
 	"entqs/ent"
 	"entqs/entutil"
 	"fmt"
-	"log"
 )
 
 func Create(u *ent.User, ctx context.Context) (*ent.User, error) {
@@ -13,7 +12,6 @@ func Create(u *ent.User, ctx context.Context) (*ent.User, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed creating user: %v", err)
 	}
-	log.Println("user was created: ", user)
 
 	return user, nil
 }
