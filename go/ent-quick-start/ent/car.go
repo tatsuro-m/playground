@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/google/uuid"
 )
 
 // Car is the model entity for the Car schema.
@@ -21,7 +22,7 @@ type Car struct {
 	Model string `json:"model,omitempty"`
 	// RegisteredAt holds the value of the "registered_at" field.
 	RegisteredAt time.Time `json:"registered_at,omitempty"`
-	user_cars    *int
+	user_cars    *uuid.UUID
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -36,7 +37,7 @@ func (*Car) scanValues(columns []string) ([]interface{}, error) {
 		case car.FieldRegisteredAt:
 			values[i] = new(sql.NullTime)
 		case car.ForeignKeys[0]: // user_cars
-			values[i] = new(sql.NullInt64)
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type Car", columns[i])
 		}
@@ -71,11 +72,11 @@ func (c *Car) assignValues(columns []string, values []interface{}) error {
 				c.RegisteredAt = value.Time
 			}
 		case car.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_cars", value)
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field user_cars", values[i])
 			} else if value.Valid {
-				c.user_cars = new(int)
-				*c.user_cars = int(value.Int64)
+				c.user_cars = new(uuid.UUID)
+				*c.user_cars = *value.S.(*uuid.UUID)
 			}
 		}
 	}

@@ -13,7 +13,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "model", Type: field.TypeString},
 		{Name: "registered_at", Type: field.TypeTime},
-		{Name: "user_cars", Type: field.TypeInt, Nullable: true},
+		{Name: "user_cars", Type: field.TypeUUID, Nullable: true},
 	}
 	// CarsTable holds the schema information for the "cars" table.
 	CarsTable = &schema.Table{
@@ -42,7 +42,7 @@ var (
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "oid", Type: field.TypeUUID},
 		{Name: "age", Type: field.TypeInt},
 		{Name: "name", Type: field.TypeString, Default: "unknown"},
 	}
