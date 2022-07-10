@@ -59,10 +59,34 @@ func TestCreate(t *testing.T) {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
-				if d := cmp.Diff(got, dd.want, cmpopts.IgnoreFields(*got, "config", "ID")); len(d) != 0 {
+				if d := cmp.Diff(got, dd.want, cmpopts.IgnoreFields(*got, "config", "Edges", "ID")); len(d) != 0 {
 					t.Errorf("test failed want:　%v got: %v\ndiff: %s", dd.want, got, d)
 				}
 			}
 		})
 	}
+}
+
+func TestUserToCarsRelation(t *testing.T) {
+	t.Run("リレーションが正しく定義されていること", func(t *testing.T) {
+		client := thelper.InitEntClient(t)
+		defer client.Close()
+
+		ctx := context.Background()
+		tesla, err := client.Car.Create().SetModel("Tesla").Save(ctx)
+		assert.NoError(t, err)
+		toyota, err := client.Car.Create().SetModel("Toyota").Save(ctx)
+		assert.NoError(t, err)
+
+		u := &ent.User{Age: 22, Name: "test1"}
+		user, err := user.Create(u, ctx)
+		assert.NoError(t, err)
+
+		user, err = client.User.UpdateOne(user).AddCars(tesla, toyota).Save(ctx)
+		assert.NoError(t, err)
+
+		cars, err := user.QueryCars().All(ctx)
+		assert.NoError(t, err)
+		assert.Equal(t, 2, len(cars))
+	})
 }
