@@ -4,6 +4,7 @@ package ent
 
 import (
 	"entqs/ent/car"
+	"entqs/ent/group"
 	"entqs/ent/schema"
 	"entqs/ent/user"
 	"time"
@@ -23,6 +24,12 @@ func init() {
 	carDescRegisteredAt := carFields[1].Descriptor()
 	// car.DefaultRegisteredAt holds the default value on creation for the registered_at field.
 	car.DefaultRegisteredAt = carDescRegisteredAt.Default.(func() time.Time)
+	groupFields := schema.Group{}.Fields()
+	_ = groupFields
+	// groupDescName is the schema descriptor for name field.
+	groupDescName := groupFields[0].Descriptor()
+	// group.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	group.NameValidator = groupDescName.Validators[0].(func(string) error)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescAge is the schema descriptor for age field.
