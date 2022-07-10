@@ -3,14 +3,26 @@
 package ent
 
 import (
+	"entqs/ent/car"
 	"entqs/ent/schema"
 	"entqs/ent/user"
+	"time"
 )
 
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	carFields := schema.Car{}.Fields()
+	_ = carFields
+	// carDescModel is the schema descriptor for model field.
+	carDescModel := carFields[0].Descriptor()
+	// car.ModelValidator is a validator for the "model" field. It is called by the builders before save.
+	car.ModelValidator = carDescModel.Validators[0].(func(string) error)
+	// carDescRegisteredAt is the schema descriptor for registered_at field.
+	carDescRegisteredAt := carFields[1].Descriptor()
+	// car.DefaultRegisteredAt holds the default value on creation for the registered_at field.
+	car.DefaultRegisteredAt = carDescRegisteredAt.Default.(func() time.Time)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescAge is the schema descriptor for age field.
