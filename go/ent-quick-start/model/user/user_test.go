@@ -27,6 +27,24 @@ func TestCreate(t *testing.T) {
 			want:    &ent.User{Age: 22, Name: "test1"},
 			wantErr: false,
 		},
+		{
+			name:    "age を指定しないと作成できないこと",
+			user:    &ent.User{Name: "test1"},
+			want:    &ent.User{Name: "test1"},
+			wantErr: true,
+		},
+		{
+			name:    "age は0だと作成できないこと",
+			user:    &ent.User{Age: 0, Name: "test1"},
+			want:    &ent.User{Age: 0, Name: "test1"},
+			wantErr: true,
+		},
+		{
+			name:    "name は空文字でも良いこと",
+			user:    &ent.User{Age: 22},
+			want:    &ent.User{Age: 22, Name: ""},
+			wantErr: false,
+		},
 	}
 
 	for _, dd := range table {
@@ -41,10 +59,9 @@ func TestCreate(t *testing.T) {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
-			}
-
-			if d := cmp.Diff(got, dd.want, cmpopts.IgnoreFields(*got, "config", "ID")); len(d) != 0 {
-				t.Errorf("test failed want:　%v got: %v\ndiff: %s", dd.want, got, d)
+				if d := cmp.Diff(got, dd.want, cmpopts.IgnoreFields(*got, "config", "ID")); len(d) != 0 {
+					t.Errorf("test failed want:　%v got: %v\ndiff: %s", dd.want, got, d)
+				}
 			}
 		})
 	}
