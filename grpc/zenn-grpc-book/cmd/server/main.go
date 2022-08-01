@@ -9,6 +9,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"time"
 
 	hellopb "mygrpc/pkg/grpc"
 )
@@ -47,6 +48,22 @@ type myServer struct {
 
 func (s *myServer) Hello(ctx context.Context, req *hellopb.HelloRequest) (*hellopb.HelloResponse, error) {
 	return &hellopb.HelloResponse{Message: fmt.Sprintf("Hello %s!", req.GetName())}, nil
+}
+
+func (s *myServer) HelloServerStream(req *hellopb.HelloRequest, stream hellopb.GreetingService_HelloServerStreamServer) error {
+	resCount := 5
+	for i := 0; i < resCount; i++ {
+		err := stream.Send(&hellopb.HelloResponse{
+			Message: fmt.Sprintf("[%d] Hello, %s!", i, req.GetName()),
+		})
+		if err != nil {
+			return err
+		}
+
+		time.Sleep(time.Second * 1)
+	}
+
+	return nil
 }
 
 func NewMyServer() *myServer {
