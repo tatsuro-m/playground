@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"os"
@@ -23,6 +24,9 @@ func main() {
 
 	// ここで明示的に Service を登録する
 	hellopb.RegisterGreetingServiceServer(s, NewMyServer())
+
+	// grpc curl を使うためにこちらが必要
+	reflection.Register(s)
 
 	go func() {
 		log.Printf("start gRPC server port: %v", port)
