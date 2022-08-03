@@ -23,6 +23,13 @@ spec:
             - envoy
             - -c
             - /etc/envoy/envoy.yaml
+          ports:
+            - name: admin
+              containerPort: 9901
+              protocol: TCP
+            - name: proxy
+              containerPort: 10000
+              protocol: TCP
           volumeMounts:
             - mountPath: /etc/envoy/envoy.yaml
               name: envoy-config
