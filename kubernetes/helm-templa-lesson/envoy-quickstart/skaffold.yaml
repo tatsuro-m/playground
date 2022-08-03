@@ -5,6 +5,9 @@ build:
     - image: envoy-proxy
       docker:
         dockerfile: ./docker/envoy/Dockerfile
+    - image: grpc-server
+      docker:
+        dockerfile: ./docker/grpc-server/Dockerfile
   tagPolicy:
     gitCommit:
       variant: AbbrevCommitSha
@@ -18,6 +21,7 @@ deploy:
   kustomize:
     paths:
       - ./kubernetes/envoy
+      - ./kubernetes/grpc-server
 
 profiles:
   - name: envoy-quickstart
@@ -26,7 +30,11 @@ profiles:
         - image: envoy-proxy
           docker:
             dockerfile: ./docker/envoy/Dockerfile
+        - image: grpc-server
+          docker:
+            dockerfile: ./docker/grpc-server/Dockerfile
     deploy:
       kustomize:
         paths:
           - ./kubernetes/envoy
+          - ./kubernetes/grpc-server
