@@ -30,6 +30,9 @@ spec:
             - name: proxy
               containerPort: 10000
               protocol: TCP
+            - name: grpc-server
+              containerPort: 10001
+              protocol: TCP
           volumeMounts:
             - mountPath: /etc/envoy/envoy.yaml
               name: envoy-config

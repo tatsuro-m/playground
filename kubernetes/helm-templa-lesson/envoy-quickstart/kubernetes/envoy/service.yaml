@@ -10,4 +10,6 @@ spec:
       name: admin
     - port: 10000
       name: proxy
+    - port: 10001
+      name: grpc-server
   type: LoadBalancer
