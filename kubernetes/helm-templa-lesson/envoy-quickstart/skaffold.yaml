@@ -1,0 +1,32 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+build:
+  artifacts:
+    - image: envoy-proxy
+      docker:
+        dockerfile: ./docker/envoy/Dockerfile
+  tagPolicy:
+    gitCommit:
+      variant: AbbrevCommitSha
+  local:
+    push: false
+    useBuildkit: true
+    concurrency: 0
+deploy:
+  statusCheckDeadlineSeconds: 300
+  kubeContext: docker-desktop
+  kustomize:
+    paths:
+      - ./kubernetes/envoy
+
+profiles:
+  - name: envoy-quickstart
+    build:
+      artifacts:
+        - image: envoy-proxy
+          docker:
+            dockerfile: ./docker/envoy/Dockerfile
+    deploy:
+      kustomize:
+        paths:
+          - ./kubernetes/envoy

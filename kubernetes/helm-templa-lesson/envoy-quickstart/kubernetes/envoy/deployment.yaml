@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy-proxy
+  labels:
+    app: envoy-proxy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: envoy-proxy
+      labels:
+        app: envoy-proxy
+    spec:
+      containers:
+        - name: envoy-proxy
+          image: envoy-proxy
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: envoy-proxy
