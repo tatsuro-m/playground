@@ -19,6 +19,10 @@ spec:
         - name: envoy-proxy
           image: envoy-proxy
           imagePullPolicy: IfNotPresent
+          command:
+            - envoy
+            - -c
+            - /etc/envoy/envoy.yaml
           volumeMounts:
             - mountPath: /etc/envoy/envoy.yaml
               name: envoy-config
