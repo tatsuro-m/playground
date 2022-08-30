@@ -4,8 +4,3 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - service.yaml
-
-configMapGenerator:
-  - files:
-      - nginx.conf
-    name: nginx-conf

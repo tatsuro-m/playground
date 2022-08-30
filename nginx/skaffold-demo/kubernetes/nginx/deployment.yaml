@@ -16,7 +16,15 @@ spec:
         - name: nginx
           image: my-nginx
           imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /etc/nginx/nginx.conf
+              name: nginx-conf
+              subPath: nginx.conf
       restartPolicy: Always
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-conf
   selector:
     matchLabels:
       app: nginx

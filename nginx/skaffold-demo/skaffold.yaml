@@ -5,6 +5,9 @@ build:
     - image: my-nginx
       docker:
         dockerfile: ./docker/nginx/Dockerfile
+    - image: my-api
+      docker:
+        dockerfile: ./docker/api/Dockerfile
   tagPolicy:
     gitCommit:
       variant: AbbrevCommitSha
@@ -18,6 +21,7 @@ deploy:
   kustomize:
     paths:
       - ./kubernetes/nginx
+      - ./kubernetes/api-one
 
 profiles:
   - name: nginx
@@ -26,6 +30,9 @@ profiles:
         - image: my-nginx
           docker:
             dockerfile: ./docker/nginx/Dockerfile
+        - image: my-api
+          docker:
+            dockerfile: ./docker/api/Dockerfile
     deploy:
       kustomize:
         paths:
