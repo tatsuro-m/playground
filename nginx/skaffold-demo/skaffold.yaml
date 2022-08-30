@@ -22,9 +22,10 @@ deploy:
     paths:
       - ./kubernetes/nginx
       - ./kubernetes/api-one
+      - ./kubernetes/api-two
 
 profiles:
-  - name: nginx
+  - name: nginx-demo
     build:
       artifacts:
         - image: my-nginx
@@ -37,3 +38,5 @@ profiles:
       kustomize:
         paths:
           - ./kubernetes/nginx
+          - ./kubernetes/api-one
+          - ./kubernetes/api-two

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-two
+  labels:
+    app: api-two
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: api-two
+      labels:
+        app: api-two
+    spec:
+      containers:
+        - name: api-two
+          image: my-api
+          env:
+            - name: API_NAME
+              value: api-two
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: api-two
