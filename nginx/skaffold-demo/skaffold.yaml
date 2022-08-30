@@ -1,0 +1,32 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+build:
+  artifacts:
+    - image: my-nginx
+      docker:
+        dockerfile: ./docker/nginx/Dockerfile
+  tagPolicy:
+    gitCommit:
+      variant: AbbrevCommitSha
+  local:
+    push: false
+    useBuildkit: true
+    concurrency: 0
+deploy:
+  statusCheckDeadlineSeconds: 300
+  kubeContext: docker-desktop
+  kustomize:
+    paths:
+      - ./kubernetes/nginx
+
+profiles:
+  - name: nginx
+    build:
+      artifacts:
+        - image: my-nginx
+          docker:
+            dockerfile: ./docker/nginx/Dockerfile
+    deploy:
+      kustomize:
+        paths:
+          - ./kubernetes/nginx
