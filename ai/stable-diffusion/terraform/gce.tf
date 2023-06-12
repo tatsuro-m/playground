@@ -8,13 +8,17 @@ resource "google_compute_instance" "main" {
     device_name = "instance-1"
 
     initialize_params {
-      image = "projects/ml-images/global/images/c0-deeplearning-common-cu113-v20230501-debian-10"
+      image = "projects/ubuntu-os-cloud/global/images/ubuntu-minimal-2204-jammy-v20230605"
       size  = 50
       type  = "pd-balanced"
     }
 
     mode = "READ_WRITE"
   }
+
+  can_ip_forward      = false
+  deletion_protection = false
+  enable_display      = false
 
   scheduling {
     preemptible       = true
