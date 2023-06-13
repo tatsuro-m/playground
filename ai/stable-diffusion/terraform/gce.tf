@@ -2,6 +2,9 @@ resource "google_compute_instance" "main" {
   name         = "${local.app_prefix}-main"
   machine_type = "n1-standard-4"
   zone         = "asia-northeast1-a"
+  tags         = [
+    local.app_prefix
+  ]
 
   boot_disk {
     auto_delete = true
@@ -17,9 +20,9 @@ resource "google_compute_instance" "main" {
   }
 
   scheduling {
-    preemptible       = true
-    automatic_restart = false
-    provisioning_model = "SPOT"
+    preemptible         = true
+    automatic_restart   = false
+    provisioning_model  = "SPOT"
     on_host_maintenance = "TERMINATE"
   }
 
