@@ -21,5 +21,7 @@ git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui
 
 # 適当なモデルをダウンロード
 wget -P ./stable-diffusion-webui/models/Stable-diffusion  https://huggingface.co/sazyou-roukaku/BracingEvoMix/resolve/main/BracingEvoMix_v1.safetensors
+wget -O ./stable-diffusion-webui/models/Stable-diffusion/majicmixRealistic_v6.safetensors https://civitai.com/api/download/models/94640
+
 
 ./stable-diffusion-webui/webui.sh
