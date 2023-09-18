@@ -81,13 +81,10 @@ resource "aws_route_table_association" "public_c" {
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
-#  VPC Endpoint を使って VPC 外部のAWSサービスに接続するようにするので、NAT Gateway との接続は切っておく（Internet Gateway 経由での通信ではなくす）
-#  route {
-#    cidr_block = "0.0.0.0/0"
-#    nat_gateway_id = aws_nat_gateway.main.id
-#  }
-
-  route = []
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.main.id
+  }
 
   tags = {
     Name = "Private Route Table"
