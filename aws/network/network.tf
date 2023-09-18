@@ -117,9 +117,26 @@ resource "aws_security_group" "main" {
 
   #  コンソールから作成するとデフォルトでこの設定が入っているが、terraform 経由の場合は明示しなくてはならない
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_eip" "main" {
+  domain = "vpc"
+
+  tags = {
+    Name = "handson-nat-gateway"
+  }
+}
+
+resource "aws_nat_gateway" "main" {
+  allocation_id = aws_eip.main.id
+  subnet_id     = aws_subnet.public_c.id
+
+  tags = {
+    Name = "handson-nat-gateway"
   }
 }

@@ -28,3 +28,20 @@ resource "aws_iam_instance_profile" "main" {
   name = "main"
   role = aws_iam_role.handson_ssm.id
 }
+
+resource "aws_instance" "internal" {
+  ami           = "ami-0f89bdd365c3d966d"
+  instance_type = "t2.micro"
+  subnet_id     = aws_subnet.private_c.id
+
+  tags = {
+    Name = "internal"
+  }
+
+  associate_public_ip_address = false
+  vpc_security_group_ids      = [
+    aws_security_group.main.id
+  ]
+
+  iam_instance_profile = aws_iam_instance_profile.main.id
+}
