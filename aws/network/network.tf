@@ -134,6 +134,27 @@ resource "aws_security_group" "main" {
   }
 }
 
+resource "aws_security_group" "ssm" {
+  name        = "ssm"
+  description = "ssm"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  #  コンソールから作成するとデフォルトでこの設定が入っているが、terraform 経由の場合は明示しなくてはならない
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_eip" "main" {
   domain = "vpc"
 
@@ -152,5 +173,59 @@ resource "aws_nat_gateway" "main" {
 
   tags = {
     Name = "handson-nat-gateway"
+  }
+}
+
+resource "aws_vpc_endpoint" "ssm" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.ap-northeast-1.ssm"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [
+    aws_security_group.ssm.id
+  ]
+
+  subnet_ids = [
+    aws_subnet.public_c.id
+  ]
+
+  tags = {
+    Name = "ssm"
+  }
+}
+
+resource "aws_vpc_endpoint" "ssm_messages" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.ap-northeast-1.ssmmessages"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [
+    aws_security_group.ssm.id
+  ]
+
+  subnet_ids = [
+    aws_subnet.public_c.id
+  ]
+
+  tags = {
+    Name = "ssm-messages"
+  }
+}
+
+resource "aws_vpc_endpoint" "ec2_messages" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.ap-northeast-1.ec2messages"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [
+    aws_security_group.ssm.id
+  ]
+
+  subnet_ids = [
+    aws_subnet.public_c.id
+  ]
+
+  tags = {
+    Name = "ec2-messages"
   }
 }
