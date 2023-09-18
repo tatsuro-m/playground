@@ -16,8 +16,8 @@ resource "aws_internet_gateway" "gw" {
 }
 
 resource "aws_subnet" "public_a" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.1.0/24"
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.1.0/24"
   availability_zone = "ap-northeast-1a"
 
   tags = {
@@ -26,8 +26,8 @@ resource "aws_subnet" "public_a" {
 }
 
 resource "aws_subnet" "private_a" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.11.0/24"
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.11.0/24"
   availability_zone = "ap-northeast-1a"
 
   tags = {
@@ -36,8 +36,8 @@ resource "aws_subnet" "private_a" {
 }
 
 resource "aws_subnet" "public_c" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.2.0/24"
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.2.0/24"
   availability_zone = "ap-northeast-1c"
 
   tags = {
@@ -46,8 +46,8 @@ resource "aws_subnet" "public_c" {
 }
 
 resource "aws_subnet" "private_c" {
-  vpc_id     = aws_vpc.main.id
-  cidr_block = "10.0.12.0/24"
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.12.0/24"
   availability_zone = "ap-northeast-1c"
 
   tags = {
@@ -94,4 +94,32 @@ resource "aws_route_table_association" "private_a" {
 resource "aws_route_table_association" "private_c" {
   subnet_id      = aws_subnet.private_c.id
   route_table_id = aws_route_table.private.id
+}
+
+resource "aws_security_group" "main" {
+  name        = "launch-wizard-1"
+  description = "launch-wizard-1"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  #  コンソールから作成するとデフォルトでこの設定が入っているが、terraform 経由の場合は明示しなくてはならない
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
 }
