@@ -81,6 +81,11 @@ resource "aws_route_table_association" "public_c" {
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.main.id
+  }
+
   tags = {
     Name = "Private Route Table"
   }
@@ -135,6 +140,10 @@ resource "aws_eip" "main" {
 resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.main.id
   subnet_id     = aws_subnet.public_c.id
+
+  # To ensure proper ordering, it is recommended to add an explicit dependency
+  # on the Internet Gateway for the VPC.
+  depends_on = [aws_internet_gateway.gw]
 
   tags = {
     Name = "handson-nat-gateway"
