@@ -19,6 +19,18 @@ yum -y update
 yum -y install httpd
 systemctl enable httpd.service
 systemctl start httpd.service
+chmod 777 /var/www/html -R
+echo '<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>EC2(public subnet) Web httpd instance(No.1)</title>
+            </head>
+            <body>
+                <h1>EC2(public subnet) Web httpd instance(No.1)</h1>
+            </body>
+            </html>' > /var/www/html/index.html
+systemctl restart httpd.service
 EOF
 
   iam_instance_profile = aws_iam_instance_profile.main.id
@@ -49,6 +61,20 @@ resource "aws_instance" "internal" {
 amazon-linux-extras install nginx1
 systemctl enable nginx
 systemctl start nginx
+
+chmod 777 /usr/share/nginx/html -R
+echo '<!DOCTYPE html>
+<html>
+<head>
+　  <meta charset="UTF-8">
+    <title>EC2(private subnet) Web nginx instance(No.1)</title>
+</head>
+<body>
+    <h1>EC2(private subnet) Web nginx instance(No.1)</h1>
+</body>
+</html>' > /usr/share/nginx/html/index.html
+
+systemctl restart nginx
 EOF
 
   iam_instance_profile = aws_iam_instance_profile.main.id
