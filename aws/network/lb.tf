@@ -47,6 +47,12 @@ resource "aws_lb_target_group_attachment" "web" {
   port             = 80
 }
 
+resource "aws_lb_target_group_attachment" "web2" {
+  target_group_arn = aws_lb_target_group.web.arn
+  target_id        = aws_instance.web2.id
+  port             = 80
+}
+
 # private サブネットに存在する、nginx 起動中のインスタンスに対するグループ
 resource "aws_lb_target_group" "internal" {
   name     = "internal"
@@ -77,5 +83,11 @@ resource "aws_lb_listener" "internal" {
 resource "aws_lb_target_group_attachment" "internal" {
   target_group_arn = aws_lb_target_group.internal.arn
   target_id        = aws_instance.internal.id
+  port             = 80
+}
+
+resource "aws_lb_target_group_attachment" "internal2" {
+  target_group_arn = aws_lb_target_group.internal.arn
+  target_id        = aws_instance.internal2.id
   port             = 80
 }
