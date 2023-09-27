@@ -43,5 +43,13 @@ resource "aws_instance" "internal" {
     aws_security_group.main.id
   ]
 
+  user_data = <<EOF
+#!/bin/bash
+
+amazon-linux-extras install nginx1
+systemctl enable nginx
+systemctl start nginx
+EOF
+
   iam_instance_profile = aws_iam_instance_profile.main.id
 }
